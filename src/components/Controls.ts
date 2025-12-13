@@ -3,9 +3,6 @@ const tempoDisplayElt = document.getElementById("tempo") as HTMLDivElement;
 
 class Controls {
   tempo = 110;
-  constructor() {
-    console.log;
-  }
 
   init() {
     temporRangeElt?.addEventListener("change", this.updateTempo);

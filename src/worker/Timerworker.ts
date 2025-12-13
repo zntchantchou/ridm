@@ -1,9 +1,20 @@
+import type { BeatMapType } from "../components/types";
+
 class TimeWorker {
   nextNoteTime = 0;
-  testRatio = 50;
-  nextNoteWindowMs = 100 * this.testRatio;
-  tickIntervalMS = 25 * this.testRatio;
+  lastNoteTimeMs = 0;
+  pingRatio = 20;
+  nextNoteWindowMs = 100 * this.pingRatio;
+  tickIntervalMS = 25 * this.pingRatio;
   worker?: Worker;
+  beatMap?: undefined | BeatMapType;
+  noteQueue = [];
+  currentNote = 0;
+
+  public updateBeatMap(beatMap: BeatMapType) {
+    this.beatMap = beatMap;
+    console.log("TimerWorker ", beatMap);
+  }
 
   init() {
     console.log("worker init");
@@ -14,20 +25,19 @@ class TimeWorker {
       event: "interval",
       interval: this.tickIntervalMS,
     });
-    setTimeout(() => this.stop(), 10000);
+    // setTimeout(() => this.stop(), 10000);
   }
 
-  handleMessage(e: MessageEvent) {
+  private handleMessage(e: MessageEvent) {
     if (e.data.event === "tick") this.tick();
-    console.log("handleMessage", e);
   }
 
-  tick() {
+  private tick() {
     // each tick is used to schedule the notes in the next window
     console.log("[Timeworker] Tick");
   }
 
-  stop() {
+  private stop() {
     this.worker?.postMessage({ event: "stop" });
   }
 }

@@ -9,6 +9,7 @@ class Stepper {
   steps = 16;
   constructor(options: StepperOptions) {
     if (options && options.steps) this.steps = options.steps;
+    this.render();
   }
 
   render() {

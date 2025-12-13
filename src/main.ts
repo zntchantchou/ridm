@@ -1,1 +1,3 @@
-console.log("Hello");
+import Controls from "./components/Controls";
+
+Controls.init();

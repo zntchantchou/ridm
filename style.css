@@ -1,0 +1,53 @@
+body {
+  height: 100vh;
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+#app {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#sequencer {
+  padding-top: 0.5rem;
+  background-color: rgb(24, 23, 23);
+  min-height: 300px;
+  height: 70vh;
+  width: 80vw;
+  min-width: 400px;
+  border-radius: 10px;
+}
+
+#controls {
+  font-size: 2rem;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: white solid 0.2rem;
+  width: 100%;
+  height: 10rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+}
+
+#tempo {
+  margin-left: 2rem;
+}
+
+#steppers {
+  height: calc(100% - 10rem);
+  position: relative;
+  width: 100%;
+  background-color: rgb(41, 41, 41);
+}

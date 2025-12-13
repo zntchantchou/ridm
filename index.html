@@ -1,13 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/style/reset.css" />
+    <link rel="stylesheet" href="style.css" />
     <title>riddim</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div id="sequencer">
+        <div id="controls">
+          <div class="control-group">
+            <span>Tempo</span>
+            <input
+              id="tempo-range"
+              type="range"
+              min="10"
+              max="300"
+              value="60"
+            />
+          </div>
+          <div id="tempo"></div>
+        </div>
+        <div id="steppers"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -13,8 +13,6 @@ class Controls {
     const updatedValue = (e?.target as HTMLInputElement).value;
     this.tempo = parseInt(updatedValue);
     console.log("UPDATE TEMPO");
-    console.log("elt ", document.getElementById("tempo"));
-    console.log("this.tempoDispl ", tempoDisplayElt);
     if (tempoDisplayElt) tempoDisplayElt.textContent = updatedValue;
   }
 }

@@ -18,7 +18,7 @@ self.onmessage = (e) => {
       timerId = setInterval(() => {
         postMessage(TICK_MSG);
       }, interval);
-      console.log("interval");
+      console.log("[interval]");
       console.log("e.data.interval", e.data);
       break;
     }

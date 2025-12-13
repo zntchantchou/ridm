@@ -21,14 +21,14 @@ class Stepper {
         element.style.width = `calc(100% / ${this.steps})`;
         return element;
       });
-    console.log("Steps ", steps);
+    // console.log("Steps ", steps);
     const stepper = document.createElement("div");
     stepper.classList.add("stepper");
     steppersDiv?.appendChild(stepper);
 
     for (const item of steps) {
       stepper.appendChild(item);
-      console.log("added item", item);
+      // console.log("added item", item);
     }
   }
 }

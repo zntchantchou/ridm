@@ -5,7 +5,7 @@ const tempoDisplayElt = document.getElementById("tempo") as HTMLDivElement;
 const playPauseBtn = document.getElementById("play") as HTMLDivElement;
 
 class Controls {
-  tempo = 110;
+  tempo = 10;
   isPlaying = false;
 
   init() {
@@ -14,6 +14,8 @@ class Controls {
       "click",
       () => (this.isPlaying = !this.isPlaying)
     );
+    temporRangeElt.value = this.tempo.toString();
+    console.log("tempo Range", temporRangeElt);
     tempoDisplayElt.textContent = this.tempo.toString();
   }
 

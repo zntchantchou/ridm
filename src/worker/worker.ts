@@ -1,5 +1,5 @@
 let timerId: undefined | number;
-let interval = 2000;
+let interval = 25;
 const TICK_MSG = { event: "tick" };
 
 self.onmessage = (e) => {

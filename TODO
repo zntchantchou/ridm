@@ -1,9 +1,13 @@
-Prototype: 
 
-☐ Create a button web components to learn about them @started(25-12-13 17:46)
-☐ Setup the logic for scheduling
-  
-☐ Listen to what maximum totalStep is doable: 
+
+Prototype: 
+  ☐ Setup the logic for scheduling + visual update @started(25-12-15 09:33)
+    ✔ Check that tempo updates live @done(25-12-15 09:41)
+    ☐ pick notes up inside draw function and check step queue behaviour
+    ☐ update UI every step
+
+Later:
+  ☐ Listen to what maximum totalStep is doable: 
 
   - in terms of sound distortion
   - visually (around 35 * 4) is hard to click 

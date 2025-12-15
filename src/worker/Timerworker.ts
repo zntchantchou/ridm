@@ -5,14 +5,16 @@ class TimeWorker {
   nextNoteTime = 0;
   currentStep = 0;
   totalSteps = 16;
+  lastStep = -1;
   pingRatio = 10;
   nextNoteWindowSec = 0.1;
-  tickIntervalMS = 25 * this.pingRatio;
+  tickIntervalMS = 25;
   worker?: Worker;
   beatMap?: undefined | BeatMapType;
   noteQueue: { beat: number; time: number }[] = [];
   audioContext: AudioContext | null = null;
   isPlaying = false;
+  animationFrameId?: number = undefined;
 
   public updateBeatMap(beatMap: BeatMapType) {
     this.beatMap = beatMap;
@@ -36,7 +38,7 @@ class TimeWorker {
     });
     this.nextNoteTime = this.audioContext.currentTime; // Time in seconds since start
     console.log("[Start] nextNoteTime: ", this.nextNoteTime);
-    // requestAnimationFrame(this.draw);
+    this.animationFrameId = requestAnimationFrame(this.draw);
   }
 
   private handleMessage(e: MessageEvent) {
@@ -46,19 +48,19 @@ class TimeWorker {
   private tick() {
     // each tick is used to schedule the notes in the next window
     if (!this.audioContext) return;
-    const tickLogDetails = {
-      ACTime: this.audioContext.currentTime,
-      timeAndWindow: this.audioContext.currentTime + this.nextNoteWindowSec,
-      nextNoteTime: this.nextNoteTime,
-      tempo: Controls.getTempo(),
-    };
+    // const tickLogDetails = {
+    //   ACTime: this.audioContext.currentTime,
+    //   timeAndWindow: this.audioContext.currentTime + this.nextNoteWindowSec,
+    //   nextNoteTime: this.nextNoteTime,
+    //   tempo: Controls.getTempo(),
+    // };
     // console.log("Tick log details ", tickLogDetails);
     // Find the next step that should be scheduled
     while (
       this.nextNoteTime <
       this.audioContext.currentTime + this.nextNoteWindowSec
     ) {
-      console.log("[TICK LOOPING] NEW STEP : ", tickLogDetails);
+      // console.log("[TICK LOOPING] NEW STEP : ", tickLogDetails);
 
       // console.log("[TICK LOOPING] Controls: ", Controls);
       this.scheduleStep();
@@ -67,34 +69,42 @@ class TimeWorker {
   }
 
   // Consumes the note queue for rendering visual cue of steps passing
-  // private draw = () => {
-  //   console.log("[draw] currentTime: ", this.audioContext?.currentTime);
-  //   let currentStep = lastStep;
-  //   if (this?.audioContext) {
-  //     const currentTime = this.audioContext.currentTime;
-  //     if (this.noteQueue.length) {
-  //       console.log("DRAW cheCK", this.noteQueue);
-  //       return;
-  //     }
-  //     while (this.noteQueue.length && this.noteQueue[0].time < currentTime) {
-  //       console.log("This.notequeue", this.noteQueue);
-  //       currentStep = this.noteQueue[0].beat;
-  //       this.noteQueue.splice(0, 1);
-  //       console.log("This.notequeue after", this.noteQueue);
-  //     }
-  //     // console.log("AFTER WHILE LOOP", currentStep);
-  //     if (currentStep !== lastStep) {
-  //       // update stepper code
-  //       console.log("UPDATE STEPPER", currentStep);
-  //     }
-  //     lastStep = currentStep;
-  //   }
-  //   console.log("REQUEST ANIMATION FRAME 2", this?.draw);
-  //   if (this?.draw) requestAnimationFrame(this.draw);
-  // };
+  private draw = () => {
+    const details = { queueLength: this.noteQueue.length };
+    let currStep = this.lastStep;
+    console.log("[DRAW] ", details);
+    if (this.audioContext?.currentTime) {
+      const currentTime = this.audioContext.currentTime;
+      while (this.noteQueue.length && this.noteQueue[0].time < currentTime) {
+        console.log("NOTE IS PENDING", this.noteQueue[0]);
+        currStep = this.noteQueue[0].beat;
+        this.noteQueue.splice(0, 1);
+      }
+    }
+    if (currStep !== this.lastStep) {
+      // PERFORM VISUAL UPDATE HERE
+      console.log("UPDATE STEPPER", currStep);
+      const lastStepElt: null | HTMLDivElement = document.querySelector(
+        `[data-beat="${this.lastStep}"]`
+      );
+      const currentStepElt: HTMLDivElement = document.querySelector(
+        `[data-beat="${currStep}"]`
+      ) as HTMLDivElement;
+      if (lastStepElt) {
+        console.log("[prevElt] ", lastStepElt);
+        console.log("[prevElt style] ", lastStepElt.computedStyleMap());
+        lastStepElt.style.backgroundColor = "white";
+      }
+
+      console.log("[currElt] ", currentStepElt);
+      currentStepElt.style.backgroundColor = "red";
+      this.lastStep = currStep;
+    }
+    if (this.isPlaying && this?.draw) requestAnimationFrame(this.draw);
+  };
 
   scheduleStep() {
-    console.log("[sheduleStep]");
+    console.log("[sheduleStep] ", this.currentStep);
     this.noteQueue.push({ beat: this.currentStep, time: this.nextNoteTime });
   }
 
@@ -102,14 +112,20 @@ class TimeWorker {
   goToNextStep() {
     // Defines the next note's time
     // MUST have access to current tempo
-    if (this.currentStep == this.totalSteps - 1) this.currentStep = 0;
-    else this.currentStep++;
+    if (this.currentStep === this.totalSteps - 1) {
+      this.currentStep = 0;
+      console.log("[goToNextStep] WRAP STEP TO 0 :", this.currentStep);
+    } else {
+      this.currentStep = this.currentStep + 1;
+      console.log("[goToNextStep] ADD ONE :", this.currentStep);
+    }
     const timePerStepSec = (60 / Controls.getTempo()) * 0.25;
     this.nextNoteTime += timePerStepSec;
     const logDetails = {
       timePerStepSec,
       nextNoteTime: this.nextNoteTime,
       getTempo: Controls.getTempo(),
+      currentStep: this.currentStep,
     };
     console.log("[goToNextStep] logDetails :", logDetails);
   }
@@ -117,6 +133,10 @@ class TimeWorker {
   private stop() {
     console.log("This.stop ");
     this.isPlaying = false;
+
+    if (this.animationFrameId) {
+      console.log("this.animationFrame ", this.animationFrameId);
+    }
     this.worker?.postMessage({ event: "stop" });
   }
 }

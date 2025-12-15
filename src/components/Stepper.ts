@@ -16,10 +16,11 @@ class Stepper {
     console.log("[stepper] RENDER");
     const steps = Array(this.steps)
       .fill(null)
-      .map(() => {
+      .map((_, i) => {
         const element = document.createElement("div");
         element.classList.add("step");
         element.style.width = `calc(100% / ${this.steps})`;
+        element.dataset.beat = i.toString();
         return element;
       });
     // console.log("Steps ", steps);

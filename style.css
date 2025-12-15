@@ -73,3 +73,18 @@ body {
   height: 100%;
   background-color: white;
 }
+
+.step.beat {
+  background-color: rgb(181, 196, 247);
+}
+.step.beat {
+  background-color: rgb(181, 196, 247);
+}
+
+[data-ticking="on"],
+.step.beat[data-ticking="on"] {
+  background-color: rgb(255, 251, 23);
+}
+.step.beat[data-ticking="on"] {
+  background-color: rgb(117, 255, 62);
+}

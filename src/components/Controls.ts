@@ -1,4 +1,6 @@
-const temporRangeElt = document.getElementById("tempo-range") as HTMLDivElement;
+const temporRangeElt = document.getElementById(
+  "tempo-range"
+) as HTMLInputElement;
 const tempoDisplayElt = document.getElementById("tempo") as HTMLDivElement;
 const playPauseBtn = document.getElementById("play") as HTMLDivElement;
 
@@ -15,11 +17,15 @@ class Controls {
     tempoDisplayElt.textContent = this.tempo.toString();
   }
 
-  updateTempo(e: Event) {
+  private updateTempo(e: Event) {
     const updatedValue = (e?.target as HTMLInputElement).value;
     this.tempo = parseInt(updatedValue);
-    console.log("UPDATE TEMPO");
+    console.log("[Controls] UPDATE TEMPO: ", this.tempo);
     if (tempoDisplayElt) tempoDisplayElt.textContent = updatedValue;
+  }
+
+  public getTempo(): number {
+    return parseInt(temporRangeElt.value);
   }
 }
 

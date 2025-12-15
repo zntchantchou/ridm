@@ -9,7 +9,6 @@ playBtn?.addEventListener("click", () => Timerworker.start());
 
 function init() {
   Controls.init();
-  // Timerworker.init();
   const getTotalSteps = (subdivisions: number) => subdivisions * 4;
   const defaultStepper = new Stepper({ steps: getTotalSteps(4) });
   const seq = new Sequencer(Timerworker);

@@ -50,6 +50,7 @@ class TimeWorker {
       ACTime: this.audioContext.currentTime,
       timeAndWindow: this.audioContext.currentTime + this.nextNoteWindowSec,
       nextNoteTime: this.nextNoteTime,
+      tempo: Controls.getTempo(),
     };
     // console.log("Tick log details ", tickLogDetails);
     // Find the next step that should be scheduled
@@ -57,7 +58,9 @@ class TimeWorker {
       this.nextNoteTime <
       this.audioContext.currentTime + this.nextNoteWindowSec
     ) {
-      console.log("[TICK LOOPING] log details ", tickLogDetails);
+      console.log("[TICK LOOPING] NEW STEP : ", tickLogDetails);
+
+      // console.log("[TICK LOOPING] Controls: ", Controls);
       this.scheduleStep();
       this.goToNextStep();
     }
@@ -97,13 +100,18 @@ class TimeWorker {
 
   // update the next note's time for the scheduler loop to pickup
   goToNextStep() {
-    // update lastPlayedTime
-    // set nextNoteTime
+    // Defines the next note's time
+    // MUST have access to current tempo
     if (this.currentStep == this.totalSteps - 1) this.currentStep = 0;
     else this.currentStep++;
-    const timePerStepSec = (Controls.tempo / 60) * 0.25;
+    const timePerStepSec = (60 / Controls.getTempo()) * 0.25;
     this.nextNoteTime += timePerStepSec;
-    console.log("[goToNextStep] nextNoteTime :", this.nextNoteTime);
+    const logDetails = {
+      timePerStepSec,
+      nextNoteTime: this.nextNoteTime,
+      getTempo: Controls.getTempo(),
+    };
+    console.log("[goToNextStep] logDetails :", logDetails);
   }
 
   private stop() {

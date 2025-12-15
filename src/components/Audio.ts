@@ -1,7 +1,6 @@
 class Audio {
   ctx: AudioContext = new AudioContext();
   bd?: null | AudioBuffer = null;
-
   public async init() {
     this.bd = await this.loadSample(
       "../../samples/AKAIMPC60/akaimpc60-hh/hh.wav"
@@ -21,6 +20,21 @@ class Audio {
     });
     src.connect(this.ctx.destination);
     src.start(time);
+  }
+
+  public playMetronome(beatNumber: number, time: number) {
+    console.log("PLAY METRONOME ", beatNumber);
+    const osc = this.ctx.createOscillator();
+    osc.connect(this.ctx.destination);
+    osc.frequency.value = 880.0;
+    // beat 0 == high pitch
+    if (beatNumber % 16 === 0) osc.frequency.value = 880.0;
+    // quarter notes = medium pitch
+    else if (beatNumber % 4 === 0) osc.frequency.value = 440.0;
+    // other 16th notes = low pitch
+    else osc.frequency.value = 220.0;
+    osc.start(time);
+    osc.stop(time + 0.05);
   }
 
   public playDefault(time = 0) {

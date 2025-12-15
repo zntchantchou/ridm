@@ -8,7 +8,6 @@ window.addEventListener("load", init);
 const playBtn = document.getElementById("play");
 playBtn?.addEventListener("click", () => {
   Timerworker.start();
-  // Audio.playDefault();
 });
 
 function init() {
@@ -16,8 +15,6 @@ function init() {
   Audio.init();
   const getTotalSteps = (subdivisions: number) => subdivisions * 4;
   const defaultStepper = new Stepper({ steps: getTotalSteps(4) });
-  // new Stepper({ steps: 25 });
-
   const seq = new Sequencer(Timerworker);
   seq.register(defaultStepper);
 }

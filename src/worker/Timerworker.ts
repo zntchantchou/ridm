@@ -19,7 +19,6 @@ class TimeWorker {
 
   public updateBeatMap(beatMap: BeatMapType) {
     this.beatMap = beatMap;
-    // console.log("TimerWorker ", beatMap);
   }
 
   start() {
@@ -28,7 +27,7 @@ class TimeWorker {
       return;
     }
     console.log("[Start]");
-    this.audioContext = new AudioContext();
+    if (!this.audioContext) this.audioContext = new AudioContext();
     this.isPlaying = true;
     this.worker = new Worker(new URL("./worker.ts", import.meta.url));
     this.worker.onmessage = (e) => this.handleMessage(e);
@@ -49,14 +48,6 @@ class TimeWorker {
   private tick() {
     // each tick is used to schedule the notes in the next window
     if (!this.audioContext) return;
-    // const tickLogDetails = {
-    //   ACTime: this.audioContext.currentTime,
-    //   timeAndWindow: this.audioContext.currentTime + this.nextNoteWindowSec,
-    //   nextNoteTime: this.nextNoteTime,
-    //   tempo: Controls.getTempo(),
-    // };
-    // console.log("Tick log details ", tickLogDetails);
-    // Find the next step that should be scheduled
     while (
       this.nextNoteTime <
       this.audioContext.currentTime + this.nextNoteWindowSec
@@ -74,7 +65,6 @@ class TimeWorker {
     if (this.audioContext?.currentTime) {
       const currentTime = this.audioContext.currentTime;
       while (this.stepQueue.length && this.stepQueue[0].time < currentTime) {
-        // console.log("NOTE IS PENDING", this.stepQueue[0]);
         currStep = this.stepQueue[0].beat;
         this.stepQueue.splice(0, 1);
       }
@@ -99,55 +89,29 @@ class TimeWorker {
     }
     currentStepElt.dataset.ticking = "on";
   }
+
   scheduleStep() {
     console.log("[sheduleStep] ", this.currentStep);
-    // update stepQueue for UI
-    this.stepQueue.push({ beat: this.currentStep, time: this.nextNoteTime });
-    // schedule the next sound
-
-    // try playing 32th notes
-    // try playing 16th notes (all notes currently)
-    Audio.playDefault(this.nextNoteTime);
-    // try playing 8th notes
-    // if (this.currentStep % 2 === 0) {
-    //   Audio.playDefault(this.nextNoteTime);
-    // }
-    // try playing 4th notes
-    // if (this.currentStep % 4 === 0) {
-    //   Audio.playDefault(this.nextNoteTime);
-    // }
+    this.stepQueue.push({ beat: this.currentStep, time: this.nextNoteTime }); // update stepQueue for UI
+    Audio.playMetronome(this.currentStep, this.nextNoteTime); // play metronome
   }
 
   // update the next note's time for the scheduler loop to pickup
+  // Defines the next note's time
   goToNextStep() {
-    // Defines the next note's time
-    // MUST have access to current tempo
     console.log("[goToNextStep]");
     if (this.currentStep === this.totalSteps - 1) {
       this.currentStep = 0;
-      // console.log("[goToNextStep] WRAP STEP TO 0 :", this.currentStep);
     } else {
       this.currentStep = this.currentStep + 1;
-      // console.log("[goToNextStep] ADD ONE :", this.currentStep);
     }
     const timePerStepSec = (60 / Controls.getTempo()) * 0.25;
     this.nextNoteTime += timePerStepSec;
-    // const logDetails = {
-    //   timePerStepSec,
-    //   nextNoteTime: this.nextNoteTime,
-    //   getTempo: Controls.getTempo(),
-    //   currentStep: this.currentStep,
-    // };
-    // console.log("[goToNextStep] logDetails :", logDetails);
   }
 
   private stop() {
     console.log("This.stop ");
     this.isPlaying = false;
-
-    if (this.animationFrameId) {
-      console.log("this.animationFrame ", this.animationFrameId);
-    }
     this.worker?.postMessage({ event: "stop" });
   }
 }

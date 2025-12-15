@@ -6,13 +6,31 @@ interface StepperOptions {
 
 class Stepper {
   // Total number of steps for the row
+  // If a bigger multiple of 16 is present , consider biggerStepper / stepper to be the filteringRatio
   steps = 16;
+  lastStep = -1;
+  currentStep = 0;
+  stepPickupRatio = 0;
   stepElements: HTMLDivElement[] = [];
+
   constructor(options: StepperOptions) {
     if (options && options.steps) this.steps = options.steps;
     this.render();
   }
-
+  // update ui
+  private updateUi(currentStep: number) {
+    // const lastStepElements: NodeListOf<HTMLDivElement> =
+    //   document.querySelectorAll(`[data-beat="${this.lastStep}"]`);
+    // const currentStepElements: NodeListOf<HTMLDivElement> =
+    //   document.querySelectorAll(`[data-beat="${currentStep}"]`);
+    // // console.log("Curr step ELEMENTS: ", currentStepElements);
+    // if (lastStepElements.length && currentStepElements) {
+    //   currentStepElements.forEach((elt, i) => {
+    //     elt.dataset.ticking = "on";
+    //     if (lastStepElements[i]) lastStepElements[i].dataset.ticking = "off";
+    //   });
+    // }
+  }
   render() {
     console.log("[stepper] RENDER");
     this.stepElements = Array(this.steps)

@@ -78,20 +78,22 @@ class TimeWorker {
 
   // Perform visual update of the steps
   private updateUi(currentStep: number) {
-    const lastStepElt: null | HTMLDivElement = document.querySelector(
-      `[data-beat="${this.lastStep}"]`
-    );
-    const currentStepElt: HTMLDivElement = document.querySelector(
-      `[data-beat="${currentStep}"]`
-    ) as HTMLDivElement;
-    if (lastStepElt) {
-      lastStepElt.dataset.ticking = "off";
+    const lastStepElements: NodeListOf<HTMLDivElement> =
+      document.querySelectorAll(`[data-beat="${this.lastStep}"]`);
+    const currentStepElements: NodeListOf<HTMLDivElement> =
+      document.querySelectorAll(`[data-beat="${currentStep}"]`);
+    // console.log("Curr step ELEMENTS: ", currentStepElements);
+    if (lastStepElements.length && currentStepElements) {
+      currentStepElements.forEach((elt, i) => {
+        elt.dataset.ticking = "on";
+        if (lastStepElements[i]) lastStepElements[i].dataset.ticking = "off";
+      });
     }
-    currentStepElt.dataset.ticking = "on";
   }
 
   scheduleStep() {
     console.log("[sheduleStep] ", this.currentStep);
+    // One queue per time signature
     this.stepQueue.push({ beat: this.currentStep, time: this.nextNoteTime }); // update stepQueue for UI
     Audio.playMetronome(this.currentStep, this.nextNoteTime); // play metronome
   }

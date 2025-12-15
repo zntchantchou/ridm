@@ -14,7 +14,7 @@ function init() {
   Controls.init();
   Audio.init();
   const getTotalSteps = (subdivisions: number) => subdivisions * 4;
-  const defaultStepper = new Stepper({ steps: getTotalSteps(4) });
   const seq = new Sequencer(Timerworker);
-  seq.register(defaultStepper);
+  seq.register(new Stepper({ steps: getTotalSteps(4) }));
+  seq.register(new Stepper({ steps: getTotalSteps(8) }));
 }

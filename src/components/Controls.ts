@@ -1,11 +1,17 @@
 const temporRangeElt = document.getElementById("tempo-range") as HTMLDivElement;
 const tempoDisplayElt = document.getElementById("tempo") as HTMLDivElement;
+const playPauseBtn = document.getElementById("play") as HTMLDivElement;
 
 class Controls {
   tempo = 110;
+  isPlaying = false;
 
   init() {
     temporRangeElt?.addEventListener("change", this.updateTempo);
+    playPauseBtn?.addEventListener(
+      "click",
+      () => (this.isPlaying = !this.isPlaying)
+    );
     tempoDisplayElt.textContent = this.tempo.toString();
   }
 

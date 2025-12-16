@@ -14,8 +14,6 @@ class TimeWorker {
   tickIntervalMS = 25;
   worker?: Worker;
   beatMap?: undefined | BeatMapType;
-
-  // stepQueue: { beat: number; time: number }[] = [];
   stepQueue: typeof StepQueue = StepQueue;
   audioContext: AudioContext | null = null;
   isPlaying = false;
@@ -42,8 +40,6 @@ class TimeWorker {
       interval: this.tickIntervalMS,
     });
     this.nextNoteTime = this.audioContext.currentTime; // Time in seconds since start
-    // console.log("[Start] nextNoteTime: ", this.nextNoteTime);
-    // this.animationFrameId = requestAnimationFrame(this.draw);
   }
 
   private handleMessage(e: MessageEvent) {
@@ -53,6 +49,8 @@ class TimeWorker {
   private tick() {
     // each tick is used to schedule the notes in the next window
     if (!this.audioContext) return;
+    // OUTSOURCE
+    // Each distinct rythm or pulse must have their own context
     while (
       this.nextNoteTime <
       this.audioContext.currentTime + this.nextNoteWindowSec
@@ -63,7 +61,7 @@ class TimeWorker {
   }
 
   scheduleStep() {
-    console.log("[sheduleStep] ", this.currentStep);
+    // console.log("[sheduleStep] ", this.currentStep);
     // One queue per time signature
     // this.stepQueue.push({ beat: this.currentStep, time: this.nextNoteTime }); // update stepQueue for UI
     this.stepQueue.push({

@@ -9,31 +9,30 @@ class UI {
   constructor(AC: AudioContext) {
     this.audioContext = AC;
   }
-
+  /** start the animation */
   start() {
-    // request the animationframe on draw
     console.log("[UI start]");
     this.isPlaying = true;
     this.animationId = requestAnimationFrame(this.draw);
   }
 
+  /** pause the animation */
   pause() {
     console.log("[UI stop]");
     this.isPlaying = false;
     // cancel animation frame
   }
 
+  /** stop the animation */
   stop() {
     console.log("[UI stop]");
     this.isPlaying = false;
     if (this.animationId) cancelAnimationFrame(this.animationId);
-    // cancel animation frame
   }
 
   draw = () => {
     let currStep = this.lastStep;
     // console.log("[UI draw]");
-    // pop queue and draw
     if (!this.audioContext) return;
     while (
       StepQueue.size() &&
@@ -68,20 +67,20 @@ class UI {
       step.stepNumber,
       step.totalSteps
     );
-
+    // look for a subdivision through all unique stepper keys
     for (const stepperKey of Sequencer.steppersMap.keys()) {
       const key = parseInt(stepperKey);
       if (step.totalSteps > key && step.totalSteps % key === 0) {
+        console.log("SUBDIVISION FOUND STEP ", step);
+        console.log("SUBDIVISION KEY", key);
         const subDivider = step.totalSteps / key;
         if (step.stepNumber % subDivider === 0) {
-          console.log("KEY FOUND => ", key);
-          console.log("SUBDIVIER => ", subDivider);
           const prevStepValue =
             step.stepNumber === 0
-              ? step.totalSteps / subDivider - 1
+              ? step.totalSteps / subDivider - 1 // for 0 previous step is the last step
               : step.stepNumber / subDivider - 1;
-          const prevStep = this.selectSteps(prevStepValue, key);
-          lastStepElements.push(...prevStep);
+          const lastStep = this.selectSteps(prevStepValue, key);
+          lastStepElements.push(...lastStep);
           currentStepElements.push(
             ...this.selectSteps(step.stepNumber / subDivider, key)
           );

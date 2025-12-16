@@ -29,22 +29,13 @@ class Stepper {
         element.dataset.step = i.toString();
         element.dataset.steps = this.steps.toString();
         if (i === 0) element.classList.add("beat");
-        // if (this.steps % 4 === 0) {
-        //   if (i % (this.steps / 4) === 0) {
-        //     element.classList.add("beat");
-        //   }
-        // }
-
         return element;
       });
-    // console.log("Steps ", steps);
     const stepper = document.createElement("div");
     stepper.classList.add("stepper");
-    // stepper.dataset.steps = this.steps.toString();
     steppersDiv?.appendChild(stepper);
     for (const item of this.stepElements) {
       stepper.appendChild(item);
-      // console.log("added item", item);
     }
   }
 }

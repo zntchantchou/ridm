@@ -15,14 +15,15 @@ class StepQueue {
   }
 
   push(step: Step): void {
-    // console.log("pushing ", step);
     this.steps.push(step);
   }
+
   pop() {
     const oldest = this.steps[0];
     this.steps.splice(0, 1);
     return oldest;
   }
+
   size() {
     return this.steps.length;
   }

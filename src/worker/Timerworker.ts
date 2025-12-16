@@ -7,7 +7,7 @@ import UI from "../components/Ui";
 class TimeWorker {
   nextNoteTime = 0;
   currentStep = 0;
-  totalSteps = 32;
+  totalSteps = 16;
   lastStep = -1;
   pingRatio = 10;
   nextNoteWindowSec = 0.1;
@@ -21,10 +21,6 @@ class TimeWorker {
   isPlaying = false;
   animationFrameId?: number = undefined;
   ui: UI | null = null;
-  // OUTSOURCE
-  public updateBeatMap(beatMap: BeatMapType) {
-    this.beatMap = beatMap;
-  }
 
   start() {
     if (this.isPlaying) {
@@ -63,51 +59,6 @@ class TimeWorker {
     ) {
       this.scheduleStep();
       this.goToNextStep();
-    }
-  }
-
-  // OUTSOURCE
-  // Consumes the note queue for rendering visual cue of steps passing
-  // private draw = () => {
-  //   // const details = { queueLength: this.stepQueue.length };
-  //   let currStep = this.lastStep;
-  //   // console.log("[DRAW]");
-  //   if (this.audioContext?.currentTime) {
-  //     const currentTime = this.audioContext.currentTime;
-  //     while (
-  //       this.stepQueue.size() &&
-  //       this.stepQueue.steps[0].time < currentTime
-  //     ) {
-  //       currStep = this.stepQueue.pop().stepNumber;
-  //     }
-  //   }
-  //   // there will be more that on possible lastStep and nextStep (one per )
-  //   if (currStep !== this.lastStep) {
-  //     // accept a total step number to only update correct steppers
-  //     this.updateUi(currStep);
-  //     this.lastStep = currStep;
-  //   }
-  //   if (this.isPlaying && this?.draw) requestAnimationFrame(this.draw);
-  // };
-
-  // OUTSOURCE
-  // Perform visual update of the steps
-  private updateUi(currentStep: number) {
-    const lastStepElements: NodeListOf<HTMLDivElement> =
-      document.querySelectorAll(`[data-beat="${this.lastStep}"]`);
-    const currentStepElements: NodeListOf<HTMLDivElement> =
-      document.querySelectorAll(`[data-beat="${currentStep}"]`);
-    // console.log("Last step ", this.lastStep);
-    // console.log("CurrentStep ", currentStep);
-    if (lastStepElements.length && currentStepElements) {
-      currentStepElements.forEach((elt, i) => {
-        console.log("ELT ", elt);
-        elt.dataset.ticking = "on";
-        if (lastStepElements[i]) {
-          lastStepElements[i].dataset.ticking = "off";
-          console.log("lastStepElt AT BUG ", lastStepElements[i]);
-        } // unhighlight the last ticking step if there was one
-      });
     }
   }
 

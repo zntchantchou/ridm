@@ -1,3 +1,4 @@
+import Sequencer from "./Sequencer";
 import StepQueue, { type Step } from "./StepQueue";
 
 class UI {
@@ -11,7 +12,7 @@ class UI {
 
   start() {
     // request the animationframe on draw
-    console.log("[UI start]", this.audioContext);
+    console.log("[UI start]");
     this.isPlaying = true;
     this.animationId = requestAnimationFrame(this.draw);
   }
@@ -31,7 +32,7 @@ class UI {
 
   draw = () => {
     let currStep = this.lastStep;
-    console.log("[UI draw]");
+    // console.log("[UI draw]");
     // pop queue and draw
     if (!this.audioContext) return;
     while (
@@ -47,29 +48,51 @@ class UI {
     if (this.isPlaying) requestAnimationFrame(this.draw);
   };
 
+  private selectSteps(stepNumber: number, steps: number) {
+    // console.log("SELECT STEP : ", stepNumber, steps);
+    return Array.from(
+      document.querySelectorAll(
+        `[data-steps="${steps}"][data-step="${stepNumber}"]`
+      )
+    ) as HTMLDivElement[];
+  }
+
   private updateUI(step: Step) {
-    // select all concerned steppers
-    // list their children
-    console.log("UPDATE UI");
-    const lastStepElements: NodeListOf<HTMLDivElement> =
-      document.querySelectorAll(
-        `[data-steps="${step.totalSteps}"][data-step="${this.lastStep?.stepNumber}"]`
-      );
-    const currentStepElements: NodeListOf<HTMLDivElement> =
-      document.querySelectorAll(
-        `[data-steps="${step.totalSteps}"][data-step="${step.stepNumber}"]`
-      );
-    // console.log("Last step ", this.lastStep);
-    // console.log("CurrentStep ", step);
-    console.log("lastStepElts ", lastStepElements);
-    console.log("currentStepElts ", currentStepElements);
+    // console.log("UPDATE UI");
+    const lastStepElements = this.selectSteps(
+      this.lastStep?.stepNumber as number,
+      step.totalSteps
+    );
+
+    const currentStepElements = this.selectSteps(
+      step.stepNumber,
+      step.totalSteps
+    );
+
+    for (const stepperKey of Sequencer.steppersMap.keys()) {
+      const key = parseInt(stepperKey);
+      if (step.totalSteps > key && step.totalSteps % key === 0) {
+        const subDivider = step.totalSteps / key;
+        if (step.stepNumber % subDivider === 0) {
+          console.log("KEY FOUND => ", key);
+          console.log("SUBDIVIER => ", subDivider);
+          const prevStepValue =
+            step.stepNumber === 0
+              ? step.totalSteps / subDivider - 1
+              : step.stepNumber / subDivider - 1;
+          const prevStep = this.selectSteps(prevStepValue, key);
+          lastStepElements.push(...prevStep);
+          currentStepElements.push(
+            ...this.selectSteps(step.stepNumber / subDivider, key)
+          );
+        }
+      }
+    }
     if (lastStepElements.length && currentStepElements) {
       currentStepElements.forEach((elt, i) => {
         elt.dataset.ticking = "on";
-        console.log("ELT ", elt);
         if (lastStepElements[i]) {
           lastStepElements[i].dataset.ticking = "off";
-          console.log("lastStepElt AT BUG ", lastStepElements[i]);
         } // unhighlight the last ticking step if there was one
       });
     }

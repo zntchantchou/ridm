@@ -1,6 +1,7 @@
 import type { BeatMapType } from "../components/types";
 import Controls from "../components/Controls";
 import Audio from "../components/Audio";
+import StepQueue from "../components/StepQueue";
 // let lastStep = -1;
 class TimeWorker {
   nextNoteTime = 0;
@@ -12,7 +13,9 @@ class TimeWorker {
   tickIntervalMS = 25;
   worker?: Worker;
   beatMap?: undefined | BeatMapType;
-  stepQueue: { beat: number; time: number }[] = [];
+
+  // stepQueue: { beat: number; time: number }[] = [];
+  stepQueue: typeof StepQueue = StepQueue;
   audioContext: AudioContext | null = null;
   isPlaying = false;
   animationFrameId?: number = undefined;
@@ -38,7 +41,7 @@ class TimeWorker {
       interval: this.tickIntervalMS,
     });
     this.nextNoteTime = this.audioContext.currentTime; // Time in seconds since start
-    console.log("[Start] nextNoteTime: ", this.nextNoteTime);
+    // console.log("[Start] nextNoteTime: ", this.nextNoteTime);
     this.animationFrameId = requestAnimationFrame(this.draw);
   }
 
@@ -66,9 +69,11 @@ class TimeWorker {
     // console.log("[DRAW]");
     if (this.audioContext?.currentTime) {
       const currentTime = this.audioContext.currentTime;
-      while (this.stepQueue.length && this.stepQueue[0].time < currentTime) {
-        currStep = this.stepQueue[0].beat;
-        this.stepQueue.splice(0, 1);
+      while (
+        this.stepQueue.size() &&
+        this.stepQueue.steps[0].time < currentTime
+      ) {
+        currStep = this.stepQueue.pop().stepNumber;
       }
     }
     // there will be more that on possible lastStep and nextStep (one per )
@@ -87,11 +92,15 @@ class TimeWorker {
       document.querySelectorAll(`[data-beat="${this.lastStep}"]`);
     const currentStepElements: NodeListOf<HTMLDivElement> =
       document.querySelectorAll(`[data-beat="${currentStep}"]`);
-    // console.log("Curr step ELEMENTS: ", currentStepElements);
+    console.log("Last step ", this.lastStep);
+    console.log("CurrentStep ", currentStep);
     if (lastStepElements.length && currentStepElements) {
       currentStepElements.forEach((elt, i) => {
         elt.dataset.ticking = "on";
-        if (lastStepElements[i]) lastStepElements[i].dataset.ticking = "off";
+        if (lastStepElements[i]) {
+          lastStepElements[i].dataset.ticking = "off";
+          console.log("lastStepElt AT BUG ", lastStepElements[i]);
+        } // unhighlight the last ticking step if there was one
       });
     }
   }
@@ -99,14 +108,19 @@ class TimeWorker {
   scheduleStep() {
     console.log("[sheduleStep] ", this.currentStep);
     // One queue per time signature
-    this.stepQueue.push({ beat: this.currentStep, time: this.nextNoteTime }); // update stepQueue for UI
+    // this.stepQueue.push({ beat: this.currentStep, time: this.nextNoteTime }); // update stepQueue for UI
+    this.stepQueue.push({
+      stepNumber: this.currentStep,
+      time: this.nextNoteTime,
+      totalSteps: this.totalSteps,
+    });
     Audio.playMetronome(this.currentStep, this.nextNoteTime); // play metronome
   }
 
   // update the next note's time for the scheduler loop to pickup
   // Defines the next note's time
   goToNextStep() {
-    console.log("[goToNextStep]");
+    // console.log("[goToNextStep]");
     if (this.currentStep === this.totalSteps - 1) {
       this.currentStep = 0;
     } else {

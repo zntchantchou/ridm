@@ -5,7 +5,7 @@ import Audio from "../components/Audio";
 class TimeWorker {
   nextNoteTime = 0;
   currentStep = 0;
-  totalSteps = 16;
+  totalSteps = 32;
   lastStep = -1;
   pingRatio = 10;
   nextNoteWindowSec = 0.1;
@@ -17,6 +17,7 @@ class TimeWorker {
   isPlaying = false;
   animationFrameId?: number = undefined;
 
+  // OUTSOURCE
   public updateBeatMap(beatMap: BeatMapType) {
     this.beatMap = beatMap;
   }
@@ -57,6 +58,7 @@ class TimeWorker {
     }
   }
 
+  // OUTSOURCE
   // Consumes the note queue for rendering visual cue of steps passing
   private draw = () => {
     // const details = { queueLength: this.stepQueue.length };
@@ -69,13 +71,16 @@ class TimeWorker {
         this.stepQueue.splice(0, 1);
       }
     }
+    // there will be more that on possible lastStep and nextStep (one per )
     if (currStep !== this.lastStep) {
+      // accept a total step number to only update correct steppers
       this.updateUi(currStep);
       this.lastStep = currStep;
     }
     if (this.isPlaying && this?.draw) requestAnimationFrame(this.draw);
   };
 
+  // OUTSOURCE
   // Perform visual update of the steps
   private updateUi(currentStep: number) {
     const lastStepElements: NodeListOf<HTMLDivElement> =
@@ -107,7 +112,8 @@ class TimeWorker {
     } else {
       this.currentStep = this.currentStep + 1;
     }
-    const timePerStepSec = (60 / Controls.getTempo()) * 0.25;
+    const stepsPerBeat = 8;
+    const timePerStepSec = 60 / Controls.getTempo() / stepsPerBeat;
     this.nextNoteTime += timePerStepSec;
   }
 

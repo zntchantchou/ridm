@@ -1,4 +1,4 @@
-interface Step {
+export interface Step {
   time: number;
   stepNumber: number;
   totalSteps: number;
@@ -6,9 +6,16 @@ interface Step {
 
 class StepQueue {
   steps: Step[] = [];
-  constructor() {}
+  constructor() {
+    console.log("[STEPQUEUE] created");
+  }
+
+  head() {
+    return this.steps[0];
+  }
 
   push(step: Step): void {
+    // console.log("pushing ", step);
     this.steps.push(step);
   }
   pop() {

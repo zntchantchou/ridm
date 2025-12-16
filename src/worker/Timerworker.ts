@@ -2,6 +2,7 @@ import type { BeatMapType } from "../components/types";
 import Controls from "../components/Controls";
 import Audio from "../components/Audio";
 import StepQueue from "../components/StepQueue";
+import UI from "../components/Ui";
 // let lastStep = -1;
 class TimeWorker {
   nextNoteTime = 0;
@@ -19,7 +20,7 @@ class TimeWorker {
   audioContext: AudioContext | null = null;
   isPlaying = false;
   animationFrameId?: number = undefined;
-
+  ui: UI | null = null;
   // OUTSOURCE
   public updateBeatMap(beatMap: BeatMapType) {
     this.beatMap = beatMap;
@@ -31,7 +32,11 @@ class TimeWorker {
       return;
     }
     console.log("[Start]");
-    if (!this.audioContext) this.audioContext = new AudioContext();
+    if (!this.audioContext) {
+      this.audioContext = new AudioContext();
+      this.ui = new UI(this.audioContext);
+    }
+    this.ui?.start();
     this.isPlaying = true;
     this.worker = new Worker(new URL("./worker.ts", import.meta.url));
     this.worker.onmessage = (e) => this.handleMessage(e);
@@ -42,7 +47,7 @@ class TimeWorker {
     });
     this.nextNoteTime = this.audioContext.currentTime; // Time in seconds since start
     // console.log("[Start] nextNoteTime: ", this.nextNoteTime);
-    this.animationFrameId = requestAnimationFrame(this.draw);
+    // this.animationFrameId = requestAnimationFrame(this.draw);
   }
 
   private handleMessage(e: MessageEvent) {
@@ -63,27 +68,27 @@ class TimeWorker {
 
   // OUTSOURCE
   // Consumes the note queue for rendering visual cue of steps passing
-  private draw = () => {
-    // const details = { queueLength: this.stepQueue.length };
-    let currStep = this.lastStep;
-    // console.log("[DRAW]");
-    if (this.audioContext?.currentTime) {
-      const currentTime = this.audioContext.currentTime;
-      while (
-        this.stepQueue.size() &&
-        this.stepQueue.steps[0].time < currentTime
-      ) {
-        currStep = this.stepQueue.pop().stepNumber;
-      }
-    }
-    // there will be more that on possible lastStep and nextStep (one per )
-    if (currStep !== this.lastStep) {
-      // accept a total step number to only update correct steppers
-      this.updateUi(currStep);
-      this.lastStep = currStep;
-    }
-    if (this.isPlaying && this?.draw) requestAnimationFrame(this.draw);
-  };
+  // private draw = () => {
+  //   // const details = { queueLength: this.stepQueue.length };
+  //   let currStep = this.lastStep;
+  //   // console.log("[DRAW]");
+  //   if (this.audioContext?.currentTime) {
+  //     const currentTime = this.audioContext.currentTime;
+  //     while (
+  //       this.stepQueue.size() &&
+  //       this.stepQueue.steps[0].time < currentTime
+  //     ) {
+  //       currStep = this.stepQueue.pop().stepNumber;
+  //     }
+  //   }
+  //   // there will be more that on possible lastStep and nextStep (one per )
+  //   if (currStep !== this.lastStep) {
+  //     // accept a total step number to only update correct steppers
+  //     this.updateUi(currStep);
+  //     this.lastStep = currStep;
+  //   }
+  //   if (this.isPlaying && this?.draw) requestAnimationFrame(this.draw);
+  // };
 
   // OUTSOURCE
   // Perform visual update of the steps
@@ -92,10 +97,11 @@ class TimeWorker {
       document.querySelectorAll(`[data-beat="${this.lastStep}"]`);
     const currentStepElements: NodeListOf<HTMLDivElement> =
       document.querySelectorAll(`[data-beat="${currentStep}"]`);
-    console.log("Last step ", this.lastStep);
-    console.log("CurrentStep ", currentStep);
+    // console.log("Last step ", this.lastStep);
+    // console.log("CurrentStep ", currentStep);
     if (lastStepElements.length && currentStepElements) {
       currentStepElements.forEach((elt, i) => {
+        console.log("ELT ", elt);
         elt.dataset.ticking = "on";
         if (lastStepElements[i]) {
           lastStepElements[i].dataset.ticking = "off";
@@ -134,6 +140,7 @@ class TimeWorker {
   private stop() {
     console.log("This.stop ");
     this.isPlaying = false;
+    this.ui?.stop();
     this.worker?.postMessage({ event: "stop" });
   }
 }

@@ -39,7 +39,8 @@ class Stepper {
         const element = document.createElement("div");
         element.classList.add("step");
         element.style.width = `calc(100% / ${this.steps})`;
-        element.dataset.beat = i.toString();
+        element.dataset.step = i.toString();
+        element.dataset.steps = this.steps.toString();
         if (i === 0) element.classList.add("beat");
         if (this.steps % 4 === 0) {
           if (i % (this.steps / 4) === 0) {
@@ -52,7 +53,7 @@ class Stepper {
     // console.log("Steps ", steps);
     const stepper = document.createElement("div");
     stepper.classList.add("stepper");
-    stepper.dataset.steps = this.steps.toString();
+    // stepper.dataset.steps = this.steps.toString();
     steppersDiv?.appendChild(stepper);
     for (const item of this.stepElements) {
       stepper.appendChild(item);

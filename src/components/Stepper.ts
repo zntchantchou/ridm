@@ -19,7 +19,7 @@ class Stepper {
   }
 
   render() {
-    console.log("[stepper] RENDER");
+    // console.log("[stepper] RENDER");
     this.stepElements = Array(this.steps)
       .fill(null)
       .map((_, i) => {

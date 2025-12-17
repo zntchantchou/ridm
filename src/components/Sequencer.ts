@@ -8,9 +8,18 @@ class Sequencer {
   // A subpulse is created when a new stepper has a subdivision of the steps of an existing stepper.
   // if the subPulse already exists, update its count
   steppersMap: BeatMapType = new Map<string, { steppers: Stepper[] }>();
+  pulses: Pulses | null = null;
+  constructor(pulses: Pulses) {
+    this.pulses = pulses;
+  }
+
   register(stepper: Stepper) {
+    if (stepper.steps < 1 || stepper.steps > 100) {
+      console.log("CANNOT register stepper with size: ", stepper.steps);
+      return;
+    }
     this.steppers.push(stepper);
-    Pulses.register(stepper);
+    this.pulses?.register(stepper);
     const existingBeat = this.steppersMap.get(stepper.steps.toString());
     if (!existingBeat) {
       this.steppersMap.set(stepper.steps.toString(), {
@@ -30,4 +39,4 @@ class Sequencer {
   }
 }
 
-export default new Sequencer();
+export default Sequencer;

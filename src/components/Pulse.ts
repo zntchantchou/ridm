@@ -22,16 +22,17 @@ class Pulse {
   }
 
   addSub(pulse: Pulse) {
-    this.subs?.push(pulse);
+    this.subs.push(pulse);
   }
 
   promote() {
-    console.log("[Promoted] ", this);
     this.lead = true;
+    console.log("[PROMOTED] ", this);
   }
 
+  /** set lead to false */
   demote() {
-    console.log("[demoted] ", this);
+    console.log("[DEMOTED] ", this);
     this.lead = false;
     this.clearSubs();
   }

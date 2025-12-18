@@ -61,32 +61,27 @@ class UI {
       console.error("NO PULSES");
       return;
     }
-    // TODO USE PULSES
+    // highlight steps from parent pulses
+    currentStepElts = this.selectSteps(step.stepNumber, step.totalSteps);
+    lastStepElements = this.selectSteps(
+      step.stepNumber === 0 ? step.totalSteps - 1 : step.stepNumber - 1, // unstyle last element if step is 0
+      step.totalSteps
+    );
+    // highlight steps from children pulses (subdivisions)
     for (const pulse of this.pulses.getLeadPulses()) {
-      const lastStep = pulse.getPrevStep(step);
-      currentStepElts = this.selectSteps(step.stepNumber, step.totalSteps);
-      lastStepElements = this.selectSteps(lastStep, step.totalSteps);
-      // console.log("[UPDATE UI] PARENT ", pulse);
-
-      if (pulse.empty) continue;
       pulse.subs.forEach((sub) => {
-        // console.log("SUB FOUND ", sub);
-        // look for pub previous and current step
         const prevStep = this.selectSteps(sub.getPrevStep(step), sub.steps);
         const currStep = this.selectSteps(sub.getCurrentStep(step), sub.steps);
         lastStepElements.push(...prevStep);
         currentStepElts.push(...currStep);
-        console.log("SUB FOUND", sub);
-        // console.log("SUB FOUND Current ", currStep, sub.getCurrentStep(step));
-        // console.log("SUB FOUND prevStep ", prevStep, sub.getPrevStep(step));
       });
     }
     if (lastStepElements.length && currentStepElts) {
       currentStepElts.forEach((elt, i) => {
         elt.dataset.ticking = "on";
         if (lastStepElements[i]) {
-          lastStepElements[i].dataset.ticking = "off";
-        } // unhighlight the last ticking step if there was one
+          lastStepElements[i].dataset.ticking = "off"; // unhighlight the last ticking step if there was one
+        }
       });
     }
   }

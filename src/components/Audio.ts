@@ -22,15 +22,18 @@ class Audio {
     src.start(time);
   }
 
-  public playMetronome(beatNumber: number, time: number) {
+  public playMetronome(beatNumber: number, time: number, steps: number = 0) {
     // console.log("PLAY METRONOME ", beatNumber);
     const osc = this.ctx.createOscillator();
     osc.connect(this.ctx.destination);
+
     // osc.frequency.value = 880.0;
     // beat 0 == high pitch
     // if (beatNumber % 16 === 0) osc.frequency.value = 880.0;
     // quarter notes = medium pitch
-    if (beatNumber % 32 === 0) osc.frequency.value = 220.0;
+    // if (beatNumber % 32 === 0) osc.frequency.value = 220.0;
+    osc.frequency.value = 260 + 25 * steps;
+
     // else if (beatNumber % 4 === 0) osc.frequency.value = 440.0;
     // other 16th notes = low pitch
     // else osc.frequency.value = 220.0;

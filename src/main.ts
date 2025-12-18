@@ -17,14 +17,20 @@ function init() {
   Controls.init();
   Audio.init();
   const sequencer = new Sequencer(pulses);
-  // sequencer.register(new Stepper({ beats: 8, stepsPerBeat: 4 }));
-  // sequencer.register(new Stepper({ beats: 3, stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 }));
-  // sequencer.register(new Stepper({ beats: 2, stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 2, stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 7 }));
-  console.log("PULSES AT INIT ", sequencer.pulses);
+  // BREAKING SEQUENCE
+  // sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 4 })); // DROPPED
+  for (let i = 0; i < 3; i++) {
+    sequencer.register(new Stepper({ beats: 2, stepsPerBeat: i + 1 }));
+    sequencer.register(new Stepper({ beats: 3, stepsPerBeat: i + 1 }));
+    sequencer.register(new Stepper({ beats: 4, stepsPerBeat: i + 1 }));
+    sequencer.register(new Stepper({ beats: 5, stepsPerBeat: i + 1 })); // DROPPED
+  }
+  // sequencer.register(new Stepper({ beats: 5, stepsPerBeat: 5 }));
+
+  // console.log("--------- LEAD PULSES @ INIT --------");
+  // sequencer.pulses?.getLeadPulses().map(console.log);
+  // console.log("--------- ALL PULSES @ INIT --------");
+  // sequencer.pulses?.getElements().map(console.log);
   // sequencer.register(new Stepper({ beats: 7, stepsPerBeat: 1 }));
   // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 3 }));
 }

@@ -36,15 +36,13 @@ class Pulse {
 
   /** Queue the next step for this pulse */
   pulsate() {
-    console.log("[Pulse] pulsate");
+    // console.log("[Pulse] pulsate");
     StepQueue.push({
       stepNumber: this.currentStep,
       time: this.nextNoteTime,
       totalSteps: this.steps,
     });
-    Audio.playMetronome(this.currentStep, this.nextNoteTime);
-    // create own metronome based on steps and beatsPerStep
-    // play the audio
+    Audio.playMetronome(this.currentStep, this.nextNoteTime, this.steps);
   }
 
   /** Delay the nextStepTime by timePerStep, updates the current step */
@@ -56,7 +54,7 @@ class Pulse {
       this.currentStep = 0;
     }
     this.nextNoteTime += this.getTps(); // Adjust to current TPC
-    console.log("[Pulse] next ", this.nextNoteTime);
+    // console.log("[Pulse] next ", this.nextNoteTime);
   }
 
   /** adds one to the number of steppers currently listening */

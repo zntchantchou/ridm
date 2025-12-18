@@ -66,7 +66,6 @@ class Pulse {
   }
 
   addSub(pulse: Pulse) {
-    if (!this.subs) console.error("THIS IS THE BIG ERROR >>>>>>>>>< ", this);
     this.subs.push(pulse);
   }
 
@@ -97,7 +96,7 @@ class Pulse {
 
   getCurrentStep(parentStep: Step) {
     const parentChildRatio = parentStep.totalSteps / this.steps;
-    return parentStep.stepNumber / parentChildRatio;
+    return Math.floor(parentStep.stepNumber / parentChildRatio);
   }
 
   getPrevStep(parentStep: Step) {
@@ -106,13 +105,7 @@ class Pulse {
       parentStep.stepNumber === 0
         ? //  should be total steps
           this.steps - 1
-        : parentStep.stepNumber / parentChildRatio - 1;
-    // my last step + 1
-
-    // step.stepNumber === 0
-    // ? step.totalSteps / subDivider - 1 // for 0 previous step is the last step
-    // : step.stepNumber / subDivider - 1;
-    // const parentChildRatio = parentStep.totalSteps / this.steps;
+        : Math.floor(parentStep.stepNumber / parentChildRatio) - 1;
     return prevStep;
   }
 }

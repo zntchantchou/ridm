@@ -8,17 +8,15 @@ class Pulses {
 
   register(stepper: Stepper) {
     // if no elements add the new pulse
-    // console.log("Pulses [register] ", stepper);
-
     if (this.isEmpty) {
       this.addLead(new Pulse({ steps: stepper.steps }));
       return;
     }
-    // if already present only update the count for the existing pulse inside elements
+
     const existing = this.getPulse(stepper.steps);
     if (existing) {
       // console.log("Existing: ", existing);
-      existing.increment();
+      existing.increment(); // if already present only update the count for the existing pulse inside elements
       return;
     }
 
@@ -27,24 +25,21 @@ class Pulses {
       // console.log("Parent Pulse found : ", parent.steps);
       const newPulse = new Pulse({ steps: stepper.steps });
       this.add(newPulse);
-      // console.log("PARENT WITH MISSING SUB ", parent);
       parent.addSub(newPulse);
       return;
     }
+
     const child = this.findChild(stepper.steps);
     if (child) {
       const newPulse = new Pulse({ steps: stepper.steps });
-      newPulse.addSub(child);
-      // inherit the subs from the previous parent
-      if (!child.empty) child.subs.map(newPulse.addSub);
       this.addLead(newPulse);
-      this.demote(child);
-      console.log("THIS IS THE PULSE ", newPulse);
-      console.log("THIS IS THE CHILD AT THE END ", child);
+      if (!child.empty) child.subs.map((s) => newPulse.addSub(s));
+      this.demote(child); // this deletes the children so the order matters
+      newPulse.addSub(child);
       return;
     }
+    // pulse is neither a factor nor a subdivision of a pulse and is not currently registered
     this.addLead(new Pulse({ steps: stepper.steps }));
-    console.log("This.LEAD_PULSES \n", this.leadPulses);
   }
 
   log() {

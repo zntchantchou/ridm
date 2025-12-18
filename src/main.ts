@@ -18,10 +18,12 @@ function init() {
   Audio.init();
   const sequencer = new Sequencer(pulses);
   sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 2 }));
+  // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 2 }));
+  // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 3 }));
 }
 // handle start / pause
 playBtn?.addEventListener("click", () => {
+  // user gesture is needed to start the initiated audio context;
   ac.resume();
   timeWorker.start(ui);
 });

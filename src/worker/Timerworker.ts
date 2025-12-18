@@ -28,7 +28,6 @@ class TimeWorker {
     audioContext: AudioContext;
   }) {
     this.audioContext = audioContext;
-    // console.log("THIS . AUDIOCONTEXT ", this.audioContext);
     if (pulses) this.pulses = pulses;
   }
   start(ui: UI) {
@@ -54,7 +53,6 @@ class TimeWorker {
   }
 
   private tick() {
-    console.log("TICK AC ", this.audioContext);
     if (
       !this.audioContext ||
       !this.ui ||
@@ -65,12 +63,6 @@ class TimeWorker {
     }
     // each Pulse looks for steps that fall within the window
     // Each time it finds one, it schedules the step by pushing it into the shared StepQueue
-    // console.log(
-    // "TICK SAME CONTEXT? ",
-    // this.audioContext,
-    // this.ui.audioContext,
-    // this.audioContext === this.ui.audioContext
-    // );
     for (const pulse of this.pulses.getLeadPulses()) {
       pulse.discover(this.audioContext?.currentTime, this.nextNoteWindowSec);
     }

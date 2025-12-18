@@ -37,9 +37,9 @@ class UI {
     console.log("[UI draw]");
     if (!this.audioContext) return;
     const currentTime = this.audioContext.currentTime;
-    console.log("STEPQUEUE ", StepQueue, StepQueue.size(), currentTime);
+    // console.log("STEPQUEUE ", StepQueue, StepQueue.size(), currentTime);
     while (StepQueue.size() && StepQueue.head().time < currentTime) {
-      console.log("STEPQUEUE BOOM ");
+      // console.log("STEPQUEUE BOOM ");
       this.updateUI(StepQueue.pop());
     }
     if (this.isPlaying) requestAnimationFrame(this.draw);
@@ -56,22 +56,35 @@ class UI {
 
   private updateUI(step: Step) {
     // console.log("UPDATE UI");
-    const lastStepElements = this.selectSteps(
-      this.lastStep?.stepNumber as number,
-      step.totalSteps
-    );
+    // There is no concept of laststep
+    // const lastStepElements = this.selectSteps(
+    //   this.lastStep?.stepNumber as number,
+    //   step.totalSteps
+    // );
 
-    const currentStepElements = this.selectSteps(
-      step.stepNumber,
-      step.totalSteps
-    );
+    // const currentStepElements = this.selectSteps(
+    //   step.stepNumber,
+    //   step.totalSteps
+    // );
+    let currentStepElts: HTMLDivElement[] = [];
+    let lastStepElements: HTMLDivElement[] = [];
     // look for a subdivision through all unique stepper key
     if (!this.pulses?.hasLeads) {
       console.error("NO PULSES");
       return;
     }
+    // TODO USE PULSES
     for (const pulse of this.pulses.getLeadPulses()) {
+      // Could pulses each calculate their own
+      // UPDATE EACH LEAD PULSE STEPPER FIRST
+      // UPDATE THE CHILDREN OF LEAD STEPPERS
+      const currentStep = pulse.getCurrentStep(step);
+      const lastStep = pulse.getPrevStep(step);
+      currentStepElts = this.selectSteps(step.stepNumber, step.totalSteps);
+      lastStepElements = this.selectSteps(lastStep, step.totalSteps);
       console.log("[UPDATE UI] ", pulse);
+      console.log("[UPDATE UI] currentStep ", currentStep, currentStepElts);
+      console.log("[UPDATE UI] lastStep ", lastStep, lastStepElements);
     }
     // for (const stepperKey of Sequencer.steppersMap.keys()) {
     //   const key = parseInt(stepperKey);
@@ -92,13 +105,20 @@ class UI {
     //     }
     //   }
     // }
-    if (lastStepElements.length && currentStepElements) {
-      currentStepElements.forEach((elt, i) => {
+    if (lastStepElements.length && currentStepElts) {
+      currentStepElts.forEach((elt, i) => {
         elt.dataset.ticking = "on";
         if (lastStepElements[i]) {
           lastStepElements[i].dataset.ticking = "off";
         } // unhighlight the last ticking step if there was one
       });
+      // if (lastStepElements.length && currentStepElements) {
+      //   currentStepElements.forEach((elt, i) => {
+      //     elt.dataset.ticking = "on";
+      //     if (lastStepElements[i]) {
+      //       lastStepElements[i].dataset.ticking = "off";
+      //     } // unhighlight the last ticking step if there was one
+      //   });
     }
   }
 }

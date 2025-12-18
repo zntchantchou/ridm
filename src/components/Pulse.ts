@@ -1,5 +1,5 @@
 import Controls from "./Controls";
-import StepQueue from "./StepQueue";
+import StepQueue, { type Step } from "./StepQueue";
 import Audio from "./Audio";
 
 type PulseOptions = { steps: number; isLead?: boolean };
@@ -27,8 +27,7 @@ class Pulse {
 
   /** try to discover next steps to add within the buffer's window (nextNoteWindowMs) */
   discover(audioContextTime: number, discoverWindow: number) {
-    console.log("[Pulse] discover ", audioContextTime);
-
+    // console.log("[Pulse] discover ", audioContextTime);
     while (this.nextNoteTime < audioContextTime + discoverWindow) {
       this.pulsate();
       this.next();
@@ -94,6 +93,27 @@ class Pulse {
 
   get empty() {
     return this.subs.length === 0;
+  }
+
+  getCurrentStep(parentStep: Step) {
+    const parentChildRatio = parentStep.totalSteps / this.steps;
+    return parentStep.stepNumber / parentChildRatio;
+  }
+
+  getPrevStep(parentStep: Step) {
+    const parentChildRatio = parentStep.totalSteps / this.steps;
+    const prevStep =
+      parentStep.stepNumber === 0
+        ? //  should be total steps
+          this.steps - 1
+        : parentStep.stepNumber / parentChildRatio - 1;
+    // my last step + 1
+
+    // step.stepNumber === 0
+    // ? step.totalSteps / subDivider - 1 // for 0 previous step is the last step
+    // : step.stepNumber / subDivider - 1;
+    // const parentChildRatio = parentStep.totalSteps / this.steps;
+    return prevStep;
   }
 }
 

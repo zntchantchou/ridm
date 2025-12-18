@@ -1,20 +1,23 @@
 const steppersDiv = document.getElementById("steppers");
 
 interface StepperOptions {
-  steps: number;
+  beats: number;
+  stepsPerBeat: number;
 }
 
 class Stepper {
   // Total number of steps for the row
   // If a bigger multiple of 16 is present , consider biggerStepper / stepper to be the filteringRatio
-  steps = 16;
+  beats = 4;
+  stepsPerBeat = 4;
   lastStep = -1;
   currentStep = 0;
   stepPickupRatio = 0;
   stepElements: HTMLDivElement[] = [];
 
-  constructor(options: StepperOptions) {
-    if (options && options.steps) this.steps = options.steps;
+  constructor({ beats, stepsPerBeat }: StepperOptions) {
+    this.beats = beats;
+    this.stepsPerBeat = stepsPerBeat;
     this.render();
   }
 
@@ -37,6 +40,10 @@ class Stepper {
     for (const item of this.stepElements) {
       stepper.appendChild(item);
     }
+  }
+
+  get steps() {
+    return this.stepsPerBeat * this.beats;
   }
 }
 

@@ -17,9 +17,20 @@
           </div>
           <div class="control-group">
             <span>Tempo</span>
-            <input id="tempo-range" type="range" min="10" max="300" />
+            <input
+              step="0.1"
+              id="tempo-range"
+              type="range"
+              min="10"
+              max="300"
+            />
+            <div id="tempo"></div>
           </div>
-          <div id="tempo"></div>
+          <div class="control-group">
+            <span>Time per cycle (seconds) </span>
+            <input step="0.1" id="tpc-range" type="range" min="1" max="5" />
+          </div>
+          <div id="tpc"></div>
         </div>
         <div id="steppers"></div>
       </div>

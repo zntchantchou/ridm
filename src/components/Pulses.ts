@@ -8,7 +8,7 @@ class Pulses {
 
   register(stepper: Stepper) {
     // if no elements add the new pulse
-    console.log("Pulses [register] ", stepper);
+    // console.log("Pulses [register] ", stepper);
 
     if (this.isEmpty) {
       this.addLead(new Pulse({ steps: stepper.steps }));
@@ -17,25 +17,27 @@ class Pulses {
     // if already present only update the count for the existing pulse inside elements
     const existing = this.getPulse(stepper.steps);
     if (existing) {
-      console.log("Existing: ", existing);
+      // console.log("Existing: ", existing);
       existing.increment();
       return;
     }
 
     const parent = this.findParent(stepper.steps);
     if (parent) {
-      console.log("Parent Pulse found : ", parent.steps);
+      // console.log("Parent Pulse found : ", parent.steps);
       const newPulse = new Pulse({ steps: stepper.steps });
       this.add(newPulse);
+      // console.log("PARENT WITH MISSING SUB ", parent);
       parent.addSub(newPulse);
       return;
     }
     const child = this.findChild(stepper.steps);
     if (child) {
       const newPulse = new Pulse({ steps: stepper.steps });
+      // inherit the subs from the previous lead
+      if (!child.empty) child.subs.map(newPulse.addSub);
       this.addLead(newPulse);
       this.demote(child);
-      // stepper should be added as a lead
       return;
     }
     this.addLead(new Pulse({ steps: stepper.steps }));
@@ -43,16 +45,14 @@ class Pulses {
   }
 
   log() {
-    console.log("[PULSES]:elements  ", this.elements);
-    console.log("[PULSES]:leads  ", this.leadPulses);
+    // console.log("[PULSES]:elements  ", this.elements);
+    // console.log("[PULSES]:leads  ", this.leadPulses);
   }
 
   findParent(steps: number): Pulse | null {
     let parentPulse: Pulse | null = null;
     for (const pulse of this.leadPulses) {
-      if (steps >= pulse.steps) {
-        continue;
-      }
+      if (steps >= pulse.steps) continue;
       if (pulse.steps % steps === 0) {
         parentPulse = pulse;
         break;
@@ -67,7 +67,6 @@ class Pulses {
       if (steps <= pulse.steps) continue;
       if (steps % pulse.steps === 0) {
         childPulse = pulse;
-        // console.log("FOuND CHILD ", pulse.steps, steps);
       }
     }
     return childPulse;
@@ -96,7 +95,7 @@ class Pulses {
   }
 
   // add deregister stepper
-  deregister(stepper: Stepper) {}
+  // deregister(stepper: Stepper) {}
 
   add(p: Pulse) {
     this.elements.push(p);
@@ -118,6 +117,10 @@ class Pulses {
     return this.elements.length === 0;
   }
 
+  hasLeads() {
+    return this.leadPulses.length !== 0;
+  }
+
   getElements() {
     return this.elements;
   }
@@ -125,13 +128,6 @@ class Pulses {
   getLeadPulses() {
     return this.leadPulses;
   }
-
-  // isParentPulse(steps: number): boolean {
-  //   // for (const lead of  {
-  //   //   if(steps < lead.steps)
-  //   // }
-  // }
-
   // is triggered by stepper registration
   // TEST:
   // ups the count if the corresponding pulse exists and does nothing else

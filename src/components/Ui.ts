@@ -1,4 +1,5 @@
-import Sequencer from "./Sequencer";
+import type Pulses from "./Pulses";
+// import Sequencer from "./Sequencer";
 import StepQueue, { type Step } from "./StepQueue";
 
 class UI {
@@ -6,8 +7,10 @@ class UI {
   lastStep: Step | null = null;
   isPlaying = false;
   animationId: number | null = null;
-  constructor(AC: AudioContext) {
+  pulses: Pulses | null = null;
+  constructor(AC: AudioContext, pulses: Pulses) {
     this.audioContext = AC;
+    this.pulses = pulses;
   }
   /** start the animation */
   start() {
@@ -67,26 +70,31 @@ class UI {
       step.stepNumber,
       step.totalSteps
     );
-    // look for a subdivision through all unique stepper keys
-    for (const stepperKey of Sequencer.steppersMap.keys()) {
-      const key = parseInt(stepperKey);
-      if (step.totalSteps > key && step.totalSteps % key === 0) {
-        console.log("SUBDIVISION FOUND STEP ", step);
-        console.log("SUBDIVISION KEY", key);
-        const subDivider = step.totalSteps / key;
-        if (step.stepNumber % subDivider === 0) {
-          const prevStepValue =
-            step.stepNumber === 0
-              ? step.totalSteps / subDivider - 1 // for 0 previous step is the last step
-              : step.stepNumber / subDivider - 1;
-          const lastStep = this.selectSteps(prevStepValue, key);
-          lastStepElements.push(...lastStep);
-          currentStepElements.push(
-            ...this.selectSteps(step.stepNumber / subDivider, key)
-          );
-        }
-      }
-    }
+    // look for a subdivision through all unique stepper key
+
+    // for(const )
+    // for (const p of this.pulses) {
+    //   const
+    // }
+    // for (const stepperKey of Sequencer.steppersMap.keys()) {
+    //   const key = parseInt(stepperKey);
+    //   if (step.totalSteps > key && step.totalSteps % key === 0) {
+    //     console.log("SUBDIVISION FOUND STEP ", step);
+    //     console.log("SUBDIVISION KEY", key);
+    //     const subDivider = step.totalSteps / key;
+    //     if (step.stepNumber % subDivider === 0) {
+    //       const prevStepValue =
+    //         step.stepNumber === 0
+    //           ? step.totalSteps / subDivider - 1 // for 0 previous step is the last step
+    //           : step.stepNumber / subDivider - 1;
+    //       const lastStep = this.selectSteps(prevStepValue, key);
+    //       lastStepElements.push(...lastStep);
+    //       currentStepElements.push(
+    //         ...this.selectSteps(step.stepNumber / subDivider, key)
+    //       );
+    //     }
+    //   }
+    // }
     if (lastStepElements.length && currentStepElements) {
       currentStepElements.forEach((elt, i) => {
         elt.dataset.ticking = "on";

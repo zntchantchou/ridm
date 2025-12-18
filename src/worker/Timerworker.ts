@@ -1,8 +1,7 @@
 import type { BeatMapType } from "../components/types";
-import Controls from "../components/Controls";
-import Audio from "../components/Audio";
 import StepQueue from "../components/StepQueue";
 import UI from "../components/Ui";
+import Pulses from "../components/Pulses";
 // let lastStep = -1;
 class TimeWorker {
   nextNoteTime = 0;
@@ -18,9 +17,13 @@ class TimeWorker {
   audioContext: AudioContext | null = null;
   isPlaying = false;
   animationFrameId?: number = undefined;
+  pulses: Pulses | null = null;
   ui: UI | null = null;
 
-  start() {
+  constructor({ pulses }: { pulses: Pulses }) {
+    if (pulses) this.pulses = pulses;
+  }
+  start(ui: UI) {
     if (this.isPlaying) {
       this.stop();
       return;
@@ -28,8 +31,8 @@ class TimeWorker {
     console.log("[Start]");
     if (!this.audioContext) {
       this.audioContext = new AudioContext();
-      this.ui = new UI(this.audioContext);
     }
+    this.ui = ui;
     this.ui?.start();
     this.isPlaying = true;
     this.worker = new Worker(new URL("./worker.ts", import.meta.url));
@@ -47,43 +50,12 @@ class TimeWorker {
   }
 
   private tick() {
-    // each tick is used to schedule the notes in the next window
-    if (!this.audioContext) return;
-    // OUTSOURCE
-    // Each distinct rythm or pulse must have their own context
-    while (
-      this.nextNoteTime <
-      this.audioContext.currentTime + this.nextNoteWindowSec
-    ) {
-      this.scheduleStep();
-      this.goToNextStep();
+    if (!this.audioContext || !this.pulses || !this.pulses.hasLeads) return;
+    // each Pulse looks for steps that fall within the window
+    // Each time it finds one, it schedules the step by pushing it into the shared StepQueue
+    for (const pulse of this.pulses.getLeadPulses()) {
+      pulse.discover(this.audioContext.currentTime, this.nextNoteWindowSec);
     }
-  }
-
-  scheduleStep() {
-    // console.log("[sheduleStep] ", this.currentStep);
-    // One queue per time signature
-    // this.stepQueue.push({ beat: this.currentStep, time: this.nextNoteTime }); // update stepQueue for UI
-    this.stepQueue.push({
-      stepNumber: this.currentStep,
-      time: this.nextNoteTime,
-      totalSteps: this.totalSteps,
-    });
-    Audio.playMetronome(this.currentStep, this.nextNoteTime); // play metronome
-  }
-
-  // update the next note's time for the scheduler loop to pickup
-  // Defines the next note's time
-  goToNextStep() {
-    // console.log("[goToNextStep]");
-    if (this.currentStep === this.totalSteps - 1) {
-      this.currentStep = 0;
-    } else {
-      this.currentStep = this.currentStep + 1;
-    }
-    const stepsPerBeat = 8;
-    const timePerStepSec = 60 / Controls.getTempo() / stepsPerBeat;
-    this.nextNoteTime += timePerStepSec;
   }
 
   private stop() {
@@ -94,4 +66,4 @@ class TimeWorker {
   }
 }
 
-export default new TimeWorker();
+export default TimeWorker;

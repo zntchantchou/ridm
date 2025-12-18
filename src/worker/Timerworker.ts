@@ -20,7 +20,15 @@ class TimeWorker {
   pulses: Pulses | null = null;
   ui: UI | null = null;
 
-  constructor({ pulses }: { pulses: Pulses }) {
+  constructor({
+    pulses,
+    audioContext,
+  }: {
+    pulses: Pulses;
+    audioContext: AudioContext;
+  }) {
+    this.audioContext = audioContext;
+    // console.log("THIS . AUDIOCONTEXT ", this.audioContext);
     if (pulses) this.pulses = pulses;
   }
   start(ui: UI) {
@@ -29,9 +37,6 @@ class TimeWorker {
       return;
     }
     console.log("[Start]");
-    if (!this.audioContext) {
-      this.audioContext = new AudioContext();
-    }
     this.ui = ui;
     this.ui?.start();
     this.isPlaying = true;
@@ -42,7 +47,6 @@ class TimeWorker {
       event: "interval",
       interval: this.tickIntervalMS,
     });
-    this.nextNoteTime = this.audioContext.currentTime; // Time in seconds since start
   }
 
   private handleMessage(e: MessageEvent) {
@@ -50,11 +54,25 @@ class TimeWorker {
   }
 
   private tick() {
-    if (!this.audioContext || !this.pulses || !this.pulses.hasLeads) return;
+    console.log("TICK AC ", this.audioContext);
+    if (
+      !this.audioContext ||
+      !this.ui ||
+      !this.pulses ||
+      !this.pulses.hasLeads
+    ) {
+      return;
+    }
     // each Pulse looks for steps that fall within the window
     // Each time it finds one, it schedules the step by pushing it into the shared StepQueue
+    // console.log(
+    // "TICK SAME CONTEXT? ",
+    // this.audioContext,
+    // this.ui.audioContext,
+    // this.audioContext === this.ui.audioContext
+    // );
     for (const pulse of this.pulses.getLeadPulses()) {
-      pulse.discover(this.audioContext.currentTime, this.nextNoteWindowSec);
+      pulse.discover(this.audioContext?.currentTime, this.nextNoteWindowSec);
     }
   }
 

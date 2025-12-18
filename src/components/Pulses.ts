@@ -34,10 +34,13 @@ class Pulses {
     const child = this.findChild(stepper.steps);
     if (child) {
       const newPulse = new Pulse({ steps: stepper.steps });
-      // inherit the subs from the previous lead
+      newPulse.addSub(child);
+      // inherit the subs from the previous parent
       if (!child.empty) child.subs.map(newPulse.addSub);
       this.addLead(newPulse);
       this.demote(child);
+      console.log("THIS IS THE PULSE ", newPulse);
+      console.log("THIS IS THE CHILD AT THE END ", child);
       return;
     }
     this.addLead(new Pulse({ steps: stepper.steps }));

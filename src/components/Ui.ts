@@ -34,18 +34,13 @@ class UI {
   }
 
   draw = () => {
-    let currStep = this.lastStep;
-    // console.log("[UI draw]");
+    console.log("[UI draw]");
     if (!this.audioContext) return;
-    while (
-      StepQueue.size() &&
-      StepQueue.head().time < this.audioContext.currentTime
-    ) {
-      currStep = StepQueue.pop();
-    }
-    if (currStep && currStep !== this.lastStep) {
-      this.updateUI(currStep);
-      this.lastStep = currStep;
+    const currentTime = this.audioContext.currentTime;
+    console.log("STEPQUEUE ", StepQueue, StepQueue.size(), currentTime);
+    while (StepQueue.size() && StepQueue.head().time < currentTime) {
+      console.log("STEPQUEUE BOOM ");
+      this.updateUI(StepQueue.pop());
     }
     if (this.isPlaying) requestAnimationFrame(this.draw);
   };
@@ -71,11 +66,13 @@ class UI {
       step.totalSteps
     );
     // look for a subdivision through all unique stepper key
-
-    // for(const )
-    // for (const p of this.pulses) {
-    //   const
-    // }
+    if (!this.pulses?.hasLeads) {
+      console.error("NO PULSES");
+      return;
+    }
+    for (const pulse of this.pulses.getLeadPulses()) {
+      console.log("[UPDATE UI] ", pulse);
+    }
     // for (const stepperKey of Sequencer.steppersMap.keys()) {
     //   const key = parseInt(stepperKey);
     //   if (step.totalSteps > key && step.totalSteps % key === 0) {

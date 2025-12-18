@@ -11,19 +11,17 @@ const playBtn = document.getElementById("play");
 const pulses = new Pulses();
 const ac = new AudioContext();
 const ui = new UI(ac, pulses);
-const timeWorker = new Timerworker({ pulses });
+const timeWorker = new Timerworker({ pulses, audioContext: ac });
 
 function init() {
   Controls.init();
   Audio.init();
   const sequencer = new Sequencer(pulses);
-  // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 1 })); // TEST ERRORS and BEHAVIOUR
-  sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 2 }));
   sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 }));
-  // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 8 } ));
-  // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 16 }));
+  sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 2 }));
 }
 // handle start / pause
 playBtn?.addEventListener("click", () => {
+  ac.resume();
   timeWorker.start(ui);
 });

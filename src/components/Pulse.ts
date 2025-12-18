@@ -15,47 +15,49 @@ class Pulse {
   lead: boolean = false;
   nextNoteTime: number = 0;
   currentStep: number = 0;
-  lastStep: number = 0;
+  lastStep: number = -1;
   tps: number = 0;
 
   constructor({ steps, isLead }: PulseOptions) {
     this.steps = steps;
     this.tps = Controls.tpc / steps;
     if (isLead) this.lead = isLead;
-    console.log("PULSE ", this);
+    // console.log("PULSE ", this);
   }
 
   /** try to discover next steps to add within the buffer's window (nextNoteWindowMs) */
   discover(audioContextTime: number, discoverWindow: number) {
-    console.log("[Pulse] discover");
+    console.log("[Pulse] discover ", audioContextTime);
+
     while (this.nextNoteTime < audioContextTime + discoverWindow) {
       this.pulsate();
-      this.next(discoverWindow);
+      this.next();
     }
   }
 
   /** Queue the next step for this pulse */
   pulsate() {
-    console.log("[Pulse] pulsate", this);
+    console.log("[Pulse] pulsate");
     StepQueue.push({
       stepNumber: this.currentStep,
       time: this.nextNoteTime,
       totalSteps: this.steps,
     });
     Audio.playMetronome(this.currentStep, this.nextNoteTime);
+    // create own metronome based on steps and beatsPerStep
     // play the audio
   }
 
   /** Delay the nextStepTime by timePerStep, updates the current step */
-  next(discoverWindow: number) {
+  next() {
     this.lastStep = this.currentStep;
     if (this.currentStep < this.steps - 1) {
       this.currentStep++;
     } else {
       this.currentStep = 0;
     }
-    this.nextNoteTime += discoverWindow;
-    console.log("[Pulse] next ");
+    this.nextNoteTime += this.getTps(); // Adjust to current TPC
+    console.log("[Pulse] next ", this.nextNoteTime);
   }
 
   /** adds one to the number of steppers currently listening */
@@ -84,6 +86,10 @@ class Pulse {
   clearSubs() {
     // console.log("[clearSubs] ", this);
     this.subs = [];
+  }
+
+  getTps() {
+    return Controls.tpc / this.steps;
   }
 
   get empty() {

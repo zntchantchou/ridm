@@ -71,19 +71,40 @@ body {
   border-radius: 6px;
   border: rgb(41, 41, 41) 0.2rem solid;
   height: 100%;
-  background-color: rgb(174, 174, 174);
+  background-color: rgba(86, 86, 86);
   cursor: pointer;
   opacity: 0.8;
 }
-
+.step:hover {
+  opacity: 0.5;
+  background-color: rgb(170, 189, 252);
+}
 .step.beat {
-  background-color: rgb(181, 196, 247);
+  opacity: 0.4;
+  background-color: rgba(176, 194, 249);
 }
 [data-ticking="on"] {
   opacity: 1;
+  animation: bounce 0.3s ease-in-out;
   background-color: rgb(255, 251, 23);
 }
 .step.beat[data-ticking="on"] {
   opacity: 1;
-  background-color: rgb(117, 255, 62);
+  background-color: rgb(178, 255, 62);
+}
+
+/* ACTIVE STEP ANIMATION */
+@keyframes bounce {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.05);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

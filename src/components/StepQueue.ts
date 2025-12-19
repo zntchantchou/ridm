@@ -3,7 +3,9 @@ export interface Step {
   stepNumber: number;
   totalSteps: number;
 }
-
+/**
+ Consumed by UI animation loop
+*/
 class StepQueue {
   steps: Step[] = [];
   constructor() {

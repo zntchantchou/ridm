@@ -56,7 +56,6 @@ class UI {
     // console.log("UPDATE UI");
     let currentStepElts: HTMLDivElement[] = [];
     let lastStepElements: HTMLDivElement[] = [];
-    // look for a subdivision through all unique stepper key
     if (!this.pulses?.hasLeads) {
       console.error("NO PULSES");
       return;

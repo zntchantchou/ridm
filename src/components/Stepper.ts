@@ -14,7 +14,9 @@ class Stepper {
   currentStep = 0;
   stepPickupRatio = 0;
   stepElements: HTMLDivElement[] = [];
-
+  element: HTMLDivElement | null = null;
+  // Stepper should monitor which beats are selected
+  // Each pulsation, a Pulse needs to quickly know if / which sounds to play for the current stepnumber
   constructor({ beats, stepsPerBeat }: StepperOptions) {
     this.beats = beats;
     this.stepsPerBeat = stepsPerBeat;
@@ -31,7 +33,7 @@ class Stepper {
         element.style.width = `calc(100% / ${this.steps})`;
         element.dataset.step = i.toString();
         element.dataset.steps = this.steps.toString();
-        if (i === 0) element.classList.add("beat");
+        if (i % this.stepsPerBeat === 0) element.classList.add("beat");
         return element;
       });
     const stepper = document.createElement("div");
@@ -40,11 +42,22 @@ class Stepper {
     for (const item of this.stepElements) {
       stepper.appendChild(item);
     }
+    this.element = stepper;
+    this.element.addEventListener("click", this.handleClick);
   }
 
+  handleClick = (e: Event) => {
+    console.log("Stepper clicked", e);
+  };
+  
   get steps() {
     return this.stepsPerBeat * this.beats;
   }
+// Because the "on" or "off" are common to all steppers in the same pulse, it is handle by UI.
+// The selected state is unique to the stepper
+// Each pulse, the stepper should be notified and if the corresponding step is selected, trigger the sound at nextNoteTime
+// Also each stepper should have a sound
+
 }
 
 export default Stepper;

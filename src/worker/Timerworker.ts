@@ -63,6 +63,8 @@ class TimeWorker {
     }
     // each Pulse looks for steps that fall within the window
     // Each time it finds one, it schedules the step by pushing it into the shared StepQueue
+    // This allows for the UI highlighting by stepping through regularly in each stepper
+    // Each Pulse still needs to know if it must play a stepper's sound at each step
     for (const pulse of this.pulses.getLeadPulses()) {
       pulse.discover(this.audioContext?.currentTime, this.nextNoteWindowSec);
     }

@@ -32,7 +32,7 @@ class Audio {
     // if (beatNumber % 16 === 0) osc.frequency.value = 880.0;
     // quarter notes = medium pitch
     // if (beatNumber % 32 === 0) osc.frequency.value = 220.0;
-    osc.frequency.value = 260 + 25 * steps;
+    osc.frequency.value = 200 + 20 * steps;
 
     // else if (beatNumber % 4 === 0) osc.frequency.value = 440.0;
     // other 16th notes = low pitch

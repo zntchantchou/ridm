@@ -9,20 +9,27 @@ class Pulses {
   register(stepper: Stepper) {
     // if no elements add the new pulse
     if (this.isEmpty) {
-      this.addLead(new Pulse({ steps: stepper.steps }));
+      console.log("EMPTY STEPPER ", this);
+      // OBS: the STEPPER should subscribe to the existing pulse
+      const pulse = new Pulse({ steps: stepper.steps });
+      stepper.listenToPulse(pulse);
+      this.addLead(pulse);
       return;
     }
 
     const existing = this.getPulse(stepper.steps);
     if (existing) {
+      console.log("existing ", existing);
       // console.log("Existing: ", existing);
       existing.increment(); // if already present only update the count for the existing pulse inside elements
+      // OBS: the STEPPER should subscribe to the existing pulse
       return;
     }
 
     const parent = this.findParent(stepper.steps);
     if (parent) {
       // console.log("Parent Pulse found : ", parent.steps);
+      // OBS: the STEPPER should subscribe to the parent pulse
       const newPulse = new Pulse({ steps: stepper.steps });
       this.add(newPulse);
       parent.addSub(newPulse);
@@ -31,8 +38,13 @@ class Pulses {
 
     const child = this.findChild(stepper.steps);
     if (child) {
+      // OBS: the child should
+      // unsubscribe any existing subscription
+      // subscribe to new parent pulse
       const newPulse = new Pulse({ steps: stepper.steps });
       this.addLead(newPulse);
+      // unsubscribe any existing child stepper
+      // subscribe any existring child stepper to new parent
       if (!child.empty) child.subs.map((s) => newPulse.addSub(s));
       this.demote(child); // this deletes the children so the order matters
       newPulse.addSub(child);
@@ -40,6 +52,7 @@ class Pulses {
     }
     // pulse is neither a factor nor a subdivision of a pulse and is not currently registered
     this.addLead(new Pulse({ steps: stepper.steps }));
+    // OBS: the stepper must subscribe to the pulse
   }
 
   log() {

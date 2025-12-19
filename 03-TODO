@@ -1,0 +1,45 @@
+Active step notification: 
+  1. IMPLEMENTATION - DATA
+   A.STEPPER CREATION:
+    ✔ Create an Behaviour Subject at parent pulse creation @done(25-12-19 11:43)
+    ☐ Create a subscription in Stepper at creation @started(25-12-19 11:44)
+    ☐ Always unsubscribe if existing subscription at stepper subscription
+    ☐ Create a subscription in Stepper at creation
+      ☐ sequencer register: subscribe if there are none yet
+      ☐ sequencer register: subscribe if existing
+      ☐ sequencer register: subscribe if parent
+      ☐ sequencer register: subscribe if child
+      ☐ sequencer register: subscribe other
+   B.STEPPER DELETION:
+     ☐ Stepper => unsubscribe from the pulse
+     ☐ if a lead pulse has no subscribers it should be deleted
+
+   C.STEPPER UPDATE:
+    ☐ Stepper subscription to pulse should be updated if needed
+    ☐ If stepper is unique to pulse, pulse MUST be updated to match the stepper
+  IMPLEMENTATION - SOUND:
+    ☐ Make the sounds easy to lead
+    ☐ each stepper must have a sound
+
+
+
+
+
+
+
+
+
+
+
+
+WHAT TO USE RXJS:
+
+  ✔ Behaviour subject : // DOES NOT SEEM NECESSARY, ONLY TRIGGER LATEST SOUND @done(25-12-19 10:53)
+    - on subscribe emits the latest value
+    - But the value itself has a reference to time, so its ok
+  ✘ Multicasted observable @cancelled(25-12-19 10:43) // WE KNOW WE HAVE MANY SUBSCRIBERS
+    - a singlecast given a subject to turn it into multicated observable
+  ✘ ReplaySubject // A time in ms can be given to trigger previous executions, INTERESTING BUT NOT TO START @cancelled(25-12-19 10:48)
+    - can record 
+  ✘ AsyncSubject @cancelled(25-12-19 10:48)
+    - delivers value once at completion

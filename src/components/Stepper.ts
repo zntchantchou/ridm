@@ -1,5 +1,6 @@
 import { filter, Subscription } from "rxjs";
 import type Pulse from "./Pulse";
+import Audio from "./Audio";
 
 const steppersDiv = document.getElementById("steppers");
 
@@ -30,16 +31,35 @@ class Stepper {
   }
 
   listenToPulse(pulse: Pulse) {
+    this.pulseSubscription?.unsubscribe(); // cancel any previous subscription
     this.pulseSubscription = pulse.currentStepSubject
-      // .pipe(filter((value) => !!this.selectedSteps[value] )) // filter if the note is selected or not
-      // .pipe(filter((value) => value % 2 === 0)) // filter if the note is selected or not
+      .pipe(
+        filter(({ stepNumber, totalSteps }) =>
+          this.filterStep({ totalSteps, stepNumber })
+        )
+      ) // Only trigger if note is selected
       .subscribe({
-        next: (value: number) => {
-          console.log("[STEPPER]: ListenToPulse ! ", value);
+        next: ({ stepNumber, time }) => {
+          console.log("[STEPPER]: PLAYING! ", time, stepNumber);
+          Audio.playDefault(time);
         },
+        // error handling, complete behaviour?
       });
   }
 
+  filterStep({
+    totalSteps,
+    stepNumber,
+  }: {
+    totalSteps: number;
+    stepNumber: number;
+  }) {
+    if (totalSteps === this.steps) return !!this.selectedSteps[stepNumber];
+    const parentChildRatio = totalSteps / this.steps;
+    const actualStep = stepNumber / parentChildRatio;
+    console.log("actualStep ", actualStep);
+    return Number.isInteger(actualStep) && !!this.selectedSteps[actualStep];
+  }
   stop() {
     // unsubscribe
     this.pulseSubscription?.unsubscribe();
@@ -70,31 +90,24 @@ class Stepper {
   }
 
   handleClick = (e: Event) => {
-    console.log("Stepper clicked", e);
     const target = e.target as HTMLDivElement;
-    console.log("Stepper clicked TARGET", target.dataset.step);
     const step = target.dataset.step;
     if (!step) return;
     // OTher guardrails here? runtime type check?
-    console.log("STEP ", step);
     this.toggleStep(parseInt(step));
   };
-
-  get steps() {
-    return this.stepsPerBeat * this.beats;
-  }
 
   private toggleStep(stepNumber: number) {
     const currentValue = this.selectedSteps[stepNumber];
     this.selectedSteps[stepNumber] = !currentValue;
     const step = this.stepElements[stepNumber];
     step.dataset.selected = currentValue ? "off" : "on"; // turn on or off
-    // update the style of the element to active or inactive
-    console.log("TOGGLED", this.selectedSteps);
-    // Because the "on" or "off" are common to all steppers in the same pulse, it is handle by UI.
-    // The selected state is unique to the stepper
-    // Each pulse, the stepper should be notified and if the corresponding step is selected, trigger the sound at nextNoteTime
-    // Also each stepper should have a sound
+  }
+
+  // Also each stepper should have a sound
+
+  get steps() {
+    return this.stepsPerBeat * this.beats;
   }
 }
 

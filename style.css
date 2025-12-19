@@ -77,6 +77,9 @@ body {
   box-sizing: border-box;
 }
 
+/* .step:hover {
+  animation: bounce 0.6s ease-in-out;
+} */
 .step.beat[data-selected="off"] {
   background-color: #b0b0b0;
 }

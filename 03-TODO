@@ -5,7 +5,7 @@ Active step notification:
     ☐ Create a subscription in Stepper at creation @started(25-12-19 11:44)
     ☐ Always unsubscribe if existing subscription at stepper subscription
     ☐ Create a subscription in Stepper at creation
-      ☐ sequencer register: subscribe if there are none yet
+      ✔ sequencer register: subscribe if there are none yet @done(25-12-19 12:46)
       ☐ sequencer register: subscribe if existing
       ☐ sequencer register: subscribe if parent
       ☐ sequencer register: subscribe if child

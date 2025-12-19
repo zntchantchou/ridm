@@ -19,7 +19,11 @@ class Pulse {
   private currentStep: number = 0;
   tps: number = 0;
   /** Source of the currently active step for all steppers to use */
-  currentStepSubject = new BehaviorSubject(0);
+  currentStepSubject = new BehaviorSubject({
+    time: this.nextNoteTime,
+    totalSteps: this.steps,
+    stepNumber: this.currentStep,
+  });
 
   constructor({ steps, isLead }: PulseOptions) {
     this.steps = steps;
@@ -40,13 +44,14 @@ class Pulse {
   /** Queue the next step for this pulse */
   pulsate() {
     console.log("[Pulse] pulsate");
-
-    StepQueue.push({
+    const nextStep = {
       stepNumber: this.currentStep,
       time: this.nextNoteTime,
       totalSteps: this.steps,
-    });
-    this.currentStepSubject.next(this.currentStep);
+    };
+
+    StepQueue.push(nextStep);
+    this.currentStepSubject.next(nextStep);
 
     // We need to emit an event to all steppers of this size, we send the current step
     // all steppers keep track of their "active" or "selected" steps in a dictionary accessible by number (array) for easy access

@@ -6,7 +6,7 @@ class Pulses {
   // keep those from fastest pulse to slowest pulse
   private leadPulses: Pulse[] = [];
 
-  register(stepper: Stepper) {
+  register(stepper: Stepper, steppers: Stepper[]) {
     // if no elements add the new pulse
     if (this.isEmpty) {
       console.log("EMPTY STEPPER ", this);
@@ -20,6 +20,7 @@ class Pulses {
     const existing = this.getPulse(stepper.steps);
     if (existing) {
       console.log("existing ", existing);
+      stepper.listenToPulse(existing);
       // console.log("Existing: ", existing);
       existing.increment(); // if already present only update the count for the existing pulse inside elements
       // OBS: the STEPPER should subscribe to the existing pulse
@@ -28,7 +29,7 @@ class Pulses {
 
     const parent = this.findParent(stepper.steps);
     if (parent) {
-      // console.log("Parent Pulse found : ", parent.steps);
+      console.log("Parent Pulse found : ", parent.steps);
       // OBS: the STEPPER should subscribe to the parent pulse
       const newPulse = new Pulse({ steps: stepper.steps });
       this.add(newPulse);
@@ -38,16 +39,32 @@ class Pulses {
 
     const child = this.findChild(stepper.steps);
     if (child) {
+      console.log("Child found : ", stepper);
+
       // OBS: the child should
       // unsubscribe any existing subscription
       // subscribe to new parent pulse
       const newPulse = new Pulse({ steps: stepper.steps });
       this.addLead(newPulse);
+      stepper.listenToPulse(newPulse);
+      const childrenStepper = this.getSteppers(child.steps, steppers);
+      // childrenStepper?.map((s) => s.listenToPulse(newPulse));
+      console.log("Children Steppers ", childrenStepper);
       // unsubscribe any existing child stepper
       // subscribe any existring child stepper to new parent
-      if (!child.empty) child.subs.map((s) => newPulse.addSub(s));
+      if (!child.empty) {
+        child.subs.forEach((s) => {
+          newPulse.addSub(s);
+        });
+      }
       this.demote(child); // this deletes the children so the order matters
       newPulse.addSub(child);
+      newPulse.subs
+        .flatMap((sub) =>
+          steppers.filter((stepper) => stepper.steps === sub.steps)
+        )
+        .forEach((stepper) => stepper.listenToPulse(newPulse));
+      // We get all subs, find their stepper and subscribe to the pulse
       return;
     }
     // pulse is neither a factor nor a subdivision of a pulse and is not currently registered
@@ -83,6 +100,13 @@ class Pulses {
     return childPulse;
   }
 
+  getSteppers(
+    numberOfSteps: number,
+    steppers: Stepper[]
+  ): Stepper[] | undefined {
+    if (!steppers.length) return undefined;
+    return steppers.filter((s) => s.steps === numberOfSteps);
+  }
   // addLead should always sort lead by step
   addLead(newPulse: Pulse, prevPulse?: Pulse) {
     newPulse.promote();

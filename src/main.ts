@@ -17,10 +17,17 @@ function init() {
   Controls.init();
   Audio.init();
   const sequencer = new Sequencer(pulses);
-  sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 })); // DROPPED
-  sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 })); // DROPPED
-  // sequencer.register(new Stepper({ beats: 7, stepsPerBeat: 1 }));
-  // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 3 }));
+  // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 })); // DROPPED
+  // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 })); // DROPPED
+  // sequencer.register(new Stepper({ beats: 2, stepsPerBeat: 4 }));
+  // sequencer.register(new Stepper({ beats: 1,  stepsPerBeat: 4 }));
+  sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 4 }));
+  sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 4 }));
+  sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 4 }));
+  sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 4 }));
+  sequencer.register(new Stepper({ beats: 2, stepsPerBeat: 4 }));
+  sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 }));
+  sequencer.register(new Stepper({ beats: 8, stepsPerBeat: 4 }));
 }
 // handle start / pause
 playBtn?.addEventListener("click", () => {

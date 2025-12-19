@@ -1,7 +1,12 @@
 class Audio {
-  ctx: AudioContext = new AudioContext();
+  ctx: AudioContext | null = null; // initiate at null?
   bd?: null | AudioBuffer = null;
-  public async init() {
+
+  public async init(audioContext: AudioContext) {
+    if (!audioContext)
+      throw Error("Must initialize audioContext with shared audiocontext ");
+    this.ctx = audioContext;
+    // Create dictionary for default samples to be loaded easily by drumKitPart + path
     this.bd = await this.loadSample(
       "../../samples/AKAIMPC60/akaimpc60-hh/hh.wav"
     );
@@ -10,22 +15,26 @@ class Audio {
   private async loadSample(path: string) {
     const fetched = await fetch(path);
     const ab = await fetched.arrayBuffer();
-    return this.ctx.decodeAudioData(ab);
+    return this.ctx?.decodeAudioData(ab);
   }
 
   public playSample(buffer: AudioBuffer, time: number = 0) {
+    if (!this.ctx)
+      throw Error("Must initialize audioContext with share audiocontext ");
     const src = new AudioBufferSourceNode(this.ctx, {
       buffer,
       playbackRate: 1,
     });
-    src.connect(this.ctx.destination);
+    src.connect(this.ctx?.destination);
     src.start(time);
   }
 
   public playMetronome(beatNumber: number, time: number, steps: number = 0) {
     // console.log("PLAY METRONOME ", beatNumber);
-    const osc = this.ctx.createOscillator();
-    osc.connect(this.ctx.destination);
+    if (!this.ctx)
+      throw Error("Must initialize audioContext with share audiocontext ");
+    const osc = this.ctx?.createOscillator();
+    osc.connect(this.ctx?.destination);
 
     // osc.frequency.value = 880.0;
     // beat 0 == high pitch

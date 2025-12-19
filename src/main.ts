@@ -15,19 +15,11 @@ const timeWorker = new Timerworker({ pulses, audioContext: ac });
 
 function init() {
   Controls.init();
-  Audio.init();
+  Audio.init(ac);
   const sequencer = new Sequencer(pulses);
-  // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 })); // DROPPED
-  // sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 })); // DROPPED
-  // sequencer.register(new Stepper({ beats: 2, stepsPerBeat: 4 }));
-  // sequencer.register(new Stepper({ beats: 1,  stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 1, stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 2, stepsPerBeat: 4 }));
   sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 }));
-  sequencer.register(new Stepper({ beats: 8, stepsPerBeat: 4 }));
+  // sequencer.register(new Stepper({ beats: 5, stepsPerBeat: 2 }));
+  sequencer.register(new Stepper({ beats: 3, stepsPerBeat: 3 }));
 }
 // handle start / pause
 playBtn?.addEventListener("click", () => {

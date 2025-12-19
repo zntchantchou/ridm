@@ -13,12 +13,12 @@ class Controls {
 
   init() {
     playPauseBtn?.addEventListener("click", this.togglePlay);
-    temporRangeElt?.addEventListener("change", (e) => this.updateTempo(e));
+    // temporRangeElt?.addEventListener("change", (e) => this.updateTempo(e));
     tpcRangeElt?.addEventListener("change", (e) => this.updateTpc(e));
     tpcRangeElt.value = this.tpc.toString();
-    temporRangeElt.value = this.tempo.toString();
+    // temporRangeElt.value = this.tempo.toString();
     tpcDislayElt.textContent = this.tpc.toString();
-    tempoDisplayElt.textContent = this.tempo.toString();
+    // tempoDisplayElt.textContent = this.tempo.toString();
   }
 
   private updateTempo(e: Event) {

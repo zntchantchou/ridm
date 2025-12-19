@@ -4,10 +4,6 @@ import UI from "../components/Ui";
 import Pulses from "../components/Pulses";
 // let lastStep = -1;
 class TimeWorker {
-  nextNoteTime = 0;
-  currentStep = 0;
-  totalSteps = 16;
-  lastStep = -1;
   pingRatio = 10;
   nextNoteWindowSec = 0.1;
   tickIntervalMS = 25;

@@ -13,8 +13,13 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: Verdana, sans-serif;
 }
 
+#play {
+  font-size: 1.8rem;
+  padding: 0.6rem;
+}
 #sequencer {
   padding-top: 0.5rem;
   background-color: rgb(24, 23, 23);
@@ -39,6 +44,8 @@ body {
 .control-group {
   display: flex;
   flex-direction: column;
+  height: 5rem;
+  justify-content: space-between;
   margin-right: 2rem;
 }
 

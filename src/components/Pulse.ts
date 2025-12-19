@@ -108,6 +108,7 @@ class Pulse {
     // console.log("[DEMOTED] ", this);
     this.lead = false;
     this.clearSubs();
+    this.currentStepSubject.complete();
   }
 
   clearSubs() {

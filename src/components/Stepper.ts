@@ -43,6 +43,9 @@ class Stepper {
           console.log("[STEPPER]: PLAYING! ", time, stepNumber);
           Audio.playDefault(time);
         },
+        complete: () => {
+          console.log("[STEPPER] PULSE HAS COMPLETED");
+        },
         // error handling, complete behaviour?
       });
   }

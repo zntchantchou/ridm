@@ -2,7 +2,7 @@
 
 ## Guidelines File
 
-Specific instructions can be passed by using the third argument: $3. It designates the file to look for the guidelines file for this task.
+Specific instructions can be passed by using the third argument: $3. It designates the file to look for the guidelines (guidelines.md) file for this type of task.
 
 ## Naming Convention
 

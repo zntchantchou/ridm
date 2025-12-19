@@ -4,11 +4,11 @@ Two arguments are expected by this command. Ask for better formulated arguments 
 
 ## Preliminary step: Git
 
-Before working implementing the task, create a branch following this format: [feature, release, fix]/$1-$2
+Before working implementing the task, create a branch following this format: [feature, release, fix, test]/$1-$2
 
 ## implementation
 
-Follow the task created in tasks and whose name is passed to this command as an argument
+Follow the task created in tasks/test and whose name is passed to this command as an argument
 
 ## Post implementation steps
 

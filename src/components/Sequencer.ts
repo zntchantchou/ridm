@@ -1,5 +1,6 @@
 import Stepper, { type StepperOptions } from "./Stepper";
 import Pulses from "./Pulses";
+import Controls from "./Controls";
 
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
@@ -15,6 +16,12 @@ class Sequencer {
     DEFAULT_STEPPERS.forEach((elt, i) => {
       this.register(new Stepper({ ...elt, id: i }));
     });
+    Controls.getBeatsInputs().forEach((e) => {
+      e.addEventListener("change", this.handleBeatsUpdate);
+    });
+    Controls.getStepsPerBeatInputs().forEach((e) => {
+      e.addEventListener("change", this.handleStepsPerBeatUpdate);
+    });
   }
 
   register(stepper: Stepper) {
@@ -24,28 +31,34 @@ class Sequencer {
     this.steppers.push(stepper);
     this.pulses?.register(stepper, this.steppers);
   }
-  // updateStepper(stepper: Stepper) {
-  //   // Should destroy the subscription
-  //   // IF only stepper for pulse, should also remove the pulse
-  //   console.log("[Sequencer]", stepper);
-  // }
 
-  // updatePulse(steps: number) {
-  //   console.log("[Sequencer] RemovePulse ", steps);
-  //   // Should destroy the subscription
-  //   // IF only stepper for pulse, should also remove the pulse
-  // }
-  // removeStepper(stepper: Stepper) {
-  //   // Should destroy the subscription
-  //   // IF only stepper for pulse, should also remove the pulse
-  //   console.log("[Sequencer]", stepper);
-  // }
+  handleBeatsUpdate = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const value = parseInt(target.value);
+    if (!target.dataset.stepperId) return;
+    const stepper = this.getStepper(parseInt(target.dataset.stepperId));
+    if (!stepper) return;
+    this.pulses?.deregister(stepper); // ORDER MATTERS, DEREGISTER BEFORE UPDATING...
+    stepper.updateBeats(value);
+    this.pulses?.register(stepper, this.steppers);
+    console.log("AFTER HANDLE BEATS UPDATE ", this.pulses);
+  };
 
-  // removePulse(steps: number) {
-  //   console.log("[Sequencer] RemovePulse ", steps);
-  //   // Should destroy the subscription
-  //   // IF only stepper for pulse, should also remove the pulse
-  // }
+  handleStepsPerBeatUpdate = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const value = parseInt(target.value);
+    if (!target.dataset.stepperId) return;
+    const stepper = this.getStepper(parseInt(target.dataset.stepperId));
+    if (!stepper) return;
+    this.pulses?.deregister(stepper); // delete from pulses if necessary
+    stepper?.updateStepsPerBeat(value);
+    this.pulses?.register(stepper, this.steppers);
+    console.log("AFTER HANDLE STEPS PER BEAT UPDATE ", this.pulses);
+  };
+
+  getStepper(id: number) {
+    return this.steppers.find((s) => s.id === id);
+  }
 }
 
 export default Sequencer;

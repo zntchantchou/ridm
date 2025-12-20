@@ -9,8 +9,6 @@ class Pulses {
   register(stepper: Stepper, steppers: Stepper[]) {
     if (this.isEmpty) {
       // if no elements add the new pulse
-      // console.log("EMPTY STEPPER ", this);
-      // OBS: the STEPPER should subscribe to the existing pulse
       const pulse = new Pulse({ steps: stepper.steps });
       stepper.listenToPulse(pulse);
       this.addLead(pulse);
@@ -19,17 +17,13 @@ class Pulses {
 
     const existing = this.getPulse(stepper.steps);
     if (existing) {
-      // console.log("existing ", existing);
       stepper.listenToPulse(existing);
       existing.increment(); // if already present only update the count for the existing pulse inside elements
-      // OBS: the STEPPER should subscribe to the existing pulse
       return;
     }
 
     const parent = this.findParent(stepper.steps);
     if (parent) {
-      // console.log("Parent Pulse found : ", parent.steps);
-      // OBS: the STEPPER should subscribe to the parent pulse
       const newPulse = new Pulse({ steps: stepper.steps });
       stepper.listenToPulse(parent);
       this.add(newPulse);
@@ -39,7 +33,6 @@ class Pulses {
 
     const child = this.findChild(stepper.steps);
     if (child) {
-      console.log("Child found : ", stepper);
       const newPulse = new Pulse({ steps: stepper.steps });
       this.addLead(newPulse);
       stepper.listenToPulse(newPulse);
@@ -60,15 +53,23 @@ class Pulses {
       return;
     }
     // pulse is neither a factor nor a subdivision of a pulse and is not currently registered
-    // OBS: the stepper must subscribe to the pulse
     const newPulse = new Pulse({ steps: stepper.steps });
     this.addLead(newPulse);
     stepper.listenToPulse(newPulse);
   }
 
-  log() {
-    // console.log("[PULSES]:elements  ", this.elements);
-    // console.log("[PULSES]:leads  ", this.leadPulses);
+  deregister(stepper: Stepper) {
+    const existingPulse = this.elements.find((e) => e.steps === stepper.steps);
+    if (existingPulse) {
+      existingPulse.decrement();
+      if (existingPulse.count === 0) {
+        const filterFn = (p: Pulse) => p.steps !== stepper.steps;
+        this.elements = this.elements.filter(filterFn);
+        if (existingPulse && existingPulse.lead) {
+          this.leadPulses = this.leadPulses.filter(filterFn);
+        }
+      }
+    }
   }
 
   findParent(steps: number): Pulse | null {
@@ -123,14 +124,11 @@ class Pulses {
     pulse.demote();
   }
 
-  // add deregister stepper
-  // deregister(stepper: Stepper) {}
-
   add(p: Pulse) {
     this.elements.push(p);
   }
 
-  private has(steps: number): boolean {
+  has(steps: number): boolean {
     return this.elements.some((e) => e.steps === steps);
   }
 
@@ -157,27 +155,6 @@ class Pulses {
   getLeadPulses() {
     return this.leadPulses;
   }
-  // is triggered by stepper registration
-  // TEST:
-  // ups the count if the corresponding pulse exists and does nothing else
-  // if new pulse is bigger than lead
-  // Checks if parent
-  // if parent, stores pulse as new lead
-  // adds all subs from previous lead to new lead, and clears the old lead
-  // Check if child
-  // create a non lead pulse
-  // add to parents subs
-  // if neither parent or child, create a lead pulse for this stepper
-
-  // Create a Pulse structure so that pulse rearranges assigns a lead property to
-  // ☐ rearrange the chain of pulse dependencies (ie 32, 14)
-  //   -  64 => 32, 16, 8, 4
-  //   -  becomes: 64, 16, 8, 4
-  //   -  4 => 32, 16, 8,
-  //   -  becomes 32, 16, 8, 4
-  //   - Pulses is a LINEAR, SORTED Data structure (DESC ORDER)
-  //   - Lead pulse is the highest pulse
-  //   - A pulse becomes lead if it is such that pulse.steps % pulses.lead.steps === 0
 }
 
 export default Pulses;

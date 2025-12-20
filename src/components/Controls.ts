@@ -1,7 +1,6 @@
 const temporRangeElt = document.getElementById(
   "tempo-range"
 ) as HTMLInputElement;
-const tempoDisplayElt = document.getElementById("tempo") as HTMLDivElement;
 const tpcRangeElt = document.getElementById("tpc-range") as HTMLInputElement;
 const tpcDislayElt = document.getElementById("tpc") as HTMLDivElement;
 const playPauseBtn = document.getElementById("play") as HTMLDivElement;
@@ -13,19 +12,9 @@ class Controls {
 
   init() {
     playPauseBtn?.addEventListener("click", this.togglePlay);
-    // temporRangeElt?.addEventListener("change", (e) => this.updateTempo(e));
     tpcRangeElt?.addEventListener("change", (e) => this.updateTpc(e));
     tpcRangeElt.value = this.tpc.toString();
-    // temporRangeElt.value = this.tempo.toString();
     tpcDislayElt.textContent = this.tpc.toString();
-    // tempoDisplayElt.textContent = this.tempo.toString();
-  }
-
-  private updateTempo(e: Event) {
-    const updatedValue = (e?.target as HTMLInputElement).value;
-    this.tempo = parseInt(updatedValue);
-    console.log("[Controls] UPDATE TEMPO: ", this.tempo);
-    if (tempoDisplayElt) tempoDisplayElt.textContent = updatedValue;
   }
 
   private updateTpc(e: Event) {
@@ -41,6 +30,23 @@ class Controls {
 
   private togglePlay() {
     this.isPlaying = !this.isPlaying;
+  }
+  // Controls must return all step-control elements
+  // Sequencer will handle the update Events
+  // - To update the stepper and its properties
+  // - To rerender the given Stepper
+  // - To notify pulses of the new stepper
+
+  getBeatsInputs() {
+    return Array.from(
+      document.querySelectorAll(`input[name=beats]`)
+    ) as HTMLInputElement[];
+  }
+
+  getStepsPerBeatInputs() {
+    return Array.from(
+      document.querySelectorAll(`input[name=steps-per-beat]`)
+    ) as HTMLInputElement[];
   }
 }
 

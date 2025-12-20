@@ -9,7 +9,7 @@ class Pulses {
   register(stepper: Stepper, steppers: Stepper[]) {
     if (this.isEmpty) {
       // if no elements add the new pulse
-      console.log("EMPTY STEPPER ", this);
+      // console.log("EMPTY STEPPER ", this);
       // OBS: the STEPPER should subscribe to the existing pulse
       const pulse = new Pulse({ steps: stepper.steps });
       stepper.listenToPulse(pulse);
@@ -19,7 +19,7 @@ class Pulses {
 
     const existing = this.getPulse(stepper.steps);
     if (existing) {
-      console.log("existing ", existing);
+      // console.log("existing ", existing);
       stepper.listenToPulse(existing);
       existing.increment(); // if already present only update the count for the existing pulse inside elements
       // OBS: the STEPPER should subscribe to the existing pulse

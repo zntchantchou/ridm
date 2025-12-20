@@ -16,23 +16,18 @@
             <button id="play">PLAY</button>
           </div>
           <div class="control-group">
-            <!-- <span>Tempo</span>
-            <input
-              step="0.1"
-              id="tempo-range"
-              type="range"
-              min="10"
-              max="300"
-            />
-            <div id="tempo"></div> -->
-          </div>
-          <div class="control-group">
             <span>Time per cycle (seconds) </span>
             <input step="0.1" id="tpc-range" type="range" min="1" max="16" />
           </div>
           <div id="tpc"></div>
         </div>
-        <div id="steppers"></div>
+        <div id="main">
+          <div id="top-panel"></div>
+          <div id="bottom-panel">
+            <div id="steppers-controls"></div>
+            <div id="steppers"></div>
+          </div>
+        </div>
       </div>
     </div>
   </body>

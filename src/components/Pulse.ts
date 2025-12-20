@@ -1,6 +1,5 @@
 import Controls from "./Controls";
 import StepQueue, { type Step } from "./StepQueue";
-import Audio from "./Audio";
 import { BehaviorSubject } from "rxjs";
 
 type PulseOptions = { steps: number; isLead?: boolean };
@@ -73,7 +72,7 @@ class Pulse {
     // GRAB ALL STEPPER WITH SAME TOTALSTEP
     // USE SUBS CHAIN TO FIND CHILDREN STEPPERS
     // ALL STEPPERS WHOSE CURRENT STEP IS ACTIVE SHOULD TRIGGER THEIR RESPECTIVE SOUNDS (if no two sounds are the same)
-    Audio.playMetronome(this.currentStep, this.nextNoteTime, this.steps);
+    // Audio.playMetronome(this.currentStep, this.nextNoteTime, this.steps);
   }
 
   /** Delay the nextStepTime by timePerStep, updates the current step */

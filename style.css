@@ -24,9 +24,8 @@ body {
   padding-top: 0.5rem;
   background-color: rgb(24, 23, 23);
   min-height: 300px;
-  height: 70vh;
   width: 80vw;
-  min-width: 400px;
+  min-width: 600px;
   border-radius: 10px;
 }
 
@@ -38,7 +37,7 @@ body {
   align-items: center;
   border-bottom: white solid 0.2rem;
   width: 100%;
-  height: 10rem;
+  height: 6rem;
 }
 
 .control-group {
@@ -53,30 +52,77 @@ body {
   margin-left: 2rem;
 }
 
-#steppers {
-  height: calc(100% - 10rem);
-  position: relative;
+#main {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  box-sizing: border-box;
+  /* padding: 0.8rem; */
   width: 100%;
-  background-color: rgb(25, 25, 25);
-  padding-top: 0.8rem;
+}
+
+#top-panel {
+  /* flex:1; */
+  height: 20rem;
+  background-color: rgba(255, 255, 255, 0.121);
+  width: inherit;
+}
+#bottom-panel {
+  /* background-color: gray; */
+  padding: 0.8rem;
+  width: 100%;
+  display: flex;
+}
+
+#steppers-controls {
+  /* background-color: red; */
+  height: 100%;
+  width: 30%;
+  display: flex;
+  flex: 1;
+  min-height: 40vh;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stepper-controls {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: calc(94% / 8);
+  background-color: rgba(255, 255, 255, 0.121);
+  /* margin-right: 0.3rem; */
+}
+
+.stepper-controls span {
+  color: white;
+}
+
+#steppers {
+  position: relative;
+  flex: 2;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* overflow-y: scroll; */
+  justify-content: space-between;
+  padding-left: 0.4rem;
+  min-height: 40vh;
 }
 
 .stepper {
-  margin-bottom: 0.6rem;
-  height: 3.4rem;
-  width: 96%;
+  /* margin-bottom: 0.2rem; */
+  height: calc(94% / 8);
+  width: 100%;
   display: flex;
   flex-direction: row;
 }
 
+.step:active {
+  animation: bounce 0.3s ease-in-out;
+}
 .step {
-  border-radius: 6px;
-  border: rgb(41, 41, 41) 0.2rem solid;
+  margin-right: 2px;
   height: 100%;
   background-color: rgba(86, 86, 86);
   cursor: pointer;
@@ -84,15 +130,14 @@ body {
   box-sizing: border-box;
 }
 
-/* .step:hover {
-  animation: bounce 0.6s ease-in-out;
-} */
 .step.beat[data-selected="off"] {
   background-color: #b0b0b0;
 }
 
-[data-ticking="on"] {
+[data-ticking="on"][data-selected="on"] {
   animation: bounce 0.3s ease-in-out;
+}
+[data-ticking="on"] {
   background-color: rgb(255, 251, 23);
 }
 .step.beat[data-ticking="on"] {

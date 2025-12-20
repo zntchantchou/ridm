@@ -1,17 +1,20 @@
 import { filter, Subscription } from "rxjs";
 import type Pulse from "./Pulse";
 import Audio from "./Audio";
+import StepperControls from "./StepperControls";
 
 const steppersDiv = document.getElementById("steppers");
 
-interface StepperOptions {
+export interface StepperOptions {
   beats: number;
   stepsPerBeat: number;
+  id: number;
 }
 
 class Stepper {
   // Total number of steps for the row
   // If a bigger multiple of 16 is present , consider biggerStepper / stepper to be the filteringRatio
+  id?: number;
   beats = 4;
   stepsPerBeat = 4;
   lastStep = -1;
@@ -21,12 +24,18 @@ class Stepper {
   element: HTMLDivElement | null = null;
   pulseSubscription: Subscription | null = null;
   selectedSteps: boolean[] = Array(this.beats * this.stepsPerBeat).fill(false);
-
+  controls: StepperControls | null = null;
   // Stepper should monitor which beats are selected
   // Each pulsation, a Pulse needs to quickly know if / which sounds to play for the current stepnumber
-  constructor({ beats, stepsPerBeat }: StepperOptions) {
+  constructor({ beats, stepsPerBeat, id }: StepperOptions) {
     this.beats = beats;
     this.stepsPerBeat = stepsPerBeat;
+    this.id = id;
+    this.controls = new StepperControls({
+      stepperId: this.id,
+      beats: this.beats,
+      stepsPerBeats: this.stepsPerBeat,
+    });
     this.render();
   }
 
@@ -90,6 +99,7 @@ class Stepper {
     }
     this.element = stepper;
     this.element.addEventListener("click", this.handleClick);
+    this.controls?.render();
   }
 
   handleClick = (e: Event) => {

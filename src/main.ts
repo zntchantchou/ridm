@@ -1,5 +1,4 @@
 import Controls from "./components/Controls";
-import Stepper from "./components/Stepper";
 import Timerworker from "./worker/Timerworker";
 import Sequencer from "./components/Sequencer";
 import Audio from "./components/Audio";
@@ -17,9 +16,10 @@ function init() {
   Controls.init();
   Audio.init(ac);
   const sequencer = new Sequencer(pulses);
-  sequencer.register(new Stepper({ beats: 4, stepsPerBeat: 4 }));
-  // sequencer.register(new Stepper({ beats: 5, stepsPerBeat: 2 }));
-  sequencer.register(new Stepper({ beats: 3, stepsPerBeat: 3 }));
+  sequencer.registerDefaults();
+  // for (let i = 0; i < DEFAULT_TOTAL_STEPPERS; i++) {
+  //   sequencer.register(new Stepper({ beats: i + 1, stepsPerBeat: 4, id: i }));
+  // }
 }
 // handle start / pause
 playBtn?.addEventListener("click", () => {

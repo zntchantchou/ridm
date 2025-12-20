@@ -1,6 +1,7 @@
 import Stepper, { type StepperOptions } from "./Stepper";
 import Pulses from "./Pulses";
 import Controls from "./Controls";
+import { SAMPLES_DIRS } from "./Audio";
 
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
@@ -14,7 +15,9 @@ class Sequencer {
 
   registerDefaults() {
     DEFAULT_STEPPERS.forEach((elt, i) => {
-      this.register(new Stepper({ ...elt, id: i }));
+      this.register(
+        new Stepper({ ...elt, id: i, sampleName: SAMPLES_DIRS[i].name })
+      );
     });
     Controls.getBeatsInputs().forEach((e) => {
       e.addEventListener("change", this.handleBeatsUpdate);
@@ -64,4 +67,5 @@ class Sequencer {
 export default Sequencer;
 
 const DEFAULT_STEPPER = { beats: 4, stepsPerBeat: 4 };
+
 const DEFAULT_STEPPERS: StepperOptions[] = Array(8).fill(DEFAULT_STEPPER);

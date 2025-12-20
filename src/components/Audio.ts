@@ -1,3 +1,5 @@
+const samplesDirPath = "../../samples/defaults/";
+
 class Audio {
   ctx: AudioContext | null = null; // initiate at null?
   bd?: null | AudioBuffer = null;
@@ -7,13 +9,12 @@ class Audio {
       throw Error("Must initialize audioContext with shared audiocontext ");
     this.ctx = audioContext;
     // Create dictionary for default samples to be loaded easily by drumKitPart + path
-    this.bd = await this.loadSample(
-      "../../samples/AKAIMPC60/akaimpc60-hh/hh.wav"
-    );
+    this.bd = await this.loadSample("hh.wav");
   }
 
   private async loadSample(path: string) {
-    const fetched = await fetch(path);
+    const fullPath = `${samplesDirPath}/${path}`;
+    const fetched = await fetch(fullPath);
     const ab = await fetched.arrayBuffer();
     return this.ctx?.decodeAudioData(ab);
   }
@@ -50,10 +51,53 @@ class Audio {
     osc.stop(time + 0.05);
   }
 
-  public playDefault(time = 0) {
-    console.log("[AUDIO] playing sample");
-    if (this.bd) this.playSample(this.bd, time);
+  async playDefaultSample(name: string, time: number) {
+    const samplePath = SAMPLES_DIRS.find((s) => s.name === name);
+    if (samplePath) {
+      const sample = await this.loadSample(samplePath.path);
+      if (sample) this.playSample(sample, time);
+    }
   }
 }
 
 export default new Audio();
+
+export const SAMPLES_DIRS = [
+  {
+    name: "bd",
+    path: "bd.wav",
+  },
+  {
+    name: "sd",
+    path: "sd.wav",
+  },
+
+  {
+    name: "hh",
+    path: "hh.wav",
+  },
+  {
+    name: "ht",
+    path: "ht.wav",
+  },
+  {
+    name: "oh",
+    path: "oh.wav",
+  },
+  {
+    name: "lt",
+    path: "lt.wav",
+  },
+  {
+    name: "mt",
+    path: "mt.wav",
+  },
+  {
+    name: "cp",
+    path: "cp.wav",
+  },
+  {
+    name: "rs",
+    path: "rs.wav",
+  },
+];

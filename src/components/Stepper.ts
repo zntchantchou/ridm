@@ -9,6 +9,7 @@ export interface StepperOptions {
   beats: number;
   stepsPerBeat: number;
   id: number;
+  sampleName: string;
 }
 
 class Stepper {
@@ -25,13 +26,16 @@ class Stepper {
   pulseSubscription: Subscription | null = null;
   selectedSteps: boolean[] = Array(this.beats * this.stepsPerBeat).fill(false);
   controls: StepperControls | null = null;
+  /** e.g. "hh" */
+  sampleName: string;
 
   // Stepper should monitor which beats are selected
   // Each pulsation, a Pulse needs to quickly know if / which sounds to play for the current stepnumber
-  constructor({ beats, stepsPerBeat, id }: StepperOptions) {
+  constructor({ beats, stepsPerBeat, id, sampleName }: StepperOptions) {
     this.beats = beats;
     this.stepsPerBeat = stepsPerBeat;
     this.id = id;
+    this.sampleName = sampleName;
     this.controls = new StepperControls({
       stepperId: this.id,
       beats: this.beats,
@@ -51,7 +55,7 @@ class Stepper {
       .subscribe({
         next: ({ stepNumber, time }) => {
           console.log("[STEPPER]: PLAYING! ", time, stepNumber);
-          Audio.playDefault(time);
+          Audio.playDefaultSample(this.sampleName, time);
         },
         complete: () => {
           console.log("[STEPPER] PULSE HAS COMPLETED");

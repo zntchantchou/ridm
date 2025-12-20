@@ -2,7 +2,7 @@ const controlsPanelElt = document.getElementById("steppers-controls");
 
 class StepperControls {
   element: HTMLDivElement | null = null;
-  stepperId?: number;
+  stepperId: number;
   stepsPerBeats: number = 0;
   beats: number = 0;
   minSteps = 1;
@@ -19,7 +19,7 @@ class StepperControls {
     stepsPerBeats: number;
     beats: number;
   }) {
-    console.log("[StepperControls]");
+    // console.log("[StepperControls]");
     this.stepperId = stepperId;
     this.stepsPerBeats = stepsPerBeats;
     this.beats = beats;
@@ -37,6 +37,8 @@ class StepperControls {
     beatsInput.type = "number";
     stepsPerBeatInput.name = "steps-per-beat";
     beatsInput.name = "beats";
+    beatsInput.dataset["stepperId"] = this.stepperId.toString();
+    stepsPerBeatInput.dataset["stepperId"] = this.stepperId.toString();
     stepsPerBeatInput.type = "number";
     beatsInput.min = this.minBeats.toString();
     beatsInput.max = this.maxBeats.toString();
@@ -44,8 +46,6 @@ class StepperControls {
     stepsPerBeatInput.max = this.maxSteps.toString();
     beatsInput.value = this.beats.toString();
     stepsPerBeatInput.value = this.stepsPerBeats.toString();
-    console.log("RENDER INPUT STEPS PER BEAT ", stepsPerBeatInput, this);
-    console.log("RENDER INPUT BEATS ", beatsInput);
     this.element.appendChild(beatsLabel);
     this.element.appendChild(beatsInput);
     this.element.appendChild(stepsPerBeatLabel);

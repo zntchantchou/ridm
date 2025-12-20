@@ -25,6 +25,7 @@ class Stepper {
   pulseSubscription: Subscription | null = null;
   selectedSteps: boolean[] = Array(this.beats * this.stepsPerBeat).fill(false);
   controls: StepperControls | null = null;
+
   // Stepper should monitor which beats are selected
   // Each pulsation, a Pulse needs to quickly know if / which sounds to play for the current stepnumber
   constructor({ beats, stepsPerBeat, id }: StepperOptions) {
@@ -36,7 +37,7 @@ class Stepper {
       beats: this.beats,
       stepsPerBeats: this.stepsPerBeat,
     });
-    this.render();
+    this.renderUi();
   }
 
   listenToPulse(pulse: Pulse) {
@@ -69,37 +70,46 @@ class Stepper {
     if (totalSteps === this.steps) return !!this.selectedSteps[stepNumber];
     const parentChildRatio = totalSteps / this.steps;
     const actualStep = stepNumber / parentChildRatio;
-    console.log("actualStep ", actualStep);
+    // console.log("actualStep ", actualStep);
     return Number.isInteger(actualStep) && !!this.selectedSteps[actualStep];
   }
   stop() {
-    // unsubscribe
     this.pulseSubscription?.unsubscribe();
   }
 
-  render() {
-    // console.log("[stepper] RENDER");
-    this.stepElements = Array(this.steps)
-      .fill(null)
-      .map((_, i) => {
-        const element = document.createElement("div");
-        element.classList.add("step");
-        element.style.width = `calc(100% / ${this.steps})`;
-        element.dataset.step = i.toString();
-        element.dataset.steps = this.steps.toString();
-        element.dataset.selected = "off";
-        if (i % this.stepsPerBeat === 0) element.classList.add("beat");
-        return element;
-      });
+  updateUi() {
+    if (!this.element?.hasChildNodes()) return;
+    for (const child of this.stepElements) {
+      console.log("CHILD ", child);
+      this.element.removeChild(child);
+    }
+    this.createStepElements();
+    for (const item of this.stepElements) {
+      this.element.appendChild(item);
+    }
+  }
+
+  renderUi() {
+    this.createStepElements();
     const stepper = document.createElement("div");
     stepper.classList.add("stepper");
     steppersDiv?.appendChild(stepper);
     for (const item of this.stepElements) {
       stepper.appendChild(item);
     }
+    if (!this.element) this.setupControls();
     this.element = stepper;
     this.element.addEventListener("click", this.handleClick);
+    console.log("beatsInputElt", this.beatsInputElt);
+  }
+
+  setupControls() {
     this.controls?.render();
+    this.beatsInputElt?.addEventListener("change", this.handleBeatsUpdate);
+    this.stepsPerBeatsInputElt?.addEventListener(
+      "change",
+      this.handleStepsPerBeatUpdate
+    );
   }
 
   handleClick = (e: Event) => {
@@ -117,7 +127,48 @@ class Stepper {
     step.dataset.selected = currentValue ? "off" : "on"; // turn on or off
   }
 
-  // Also each stepper should have a sound
+  handleBeatsUpdate = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const value = parseInt(target.value);
+    if (value) this.beats = value;
+    console.log("[handleBeatsUpdate]", target.value);
+    this.updateUi();
+  };
+
+  handleStepsPerBeatUpdate = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const value = parseInt(target.value);
+    if (value) this.stepsPerBeat = value;
+    console.log("[handleStepsPerBeatUpdate]", target.value);
+    this.updateUi();
+  };
+
+  createStepElements() {
+    this.stepElements = Array(this.steps)
+      .fill(null)
+      .map((_, i) => {
+        const element = document.createElement("div");
+        element.classList.add("step");
+        element.style.width = `calc(100% / ${this.steps})`;
+        element.dataset.step = i.toString();
+        element.dataset.steps = this.steps.toString();
+        element.dataset.selected = "off";
+        if (i % this.stepsPerBeat === 0) element.classList.add("beat");
+        return element;
+      });
+  }
+
+  private get beatsInputElt() {
+    return document.querySelector(
+      `input[name=beats][data-stepper-id="${this.id}"]`
+    );
+  }
+
+  private get stepsPerBeatsInputElt() {
+    return document.querySelector(
+      `input[name=steps-per-beat][data-stepper-id="${this.id}"]`
+    );
+  }
 
   get steps() {
     return this.stepsPerBeat * this.beats;

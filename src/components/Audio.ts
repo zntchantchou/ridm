@@ -33,6 +33,7 @@ class Audio {
     const samplePath = SAMPLES_DIRS.find((s) => s.name === name);
     if (samplePath) {
       const sample = await this.loadSample(samplePath.path);
+      console.log("SAMPLE => \n", sample);
       if (sample) this.playSample(sample, time);
     }
   }

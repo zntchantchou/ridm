@@ -44,7 +44,7 @@ class Sequencer {
     this.pulses?.deregister(stepper); // ORDER MATTERS, DEREGISTER BEFORE UPDATING...
     stepper.updateBeats(value);
     this.pulses?.register(stepper, this.steppers);
-    console.log("AFTER HANDLE BEATS UPDATE ", this.pulses);
+    // console.log("AFTER HANDLE BEATS UPDATE ", this.pulses);
   };
 
   handleStepsPerBeatUpdate = (e: Event) => {
@@ -56,7 +56,7 @@ class Sequencer {
     this.pulses?.deregister(stepper); // delete from pulses if necessary
     stepper?.updateStepsPerBeat(value);
     this.pulses?.register(stepper, this.steppers);
-    console.log("AFTER HANDLE STEPS PER BEAT UPDATE ", this.pulses);
+    // console.log("AFTER HANDLE STEPS PER BEAT UPDATE ", this.pulses);
   };
 
   getStepper(id: number) {

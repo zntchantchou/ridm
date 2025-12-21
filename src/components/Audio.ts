@@ -29,6 +29,13 @@ class Audio {
     src.connect(this.ctx?.destination);
     src.start(time);
   }
+  async playDefaultSample(name: string, time: number) {
+    const samplePath = SAMPLES_DIRS.find((s) => s.name === name);
+    if (samplePath) {
+      const sample = await this.loadSample(samplePath.path);
+      if (sample) this.playSample(sample, time);
+    }
+  }
 
   public playMetronome(beatNumber: number, time: number, steps: number = 0) {
     // console.log("PLAY METRONOME ", beatNumber);
@@ -49,14 +56,6 @@ class Audio {
     // else osc.frequency.value = 220.0;
     osc.start(time);
     osc.stop(time + 0.05);
-  }
-
-  async playDefaultSample(name: string, time: number) {
-    const samplePath = SAMPLES_DIRS.find((s) => s.name === name);
-    if (samplePath) {
-      const sample = await this.loadSample(samplePath.path);
-      if (sample) this.playSample(sample, time);
-    }
   }
 }
 

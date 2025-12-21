@@ -9,20 +9,24 @@ class StepperControls {
   minBeats = 2;
   maxSteps = 10;
   maxBeats = 10;
+  name: string;
 
   constructor({
     stepsPerBeats,
     beats,
     stepperId,
+    name,
   }: {
     stepperId: number;
     stepsPerBeats: number;
     beats: number;
+    name: string;
   }) {
     // console.log("[StepperControls]");
     this.stepperId = stepperId;
     this.stepsPerBeats = stepsPerBeats;
     this.beats = beats;
+    this.name = name;
   }
 
   render() {
@@ -46,6 +50,10 @@ class StepperControls {
     stepsPerBeatInput.max = this.maxSteps.toString();
     beatsInput.value = this.beats.toString();
     stepsPerBeatInput.value = this.stepsPerBeats.toString();
+    const nameElt = document.createElement("span");
+    nameElt.classList.add("stepperControlName");
+    nameElt.textContent = this.name;
+    this.element.appendChild(nameElt);
     this.element.appendChild(beatsLabel);
     this.element.appendChild(beatsInput);
     this.element.appendChild(stepsPerBeatLabel);

@@ -14,7 +14,12 @@ describe("Pulses.register()", () => {
   });
 
   it("1. registers stepper to empty Pulses correctly", () => {
-    const stepper16 = new Stepper({ beats: 4, stepsPerBeat: 4 });
+    const stepper16 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 1,
+      sampleName: "bd",
+    });
     steppers.push(stepper16);
 
     pulses.register(stepper16, steppers);
@@ -29,8 +34,18 @@ describe("Pulses.register()", () => {
   });
 
   it("2. registers stepper to existing pulse with same steps", () => {
-    const stepper16a = new Stepper({ beats: 4, stepsPerBeat: 4 });
-    const stepper16b = new Stepper({ beats: 4, stepsPerBeat: 4 });
+    const stepper16a = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 1,
+      sampleName: "bd",
+    });
+    const stepper16b = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 2,
+      sampleName: "hh",
+    });
     steppers.push(stepper16a, stepper16b);
 
     pulses.register(stepper16a, steppers);
@@ -47,8 +62,18 @@ describe("Pulses.register()", () => {
   });
 
   it("3. registers child pulse when parent exists", () => {
-    const stepper16 = new Stepper({ beats: 4, stepsPerBeat: 4 });
-    const stepper8 = new Stepper({ beats: 4, stepsPerBeat: 2 });
+    const stepper16 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 1,
+      sampleName: "bd",
+    });
+    const stepper8 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 2,
+      id: 2,
+      sampleName: "sd",
+    });
     steppers.push(stepper16, stepper8);
 
     pulses.register(stepper16, steppers);
@@ -65,8 +90,18 @@ describe("Pulses.register()", () => {
   });
 
   it("4. registers parent pulse when child exists and reassigns subs", () => {
-    const stepper8 = new Stepper({ beats: 4, stepsPerBeat: 2 });
-    const stepper16 = new Stepper({ beats: 4, stepsPerBeat: 4 });
+    const stepper8 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 2,
+      id: 2,
+      sampleName: "bd",
+    });
+    const stepper16 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 1,
+      sampleName: "sd",
+    });
     steppers.push(stepper8, stepper16);
 
     pulses.register(stepper8, steppers);
@@ -86,9 +121,24 @@ describe("Pulses.register()", () => {
   });
 
   it("5. registers many unrelated pulses correctly", () => {
-    const stepper3 = new Stepper({ beats: 3, stepsPerBeat: 1 });
-    const stepper5 = new Stepper({ beats: 5, stepsPerBeat: 1 });
-    const stepper7 = new Stepper({ beats: 7, stepsPerBeat: 1 });
+    const stepper3 = new Stepper({
+      beats: 3,
+      stepsPerBeat: 1,
+      id: 1,
+      sampleName: "bd",
+    });
+    const stepper5 = new Stepper({
+      beats: 5,
+      stepsPerBeat: 1,
+      id: 2,
+      sampleName: "sd",
+    });
+    const stepper7 = new Stepper({
+      beats: 7,
+      stepsPerBeat: 1,
+      id: 3,
+      sampleName: "lt",
+    });
     steppers.push(stepper3, stepper5, stepper7);
 
     pulses.register(stepper3, steppers);
@@ -109,10 +159,30 @@ describe("Pulses.register()", () => {
   });
 
   it("6. maintains leadPulses sorted descending by steps", () => {
-    const stepper4 = new Stepper({ beats: 4, stepsPerBeat: 1 });
-    const stepper16 = new Stepper({ beats: 4, stepsPerBeat: 4 });
-    const stepper8 = new Stepper({ beats: 4, stepsPerBeat: 2 });
-    const stepper12 = new Stepper({ beats: 3, stepsPerBeat: 4 });
+    const stepper4 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 1,
+      id: 1,
+      sampleName: "bd",
+    });
+    const stepper16 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 2,
+      sampleName: "lt",
+    });
+    const stepper8 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 2,
+      id: 3,
+      sampleName: "sd",
+    });
+    const stepper12 = new Stepper({
+      beats: 3,
+      stepsPerBeat: 4,
+      id: 4,
+      sampleName: "hh",
+    });
     steppers.push(stepper4, stepper16, stepper8, stepper12);
 
     pulses.register(stepper4, steppers);
@@ -126,9 +196,24 @@ describe("Pulses.register()", () => {
   });
 
   it("7. updates pulse count when registering to existing pulse", () => {
-    const stepper16a = new Stepper({ beats: 4, stepsPerBeat: 4 });
-    const stepper16b = new Stepper({ beats: 4, stepsPerBeat: 4 });
-    const stepper16c = new Stepper({ beats: 4, stepsPerBeat: 4 });
+    const stepper16a = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 1,
+      sampleName: "bd",
+    });
+    const stepper16b = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 2,
+      sampleName: "sd",
+    });
+    const stepper16c = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 3,
+      sampleName: "hh",
+    });
     steppers.push(stepper16a, stepper16b, stepper16c);
 
     pulses.register(stepper16a, steppers);
@@ -142,9 +227,24 @@ describe("Pulses.register()", () => {
   });
 
   it("8. reassigns steppers to new parent when parent pulse added", () => {
-    const stepper4 = new Stepper({ beats: 4, stepsPerBeat: 1 });
-    const stepper8 = new Stepper({ beats: 4, stepsPerBeat: 2 });
-    const stepper16 = new Stepper({ beats: 4, stepsPerBeat: 4 });
+    const stepper4 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 1,
+      id: 1,
+      sampleName: "bd",
+    });
+    const stepper8 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 2,
+      id: 2,
+      sampleName: "hh",
+    });
+    const stepper16 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 3,
+      sampleName: "sd",
+    });
     steppers.push(stepper4, stepper8, stepper16);
 
     pulses.register(stepper8, steppers);

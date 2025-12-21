@@ -60,6 +60,17 @@ class Pulses {
 
   deregister(stepper: Stepper) {
     const existingPulse = this.elements.find((e) => e.steps === stepper.steps);
+    if (existingPulse?.subs.length && existingPulse.count === 1) {
+      const subs = [...existingPulse.subs];
+      const successorPulse = subs[0];
+      this.addLead(successorPulse);
+      if (subs.length > 1) {
+        subs.splice(0, 1);
+        for (const sub of subs) {
+          successorPulse.addSub(sub);
+        }
+      }
+    }
     if (existingPulse) {
       existingPulse.decrement();
       if (existingPulse.count === 0) {

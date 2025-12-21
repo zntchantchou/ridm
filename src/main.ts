@@ -4,6 +4,7 @@ import Sequencer from "./components/Sequencer";
 import Audio from "./components/Audio";
 import Pulses from "./components/Pulses";
 import UI from "./components/Ui";
+import StepQueue from "./components/StepQueue";
 
 window.addEventListener("load", init);
 const playBtn = document.getElementById("play");
@@ -17,13 +18,12 @@ function init() {
   Audio.init(ac);
   const sequencer = new Sequencer(pulses);
   sequencer.registerDefaults();
-  // for (let i = 0; i < DEFAULT_TOTAL_STEPPERS; i++) {
-  //   sequencer.register(new Stepper({ beats: i + 1, stepsPerBeat: 4, id: i }));
-  // }
 }
 // handle start / pause
 playBtn?.addEventListener("click", () => {
   // user gesture is needed to start the initiated audio context;
-  ac.resume();
+  if (!Controls.isPlaying) ac.resume();
   timeWorker.start(ui);
+  // if (Controls.isPlaying) ac.suspend();
+  console.log("STEPQUEUE ", StepQueue);
 });

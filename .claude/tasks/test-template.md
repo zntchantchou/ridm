@@ -3,6 +3,7 @@
 ## Guidelines File
 
 Specific instructions can be passed by using the third argument: $3. It designates the file to look for the guidelines (guidelines.md) file for this type of task.
+Also look at any updates in the code before creating tests.
 
 ## Naming Convention
 
@@ -16,7 +17,10 @@ Example: 001-test-stepper-registration.md
   A checklist of steps to take for that task. After each task, the task list steps must be checked.
   If a clarification is needed add for a task [STILL UNCERTAIN]
   Ask for review of all uncertainties before proceeding
-  IMPORTANT: Do not create more than 10 test cases
+  IMPORTANT:
+
+  - Do not create more than 10 test cases
+  - Mark any uncertainties in the checklist as [UNCERTAIN]
 
 - File structure modifications
 

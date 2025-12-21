@@ -40,6 +40,7 @@ class Stepper {
       stepperId: this.id,
       beats: this.beats,
       stepsPerBeats: this.stepsPerBeat,
+      name: sampleName,
     });
     this.renderUi();
   }
@@ -140,6 +141,7 @@ class Stepper {
         element.dataset.step = i.toString();
         element.dataset.steps = this.steps.toString();
         element.dataset.selected = "off";
+        element.dataset.stepperId = this.id?.toString();
         if (i % this.stepsPerBeat === 0) element.classList.add("beat");
         return element;
       });

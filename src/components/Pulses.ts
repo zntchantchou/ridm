@@ -24,6 +24,8 @@ class Pulses {
 
     const parent = this.findParent(stepper.steps);
     if (parent) {
+      console.log("STEPPER FOUND PARENT s => \n", stepper);
+      console.log("STEPPER FOUND PARENT p => \n", parent);
       const newPulse = new Pulse({ steps: stepper.steps });
       stepper.listenToPulse(parent);
       this.add(newPulse);
@@ -34,6 +36,8 @@ class Pulses {
     const child = this.findChild(stepper.steps);
     if (child) {
       const newPulse = new Pulse({ steps: stepper.steps });
+      console.log("STEPPER FOUND CHILD s => ", stepper);
+      console.log("STEPPER FOUND CHILD c => ", child);
       this.addLead(newPulse);
       stepper.listenToPulse(newPulse);
       if (!child.empty) {
@@ -59,7 +63,10 @@ class Pulses {
   }
 
   deregister(stepper: Stepper) {
+    console.log("PULSES DEREGISTER ");
     const existingPulse = this.elements.find((e) => e.steps === stepper.steps);
+    if (!existingPulse) throw Error("No pulse found to deregister");
+    // Promote the successor lead sub and transfer it its parent's subs
     if (existingPulse?.subs.length && existingPulse.count === 1) {
       const subs = [...existingPulse.subs];
       const successorPulse = subs[0];
@@ -71,14 +78,13 @@ class Pulses {
         }
       }
     }
-    if (existingPulse) {
-      existingPulse.decrement();
-      if (existingPulse.count === 0) {
-        const filterFn = (p: Pulse) => p.steps !== stepper.steps;
-        this.elements = this.elements.filter(filterFn);
-        if (existingPulse && existingPulse.lead) {
-          this.leadPulses = this.leadPulses.filter(filterFn);
-        }
+    // Eliminate the updated sub if is has no stepper listening to it
+    existingPulse.decrement();
+    if (existingPulse.count === 0) {
+      const filterFn = (p: Pulse) => p.steps !== stepper.steps;
+      this.elements = this.elements.filter(filterFn);
+      if (existingPulse.lead) {
+        this.leadPulses = this.leadPulses.filter(filterFn);
       }
     }
   }
@@ -118,7 +124,7 @@ class Pulses {
     newPulse.promote();
     if (prevPulse) this.demote(prevPulse);
     this.leadPulses.push(newPulse);
-    this.elements.push(newPulse);
+    this.add(newPulse);
     this.sort();
     // addLead should always keep sorted
   }
@@ -136,7 +142,8 @@ class Pulses {
   }
 
   add(p: Pulse) {
-    this.elements.push(p);
+    if (!this.elements.find((elt) => elt.steps === p.steps))
+      this.elements.push(p);
   }
 
   has(steps: number): boolean {

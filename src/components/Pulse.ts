@@ -42,14 +42,19 @@ class Pulse {
   /** Queue the next step for this pulse */
   pulsate() {
     console.log("[Pulse] pulsate");
+    // if (!Controls.isPlaying) {
+    //   console.log("[Pulse] pulsate aborted");
+    //   return;
+    // }
     const nextStep = {
       stepNumber: this.currentStep,
       time: this.nextNoteTime,
       totalSteps: this.steps,
     };
 
-    StepQueue.push(nextStep);
-    this.currentStepSubject.next(nextStep);
+    StepQueue.push(nextStep); // Consumed by UI
+    console.log("NEXT STEP ", nextStep);
+    this.currentStepSubject.next(nextStep); // Consumed by steppers => audio
   }
 
   /** Delay the nextStepTime by timePerStep, updates the current step */

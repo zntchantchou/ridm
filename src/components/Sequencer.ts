@@ -33,6 +33,8 @@ class Sequencer {
     stepper.id = this.steppers.length;
     this.steppers.push(stepper);
     this.pulses?.register(stepper, this.steppers);
+    console.log("SEQ REGISTER LEADS ", this.pulses?.getLeadPulses());
+    console.log("SEQ REGISTER ELTS ", this.pulses?.getElements());
   }
 
   handleBeatsUpdate = (e: Event) => {
@@ -44,7 +46,6 @@ class Sequencer {
     this.pulses?.deregister(stepper); // ORDER MATTERS, DEREGISTER BEFORE UPDATING...
     stepper.updateBeats(value);
     this.pulses?.register(stepper, this.steppers);
-    // console.log("AFTER HANDLE BEATS UPDATE ", this.pulses);
   };
 
   handleStepsPerBeatUpdate = (e: Event) => {
@@ -56,7 +57,6 @@ class Sequencer {
     this.pulses?.deregister(stepper); // delete from pulses if necessary
     stepper?.updateStepsPerBeat(value);
     this.pulses?.register(stepper, this.steppers);
-    // console.log("AFTER HANDLE STEPS PER BEAT UPDATE ", this.pulses);
   };
 
   getStepper(id: number) {
@@ -67,5 +67,24 @@ class Sequencer {
 export default Sequencer;
 
 const DEFAULT_STEPPER = { beats: 4, stepsPerBeat: 4 };
-
+// const DEBUG_STEPPERS = [
+//   {
+//     beats: 4,
+//     stepsPerBeat: 4,
+//     id: 0,
+//     sampleName: "hh",
+//   },
+//   {
+//     beats: 4,
+//     stepsPerBeat: 2,
+//     id: 1,
+//     sampleName: "sd",
+//   },
+//   {
+//     beats: 4,
+//     stepsPerBeat: 1,
+//     id: 2,
+//     sampleName: "lt",
+//   },
+// ];
 const DEFAULT_STEPPERS: StepperOptions[] = Array(8).fill(DEFAULT_STEPPER);

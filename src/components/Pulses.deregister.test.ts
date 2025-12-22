@@ -135,7 +135,7 @@ describe("Pulses.deregister() - Stepper updates", () => {
       beats: 4,
       stepsPerBeat: 1,
       id: 2,
-      sampleName: "hh",
+      sampleName: "lt",
     });
     steppers.push(stepper16, stepper8, stepper4);
 

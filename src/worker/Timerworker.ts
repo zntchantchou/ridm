@@ -2,6 +2,7 @@ import type { BeatMapType } from "../components/types";
 import StepQueue from "../components/StepQueue";
 import UI from "../components/Ui";
 import Pulses from "../components/Pulses";
+import Controls from "../components/Controls";
 // let lastStep = -1;
 class TimeWorker {
   pingRatio = 10;
@@ -53,7 +54,8 @@ class TimeWorker {
       !this.audioContext ||
       !this.ui ||
       !this.pulses ||
-      !this.pulses.hasLeads
+      !this.pulses.hasLeads ||
+      !Controls.isPlaying
     ) {
       return;
     }
@@ -62,6 +64,7 @@ class TimeWorker {
     // This allows for the UI highlighting by stepping through regularly in each stepper
     // Each Pulse still needs to know if it must play a stepper's sound at each step
     for (const pulse of this.pulses.getLeadPulses()) {
+      console.log("[DISCOVERING]");
       pulse.discover(this.audioContext?.currentTime, this.nextNoteWindowSec);
     }
   }

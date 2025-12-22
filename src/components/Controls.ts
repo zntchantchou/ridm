@@ -1,3 +1,5 @@
+import Audio from "./Audio";
+
 const temporRangeElt = document.getElementById(
   "tempo-range"
 ) as HTMLInputElement;
@@ -8,7 +10,7 @@ const playPauseBtn = document.getElementById("play") as HTMLDivElement;
 class Controls {
   tempo = 40;
   tpc = 4; // 60 / TPS = tempo
-  isPlaying = false;
+  isPlaying: boolean = false;
 
   init() {
     playPauseBtn?.addEventListener("click", this.togglePlay);
@@ -27,10 +29,17 @@ class Controls {
   public getTempo(): number {
     return parseInt(temporRangeElt.value);
   }
-
-  private togglePlay() {
-    this.isPlaying = !this.isPlaying;
-  }
+  // use anonymous function expression so "this" can be referenced in the eventListener
+  private togglePlay = () => {
+    if (!this.isPlaying) {
+      this.isPlaying = true;
+      Audio.ctx?.resume(); // this resumes the current time
+      return;
+    }
+    this.isPlaying = false;
+    Audio.ctx?.suspend(); // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
+    console.log("[TOGGLE PLAY]SET IS PLAYING TO FALSE", this.isPlaying);
+  };
   // Controls must return all step-control elements
   // Sequencer will handle the update Events
   // - To update the stepper and its properties

@@ -27,8 +27,9 @@ class Audio {
       playbackRate: 1,
     });
     src.connect(this.ctx?.destination);
-    src.start(time);
+    src.start(time, 0, buffer.duration);
   }
+
   async playDefaultSample(name: string, time: number) {
     const samplePath = SAMPLES_DIRS.find((s) => s.name === name);
     if (samplePath) {

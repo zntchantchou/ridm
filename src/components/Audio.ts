@@ -1,15 +1,25 @@
+import Controls from "./Controls";
+
 const samplesDirPath = "../../samples/defaults/";
 
 class Audio {
   ctx: AudioContext | null = null; // initiate at null?
-  bd?: null | AudioBuffer = null;
+  defaultSamples: {
+    name: string;
+    path: string;
+    sample?: AudioBuffer;
+  }[] = [];
 
   public async init(audioContext: AudioContext) {
     if (!audioContext)
       throw Error("Must initialize audioContext with shared audiocontext ");
     this.ctx = audioContext;
     // Create dictionary for default samples to be loaded easily by drumKitPart + path
-    this.bd = await this.loadSample("hh.wav");
+    const samples = [];
+    for (const { name, path } of SAMPLES_DIRS) {
+      samples.push({ name, path, sample: await this.loadSample(path) });
+    }
+    this.defaultSamples = samples;
   }
 
   private async loadSample(path: string) {
@@ -20,7 +30,7 @@ class Audio {
   }
 
   public playSample(buffer: AudioBuffer, time: number = 0) {
-    if (!this.ctx)
+    if (!this.ctx || !Controls.isPlaying)
       throw Error("Must initialize audioContext with share audiocontext ");
     const src = new AudioBufferSourceNode(this.ctx, {
       buffer,
@@ -32,10 +42,11 @@ class Audio {
 
   async playDefaultSample(name: string, time: number) {
     const samplePath = SAMPLES_DIRS.find((s) => s.name === name);
+
     if (samplePath) {
-      const sample = await this.loadSample(samplePath.path);
-      console.log("SAMPLE => \n", sample);
-      if (sample) this.playSample(sample, time);
+      const sampleItems = this.defaultSamples.find((s) => s.name === name);
+      console.log("SAMPLE => \n", sampleItems);
+      if (sampleItems) this.playSample(sampleItems.sample as AudioBuffer, time);
     }
   }
 

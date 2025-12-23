@@ -1,4 +1,4 @@
-import { filter, Subscription } from "rxjs";
+import { filter, interval, Subscription, throttle } from "rxjs";
 import type Pulse from "./Pulse";
 import Audio from "./Audio";
 import StepperControls from "./StepperControls";
@@ -20,13 +20,13 @@ class Stepper {
   beats = 4;
   stepsPerBeat = 4;
   lastStep = -1;
-  currentStep = 0;
   stepPickupRatio = 0;
   stepElements: HTMLDivElement[] = [];
   element: HTMLDivElement | null = null;
   pulseSubscription: Subscription | null = null;
   selectedSteps: boolean[] = Array(this.beats * this.stepsPerBeat).fill(false);
   controls: StepperControls | null = null;
+  justUpdated = false;
   /** e.g. "hh" */
   sampleName: string;
 
@@ -51,22 +51,25 @@ class Stepper {
     this.pulseSubscription = pulse.currentStepSubject
       .pipe(
         filter(({ stepNumber, totalSteps }) =>
-          this.filterStep({ totalSteps, stepNumber })
+          this.isSelectedStep({ totalSteps, stepNumber })
         )
       ) // Only trigger if note is selected
+      .pipe(throttle(() => interval(Controls.tpc / this.steps)))
       .subscribe({
         next: ({ time }) => {
-          console.log("TIME AT PLAY ", time);
           Audio.playDefaultSample(this.sampleName, time);
         },
         complete: () => {
-          // error handling, complete behaviour?
           console.log("[STEPPER] PULSE HAS COMPLETED");
         },
       });
   }
+  // private isJustResizedStep(stepNumber: number) {
+  //   const lastStepDiff = stepNumber - this.lastStep;
+  //   return lastStepDiff !== 1 && lastStepDiff !== this.steps;
+  // }
 
-  filterStep({
+  private isSelectedStep({
     totalSteps,
     stepNumber,
   }: {
@@ -100,28 +103,24 @@ class Stepper {
   }
 
   updateBeats(beats: number) {
-    this.pulseSubscription?.unsubscribe();
     this.updateSelectedSteps(this.stepsPerBeat * beats);
     this.beats = beats;
     this.updateUi();
   }
 
   updateStepsPerBeat(spb: number) {
-    this.pulseSubscription?.unsubscribe();
     this.updateSelectedSteps(this.beats * spb);
     this.stepsPerBeat = spb;
     this.updateUi();
   }
 
   convertNumbersToSteps(targetSize: number, numbers: number[]) {
-    // console.log("[convertNumbersToSteps] NUMBERS EMPTY !");
     if (!numbers.length) return [];
     const steps: boolean[] = Array(targetSize)
       .fill(false)
       .map((_, i) => {
         return numbers.includes(i);
       });
-    // console.log("[convertNumbersToSteps] STEPS ", steps, numbers);
     return steps;
   }
 

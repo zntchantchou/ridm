@@ -64,6 +64,7 @@ class Pulses {
 
   deregister(stepper: Stepper) {
     console.log("PULSES DEREGISTER ");
+    stepper.stop();
     const existingPulse = this.elements.find((e) => e.steps === stepper.steps);
     if (!existingPulse) throw Error("No pulse found to deregister");
     // Promote the successor lead sub and transfer it its parent's subs

@@ -33,8 +33,6 @@ class Sequencer {
     stepper.id = this.steppers.length;
     this.steppers.push(stepper);
     this.pulses?.register(stepper, this.steppers);
-    console.log("SEQ REGISTER LEADS ", this.pulses?.getLeadPulses());
-    console.log("SEQ REGISTER ELTS ", this.pulses?.getElements());
   }
 
   handleBeatsUpdate = (e: Event) => {

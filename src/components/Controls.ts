@@ -30,7 +30,7 @@ class Controls {
     return parseInt(temporRangeElt.value);
   }
   // use anonymous function expression so "this" can be referenced in the eventListener
-  private togglePlay = () => {
+  public togglePlay = () => {
     if (!this.isPlaying) {
       this.isPlaying = true;
       Audio.ctx?.resume(); // this resumes the current time
@@ -38,7 +38,7 @@ class Controls {
     }
     this.isPlaying = false;
     Audio.ctx?.suspend(); // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
-    console.log("[TOGGLE PLAY]SET IS PLAYING TO FALSE", this.isPlaying);
+    // console.log("[TOGGLE PLAY]SET IS PLAYING TO FALSE", this.isPlaying);
   };
   // Controls must return all step-control elements
   // Sequencer will handle the update Events

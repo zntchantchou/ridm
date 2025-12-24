@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import Pulses from "./Pulses.ts";
 import Stepper from "./Stepper.ts";
+import Pulse from "./Pulse.ts";
 
 describe("Pulses.deregister() - Stepper updates", () => {
   let pulses: Pulses;
@@ -324,4 +325,59 @@ describe("Pulses.deregister() - Stepper updates", () => {
       expect(pulses.getElements().includes(leadPulse)).toBe(true);
     });
   });
+
+  it("11. Deleted parent pulse promotes the biggest sub even if indirect like 16 => 4", () => {
+    const stepper4 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 1,
+      id: 0,
+      sampleName: "lt",
+    });
+
+    const stepper8 = new Stepper({
+      beats: 8,
+      stepsPerBeat: 1,
+      id: 1,
+      sampleName: "lt",
+    });
+
+    const stepper16 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 4,
+      id: 2,
+      sampleName: "hh",
+    });
+    const stepper32 = new Stepper({
+      beats: 4,
+      stepsPerBeat: 8,
+      id: 3,
+      sampleName: "hh",
+    });
+    steppers.push(stepper4, stepper8, stepper16, stepper32);
+
+    pulses.register(stepper4, steppers);
+    pulses.register(stepper8, steppers);
+    pulses.register(stepper16, steppers);
+    pulses.register(stepper32, steppers);
+
+    expect(pulses.size).toBe(4);
+    expect(pulses.getLeadPulses().length).toBe(1);
+    expect(pulses.getLeadPulses()[0].steps).toBe(32);
+    expect(pulses.getLeadPulses()[0].subs.length).toBe(3);
+
+    pulses.deregister(stepper32, []);
+    expect(pulses.size).toBe(3);
+    expect(pulses.getLeadPulses().length).toBe(1);
+    console.log("LEAD PULSES ", pulses.getLeadPulses()[0].subs);
+    expect(pulses.getLeadPulses()[0].steps).toBe(16);
+    expect(pulses.getLeadPulses()[0].subs[0].steps).toBe(8);
+    expect(pulses.getLeadPulses()[0].subs[0].subs[0]).toBeInstanceOf(Pulse);
+    expect(pulses.getLeadPulses()[0].subs[0].subs[0].steps).toBe(4);
+    console.log("steppers ", steppers);
+    // expect(pulses.getLeadPulses()[0].lead).toBe(true);
+    // expect(pulses.getLeadPulses()[0].subs.length).toBe(1);
+    // expect(pulses.getLeadPulses()[0].subs[0].steps).toBe(4);
+  });
+
+  // "11. LeadPulses should only contain leads even after parent is added",
 });

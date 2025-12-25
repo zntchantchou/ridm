@@ -1,7 +1,7 @@
 import type { BeatMapType } from "../components/types";
 import StepQueue from "../components/StepQueue";
 import UI from "../components/Ui";
-import Pulses from "../components/Pulses";
+import Pulses from "../components/integration/Pulses";
 import Controls from "../components/Controls";
 // let lastStep = -1;
 class TimeWorker {
@@ -14,14 +14,14 @@ class TimeWorker {
   audioContext: AudioContext | null = null;
   isPlaying = false;
   animationFrameId?: number = undefined;
-  pulses: Pulses | null = null;
+  pulses: typeof Pulses | null = null;
   ui: UI | null = null;
 
   constructor({
     pulses,
     audioContext,
   }: {
-    pulses: Pulses;
+    pulses: typeof Pulses;
     audioContext: AudioContext;
   }) {
     this.audioContext = audioContext;
@@ -50,13 +50,7 @@ class TimeWorker {
   }
 
   private tick() {
-    if (
-      !this.audioContext ||
-      !this.ui ||
-      !this.pulses ||
-      !this.pulses.hasLeads ||
-      !Controls.isPlaying
-    ) {
+    if (!this.audioContext || !this.ui || !this.pulses || !Controls.isPlaying) {
       return;
     }
     // each Pulse looks for steps that fall within the window

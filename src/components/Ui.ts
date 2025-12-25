@@ -1,4 +1,4 @@
-import type Pulses from "./Pulses";
+import Pulses from "./integration/Pulses";
 // import Sequencer from "./Sequencer";
 import StepQueue, { type Step } from "./StepQueue";
 
@@ -7,8 +7,8 @@ class UI {
   lastStep: Step | null = null;
   isPlaying = false;
   animationId: number | null = null;
-  pulses: Pulses | null = null;
-  constructor(AC: AudioContext, pulses: Pulses) {
+  pulses: typeof Pulses | null = null;
+  constructor(AC: AudioContext, pulses: typeof Pulses) {
     this.audioContext = AC;
     this.pulses = pulses;
   }
@@ -34,7 +34,6 @@ class UI {
   }
 
   draw = () => {
-    // console.log("[UI draw]");
     if (!this.audioContext) return;
     const currentTime = this.audioContext.currentTime;
     while (StepQueue.size() && StepQueue.head().time < currentTime) {
@@ -56,7 +55,7 @@ class UI {
     // console.log("UPDATE UI");
     let currentStepElts: HTMLDivElement[] = [];
     let lastStepElements: HTMLDivElement[] = [];
-    if (!this.pulses?.hasLeads) {
+    if (!this.pulses?.getLeadPulses().length) {
       console.error("NO PULSES");
       return;
     }
@@ -68,13 +67,15 @@ class UI {
     );
     // highlight steps from children pulses (subdivisions)
     for (const pulse of this.pulses.getLeadPulses()) {
-      pulse.subs.forEach((sub) => {
+      pulse.getSubs()?.forEach((sub) => {
         const prevStep = this.selectSteps(sub.getPrevStep(step), sub.steps);
         const currStep = this.selectSteps(sub.getCurrentStep(step), sub.steps);
         lastStepElements.push(...prevStep);
         currentStepElts.push(...currStep);
       });
     }
+
+    console.log("UPDATE UI");
     if (lastStepElements.length && currentStepElts) {
       currentStepElts.forEach((elt, i) => {
         elt.dataset.ticking = "on";

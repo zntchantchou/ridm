@@ -1,5 +1,6 @@
 import { filter, interval, Subscription, throttle } from "rxjs";
-import type Pulse from "./integration/Pulse";
+import Pulse from "./integration/Pulse";
+import Pulses from "./integration/Pulses";
 import Audio from "./Audio";
 import StepperControls from "./StepperControls";
 import Controls from "./Controls";
@@ -103,14 +104,33 @@ class Stepper {
   }
 
   updateBeats(beats: number) {
+    const oldSteps = this.steps;
     this.updateSelectedSteps(this.stepsPerBeat * beats);
     this.beats = beats;
+    Pulses.update(this, oldSteps, this.steps);
+    this.updateUi();
+  }
+
+  updateSteps({
+    beats,
+    stepsPerBeat,
+  }: {
+    beats?: number;
+    stepsPerBeat?: number;
+  }) {
+    const oldSteps = this.steps;
+    if (stepsPerBeat) this.stepsPerBeat = stepsPerBeat;
+    if (beats) this.beats = beats;
+    this.updateSelectedSteps(this.beats * this.stepsPerBeat);
+    Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
   }
 
   updateStepsPerBeat(spb: number) {
+    const oldSteps = this.steps;
     this.updateSelectedSteps(this.beats * spb);
     this.stepsPerBeat = spb;
+    Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
   }
 

@@ -1,5 +1,5 @@
 import Pulse from "../integration/Pulse";
-import type Stepper from "../Stepper";
+import Stepper from "../Stepper.integration";
 
 /**
  * Pulses manages the lifecycle of all Pulse instances in the application.
@@ -421,16 +421,16 @@ class Pulses {
    * Rebuilds the leadSteps array from scratch.
    * Emergency method for recovery if array becomes corrupted.
    */
-  private rebuildLeadSteps(): void {
-    this.leadSteps = [];
-    for (const [steps, pulse] of this.pulses.entries()) {
-      if (pulse.lead) {
-        this.leadSteps.push(steps);
-      }
-    }
-    // Sort descending
-    this.leadSteps.sort((a, b) => b - a);
-  }
+  // private rebuildLeadSteps(): void {
+  //   this.leadSteps = [];
+  //   for (const [steps, pulse] of this.pulses.entries()) {
+  //     if (pulse.lead) {
+  //       this.leadSteps.push(steps);
+  //     }
+  //   }
+  //   // Sort descending
+  //   this.leadSteps.sort((a, b) => b - a);
+  // }
 
   // ============================================================================
   // QUERY METHODS (Public API)
@@ -554,7 +554,7 @@ class Pulses {
   notifyAll(stepNumber: number, time: number): void {
     for (const leadSteps of this.leadSteps) {
       const pulse = this.pulses.get(leadSteps)!;
-      pulse.notify(stepNumber % pulse.steps, time);
+      pulse.pulsate(stepNumber % pulse.steps, time);
     }
   }
 
@@ -623,4 +623,4 @@ class Pulses {
   }
 }
 
-export default Pulses;
+export default new Pulses();

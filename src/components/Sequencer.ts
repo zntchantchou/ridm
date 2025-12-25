@@ -1,5 +1,5 @@
-import Stepper, { type StepperOptions } from "./Stepper";
-import Pulses from "./Pulses";
+import Stepper, { type StepperOptions } from "./Stepper.integration";
+import Pulses from "./integration/Pulses";
 import Controls from "./Controls";
 import { SAMPLES_DIRS } from "./Audio";
 
@@ -32,7 +32,7 @@ class Sequencer {
     // give number
     stepper.id = this.steppers.length;
     this.steppers.push(stepper);
-    this.pulses?.register(stepper, this.steppers);
+    this.pulses?.register(stepper);
   }
 
   handleBeatsUpdate = (e: Event) => {
@@ -41,9 +41,9 @@ class Sequencer {
     if (!target.dataset.stepperId) return;
     const stepper = this.getStepper(parseInt(target.dataset.stepperId));
     if (!stepper) return;
-    this.pulses?.deregister(stepper); // ORDER MATTERS, DEREGISTER BEFORE UPDATING...
-    stepper.updateBeats(value);
-    this.pulses?.register(stepper, this.steppers);
+    this.pulses?.update(stepper, stepper.steps, value);
+    // stepper.updateBeats(value);
+    stepper.updateSteps({ beats: value });
   };
 
   handleStepsPerBeatUpdate = (e: Event) => {
@@ -52,9 +52,9 @@ class Sequencer {
     if (!target.dataset.stepperId) return;
     const stepper = this.getStepper(parseInt(target.dataset.stepperId));
     if (!stepper) return;
-    this.pulses?.deregister(stepper); // delete from pulses if necessary
-    stepper?.updateStepsPerBeat(value);
-    this.pulses?.register(stepper, this.steppers);
+    this.pulses?.update(stepper, stepper.steps, value);
+    // stepper?.updateStepsPerBeat(value);
+    stepper.updateSteps({ stepsPerBeat: value });
   };
 
   getStepper(id: number) {

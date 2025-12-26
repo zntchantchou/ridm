@@ -14,7 +14,10 @@ class Audio {
     if (!audioContext)
       throw Error("Must initialize audioContext with shared audiocontext ");
     this.ctx = audioContext;
-    // Create dictionary for default samples to be loaded easily by drumKitPart + path
+    await this.preLoadDefaultSamples();
+  }
+
+  private async preLoadDefaultSamples() {
     const samples = [];
     for (const { name, path } of SAMPLES_DIRS) {
       samples.push({ name, path, sample: await this.loadSample(path) });

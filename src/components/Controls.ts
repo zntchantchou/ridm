@@ -16,6 +16,7 @@ class Controls {
   tpc = 4; // 60 / TPS = tempo
   volume = 1;
   isPlaying: boolean = false;
+  selectedStepper: number = 0;
 
   init() {
     playPauseBtn?.addEventListener("click", this.togglePlay);
@@ -61,18 +62,6 @@ class Controls {
   // - To update the stepper and its properties
   // - To rerender the given Stepper
   // - To notify pulses of the new stepper
-
-  getBeatsInputs() {
-    return Array.from(
-      document.querySelectorAll(`input[name=beats]`)
-    ) as HTMLInputElement[];
-  }
-
-  getStepsPerBeatInputs() {
-    return Array.from(
-      document.querySelectorAll(`input[name=steps-per-beat]`)
-    ) as HTMLInputElement[];
-  }
 }
 
 export default new Controls();

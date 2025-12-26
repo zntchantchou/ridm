@@ -2,16 +2,19 @@ import { filter, interval, Subscription, throttle } from "rxjs";
 import Pulse from "./Pulse";
 import Pulses from "./Pulses";
 import Audio from "./Audio";
-import StepperControls from "./StepperControls";
+// import StepperControls from "./StepperControls";
 import Controls from "./Controls";
+import type StepperControls from "./StepperControls";
 
 const steppersDiv = document.getElementById("steppers");
-
+export type StepperColorType = { name: string; cssColor: string };
 export interface StepperOptions {
   beats: number;
   stepsPerBeat: number;
   id: number;
   sampleName: string;
+  color: StepperColorType;
+  controls: StepperControls;
 }
 
 class Stepper {
@@ -27,13 +30,23 @@ class Stepper {
   controls: StepperControls | null = null;
   justUpdated = false;
   sampleName: string;
+  color: StepperColorType | null = null;
 
-  constructor({ beats, stepsPerBeat, id, sampleName }: StepperOptions) {
+  constructor({
+    beats,
+    stepsPerBeat,
+    id,
+    sampleName,
+    controls,
+    color,
+  }: StepperOptions) {
     this.beats = beats;
     this.stepsPerBeat = stepsPerBeat;
     this.id = id;
     this.sampleName = sampleName;
-    this.renderUi();
+    this.controls = controls;
+    this.color = color;
+    this.render();
   }
 
   listenToPulse(pulse: Pulse) {
@@ -72,7 +85,7 @@ class Stepper {
     this.pulseSubscription?.unsubscribe();
   }
 
-  updateSelectedSteps(targetSize: number) {
+  private updateSelectedSteps(targetSize: number) {
     const selectedSteps = this.getSelectedBeatAsNumber();
     const ratio = targetSize / this.steps;
     const updatedSteps = [];
@@ -150,7 +163,7 @@ class Stepper {
     }
   }
 
-  private renderUi() {
+  private render() {
     this.createStepElements();
     const stepper = document.createElement("div");
     stepper.classList.add("stepper");
@@ -158,7 +171,6 @@ class Stepper {
     for (const item of this.stepElements) {
       stepper.appendChild(item);
     }
-    // if (!this.element) this.controls?.render();
     this.element = stepper;
     this.element.addEventListener("click", this.handleClick);
   }
@@ -178,7 +190,7 @@ class Stepper {
     step.dataset.selected = currentValue ? "off" : "on"; // turn on or off
   }
 
-  createStepElements() {
+  private createStepElements() {
     this.stepElements = Array(this.steps)
       .fill(null)
       .map((_, i) => {

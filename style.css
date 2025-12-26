@@ -64,11 +64,15 @@ body {
 }
 
 #top-panel {
-  /* flex: 1; */
   height: 50%;
-  background-color: rgba(255, 255, 255, 0.121);
   width: inherit;
 }
+
+#sound-panel {
+  height: 100%;
+  width: 100%;
+}
+
 #bottom-panel {
   padding: 0.8rem;
   width: 100%;
@@ -81,6 +85,7 @@ body {
   width: 30%;
   display: flex;
   flex: 1;
+  cursor: pointer;
   /* min-height: 40vh; */
   flex-direction: column;
   justify-content: space-between;
@@ -96,6 +101,7 @@ body {
 
 .stepper-controls span {
   color: white;
+  box-sizing: border-box;
 }
 
 #steppers {
@@ -133,8 +139,10 @@ body {
 .step.beat[data-selected="off"] {
   background-color: #b0b0b0;
 }
-
-[data-selected="on"] {
+.stepper-controls[data-selected="on"] {
+  border-radius: 0.2rem;
+}
+.step[data-selected="on"] {
   filter: brightness(0.6);
   opacity: 1;
 }
@@ -150,28 +158,28 @@ body {
 }
 
 .step[data-selected="on"][data-stepper-id="0"] {
-  background-color: rgb(0, 208, 255);
+  background-color: #00d0ff;
 }
 .step[data-selected="on"][data-stepper-id="1"] {
-  background-color: rgb(156, 55, 251);
+  background-color: #9c37fb;
 }
 .step[data-selected="on"][data-stepper-id="2"] {
-  background-color: rgb(238, 255, 4);
+  background-color: #eeff04;
 }
 .step[data-selected="on"][data-stepper-id="3"] {
-  background-color: rgb(46, 255, 4);
+  background-color: #2eff04;
 }
 .step[data-selected="on"][data-stepper-id="4"] {
-  background-color: rgb(255, 10, 230);
+  background-color: #ff0ae6;
 }
 .step[data-selected="on"][data-stepper-id="5"] {
-  background-color: rgb(255, 146, 4);
+  background-color: #ff9204;
 }
 .step[data-selected="on"][data-stepper-id="6"] {
-  background-color: rgb(254, 170, 255);
+  background-color: #feaaff;
 }
 .step[data-selected="on"][data-stepper-id="7"] {
-  background-color: rgb(255, 41, 41);
+  background-color: #ff2929;
 }
 
 /* ACTIVE STEP ANIMATION */

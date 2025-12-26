@@ -15,11 +15,11 @@ function init() {
   Controls.init();
   Audio.init(ac);
   const sequencer = new Sequencer(Pulses);
-  sequencer.registerDefaults();
+  sequencer.initialize();
 }
 // handle start / pause
 playBtn?.addEventListener("click", () => {
-  // user gesture is needed to start the initiated audio context;
+  // happens because AudioContext created outside of this scope
   if (!Controls.isPlaying) ac.resume();
   timeWorker.start(ui);
   // if (Controls.isPlaying) ac.suspend();

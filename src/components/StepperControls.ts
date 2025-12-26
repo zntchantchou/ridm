@@ -30,9 +30,10 @@ class StepperControls {
     this.render();
   }
 
-  render() {
+  private render() {
     this.element = document.createElement("div");
     this.element.classList.add("stepper-controls");
+    this.element.dataset["stepperId"] = this.stepperId.toString();
     const beatsLabel = document.createElement("span");
     const stepsPerBeatLabel = document.createElement("span");
     const beatsInput = document.createElement("input");

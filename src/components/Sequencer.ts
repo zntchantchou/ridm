@@ -1,8 +1,8 @@
-import Stepper, { type StepperOptions } from "./Stepper";
+import Stepper, { type StepperColorType, type StepperOptions } from "./Stepper";
 import Pulses from "./Pulses";
-import Controls from "./Controls";
 import { SAMPLES_DIRS } from "./Audio";
 import StepperControls from "./StepperControls";
+import SoundPanel from "./SoundPanel";
 
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
@@ -15,23 +15,26 @@ class Sequencer {
     this.pulses = pulses;
   }
 
-  registerDefaults() {
+  initialize() {
+    this.registerDefaults();
+    this.setupStepperResizeEvents();
+    new SoundPanel({ steppers: this.steppers });
+  }
+
+  private registerDefaults() {
     DEFAULT_STEPPERS.forEach((elt, i) => {
-      this.register({ ...elt, id: i, sampleName: SAMPLES_DIRS[i].name });
-    });
-    Controls.getBeatsInputs().forEach((e) => {
-      e.addEventListener("change", this.handleBeatsUpdate);
-    });
-    Controls.getStepsPerBeatInputs().forEach((e) => {
-      e.addEventListener("change", this.handleStepsPerBeatUpdate);
+      this.register({
+        ...elt,
+        id: i,
+        sampleName: SAMPLES_DIRS[i].name,
+        color: COLORS[i],
+      });
     });
   }
 
-  register(options: StepperOptions) {
+  private register(options: StepperOptions) {
     const steps = options.stepsPerBeat * options.beats;
     if (steps < 1 || steps > 100) return;
-
-    const stepper = new Stepper(options);
 
     const stepperControls = new StepperControls({
       stepperId: options.id,
@@ -39,13 +42,28 @@ class Sequencer {
       stepsPerBeats: options.stepsPerBeat,
       name: options.sampleName,
     });
-    // give number
-    stepper.id = this.steppers.length;
+    const stepper = new Stepper({
+      ...options,
+      id: this.steppers.length,
+      controls: stepperControls,
+      color: options.color,
+    });
+
     this.steppers.push(stepper);
     this.pulses?.register(stepper);
     this.controls.push(stepperControls);
   }
-  handleStepperUpdate = (e: Event) => {
+
+  private setupStepperResizeEvents() {
+    this.getBeatsInputs().forEach((e) => {
+      e.addEventListener("change", this.handleBeatsUpdate);
+    });
+    this.getStepsPerBeatInputs().forEach((e) => {
+      e.addEventListener("change", this.handleStepsPerBeatUpdate);
+    });
+  }
+
+  private handleStepperUpdate = (e: Event) => {
     const target = e.target as HTMLInputElement;
     const value = parseInt(target.value);
     const stepper = this.getStepper(
@@ -54,13 +72,13 @@ class Sequencer {
     return { value, stepper };
   };
 
-  handleBeatsUpdate = (e: Event) => {
+  private handleBeatsUpdate = (e: Event) => {
     const { value, stepper } = this.handleStepperUpdate(e);
     if (!stepper) return;
     stepper.updateSteps({ beats: value });
   };
 
-  handleStepsPerBeatUpdate = (e: Event) => {
+  private handleStepsPerBeatUpdate = (e: Event) => {
     const { value, stepper } = this.handleStepperUpdate(e);
     if (!stepper) return;
     stepper.updateSteps({ stepsPerBeat: value });
@@ -69,29 +87,56 @@ class Sequencer {
   getStepper(id: number) {
     return this.steppers.find((s) => s.id === id);
   }
+
+  private getBeatsInputs() {
+    return Array.from(
+      document.querySelectorAll(`input[name=beats]`)
+    ) as HTMLInputElement[];
+  }
+
+  private getStepsPerBeatInputs() {
+    return Array.from(
+      document.querySelectorAll(`input[name=steps-per-beat]`)
+    ) as HTMLInputElement[];
+  }
 }
 
 export default Sequencer;
 
 const DEFAULT_STEPPER = { beats: 4, stepsPerBeat: 4 };
-// const DEBUG_STEPPERS = [
-//   {
-//     beats: 4,
-//     stepsPerBeat: 4,
-//     id: 0,
-//     sampleName: "hh",
-//   },
-//   {
-//     beats: 4,
-//     stepsPerBeat: 2,
-//     id: 1,
-//     sampleName: "sd",
-//   },
-//   {
-//     beats: 4,
-//     stepsPerBeat: 1,
-//     id: 2,
-//     sampleName: "lt",
-//   },
-// ];
+const COLORS: StepperColorType[] = [
+  {
+    name: "blue",
+    cssColor: "#00d0ff",
+  },
+  {
+    name: "purple",
+    cssColor: "#9c37fb",
+  },
+  {
+    name: "yellow",
+    cssColor: "#eeff04",
+  },
+  {
+    name: "green",
+    cssColor: "#2eff04",
+  },
+  {
+    name: "pink",
+    cssColor: "#ff0ae6",
+  },
+  {
+    name: "orange",
+    cssColor: "#ff9204",
+  },
+  {
+    name: "palePink",
+    cssColor: "#feaaff",
+  },
+
+  {
+    name: "red",
+    cssColor: "#ff2929",
+  },
+];
 const DEFAULT_STEPPERS: StepperOptions[] = Array(8).fill(DEFAULT_STEPPER);

@@ -2,12 +2,14 @@ import Stepper, { type StepperOptions } from "./Stepper";
 import Pulses from "./Pulses";
 import Controls from "./Controls";
 import { SAMPLES_DIRS } from "./Audio";
+import StepperControls from "./StepperControls";
 
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
 class Sequencer {
   pulses: typeof Pulses | null = null;
   steppers: Stepper[] = [];
+  controls: StepperControls[] = [];
 
   constructor(pulses: typeof Pulses) {
     this.pulses = pulses;
@@ -15,9 +17,7 @@ class Sequencer {
 
   registerDefaults() {
     DEFAULT_STEPPERS.forEach((elt, i) => {
-      this.register(
-        new Stepper({ ...elt, id: i, sampleName: SAMPLES_DIRS[i].name })
-      );
+      this.register({ ...elt, id: i, sampleName: SAMPLES_DIRS[i].name });
     });
     Controls.getBeatsInputs().forEach((e) => {
       e.addEventListener("change", this.handleBeatsUpdate);
@@ -27,33 +27,42 @@ class Sequencer {
     });
   }
 
-  register(stepper: Stepper) {
-    if (stepper.steps < 1 || stepper.steps > 100) return;
+  register(options: StepperOptions) {
+    const steps = options.stepsPerBeat * options.beats;
+    if (steps < 1 || steps > 100) return;
+
+    const stepper = new Stepper(options);
+
+    const stepperControls = new StepperControls({
+      stepperId: options.id,
+      beats: options.beats,
+      stepsPerBeats: options.stepsPerBeat,
+      name: options.sampleName,
+    });
     // give number
     stepper.id = this.steppers.length;
     this.steppers.push(stepper);
     this.pulses?.register(stepper);
+    this.controls.push(stepperControls);
   }
-
-  handleBeatsUpdate = (e: Event) => {
+  handleStepperUpdate = (e: Event) => {
     const target = e.target as HTMLInputElement;
     const value = parseInt(target.value);
-    if (!target.dataset.stepperId) return;
-    const stepper = this.getStepper(parseInt(target.dataset.stepperId));
+    const stepper = this.getStepper(
+      parseInt(target.dataset.stepperId as string)
+    );
+    return { value, stepper };
+  };
+
+  handleBeatsUpdate = (e: Event) => {
+    const { value, stepper } = this.handleStepperUpdate(e);
     if (!stepper) return;
-    // this.pulses?.update(stepper, stepper.steps, value);
-    // stepper.updateBeats(value);
     stepper.updateSteps({ beats: value });
   };
 
   handleStepsPerBeatUpdate = (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    const value = parseInt(target.value);
-    if (!target.dataset.stepperId) return;
-    const stepper = this.getStepper(parseInt(target.dataset.stepperId));
+    const { value, stepper } = this.handleStepperUpdate(e);
     if (!stepper) return;
-    // this.pulses?.update(stepper, stepper.steps, value);
-    // stepper?.updateStepsPerBeat(value);
     stepper.updateSteps({ stepsPerBeat: value });
   };
 

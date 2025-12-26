@@ -27,6 +27,7 @@ class StepperControls {
     this.stepsPerBeats = stepsPerBeats;
     this.beats = beats;
     this.name = name;
+    this.render();
   }
 
   render() {

@@ -33,17 +33,11 @@ class Stepper {
     this.stepsPerBeat = stepsPerBeat;
     this.id = id;
     this.sampleName = sampleName;
-    this.controls = new StepperControls({
-      stepperId: this.id,
-      beats: this.beats,
-      stepsPerBeats: this.stepsPerBeat,
-      name: sampleName,
-    });
     this.renderUi();
   }
 
   listenToPulse(pulse: Pulse) {
-    console.log("LISTENTOPULSE ", pulse);
+    // console.log("LISTENTOPULSE ", pulse);
     this.pulseSubscription?.unsubscribe();
     this.pulseSubscription = pulse.currentStepSubject
       .pipe(
@@ -164,7 +158,7 @@ class Stepper {
     for (const item of this.stepElements) {
       stepper.appendChild(item);
     }
-    if (!this.element) this.controls?.render();
+    // if (!this.element) this.controls?.render();
     this.element = stepper;
     this.element.addEventListener("click", this.handleClick);
   }

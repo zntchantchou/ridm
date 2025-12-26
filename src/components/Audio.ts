@@ -4,32 +4,32 @@ const samplesDirPath = "../../samples/defaults/";
 
 class Audio {
   ctx: AudioContext | null = null; // initiate at null?
-  defaultSamples: {
-    name: string;
-    path: string;
-    sample?: AudioBuffer;
-  }[] = [];
+  mainVolume: GainNode | null = null;
+  defaultSamples: DefaultSampleType[] = [];
 
   public async init(audioContext: AudioContext) {
     if (!audioContext)
       throw Error("Must initialize audioContext with shared audiocontext ");
     this.ctx = audioContext;
     await this.preLoadDefaultSamples();
+    this.mainVolume = new GainNode(this.ctx);
   }
 
   private async preLoadDefaultSamples() {
     const samples = [];
     for (const { name, path } of SAMPLES_DIRS) {
-      samples.push({ name, path, sample: await this.loadSample(path) });
+      samples.push({ name, path, src: await this.loadSample(path) });
     }
     this.defaultSamples = samples;
   }
 
   private async loadSample(path: string) {
+    if (!this.ctx)
+      throw Error("Must initialize audioContext with share audiocontext ");
     const fullPath = `${samplesDirPath}/${path}`;
     const fetched = await fetch(fullPath);
     const ab = await fetched.arrayBuffer();
-    return this.ctx?.decodeAudioData(ab);
+    return this.ctx.decodeAudioData(ab);
   }
 
   public playSample(buffer: AudioBuffer, time: number = 0) {
@@ -39,7 +39,7 @@ class Audio {
       buffer,
       playbackRate: 1,
     });
-    src.connect(this.ctx?.destination);
+    src.connect(this.mainVolume as GainNode).connect(this.ctx?.destination);
     src.start(time, 0, buffer.duration);
   }
 
@@ -47,9 +47,9 @@ class Audio {
     const samplePath = SAMPLES_DIRS.find((s) => s.name === name);
 
     if (samplePath) {
-      const sampleItems = this.defaultSamples.find((s) => s.name === name);
+      const sampleItem = this.defaultSamples.find((s) => s.name === name);
       // console.log("SAMPLE => \n", sampleItems);
-      if (sampleItems) this.playSample(sampleItems.sample as AudioBuffer, time);
+      if (sampleItem?.src) this.playSample(sampleItem.src, time);
     }
   }
 
@@ -72,6 +72,12 @@ class Audio {
     // else osc.frequency.value = 220.0;
     osc.start(time);
     osc.stop(time + 0.05);
+  }
+
+  public setVolume(value: number) {
+    console.log("[setVolume] value: ", value);
+    if (!this.mainVolume) throw "Missing GainNode! at setVolume";
+    this.mainVolume.gain.value = value;
   }
 }
 
@@ -116,3 +122,9 @@ export const SAMPLES_DIRS = [
     path: "rs.wav",
   },
 ];
+
+type DefaultSampleType = {
+  name: string;
+  path: string;
+  src: AudioBuffer;
+};

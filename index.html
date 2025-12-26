@@ -16,10 +16,26 @@
             <button id="play">PLAY</button>
           </div>
           <div class="control-group">
-            <span>Time per cycle (seconds) </span>
+            <span
+              >Time per cycle (seconds)
+              <div id="tpc"></div
+            ></span>
             <input step="0.1" id="tpc-range" type="range" min="1" max="16" />
           </div>
-          <div id="tpc"></div>
+          <div class="control-group">
+            <span
+              >Volume
+              <div id="volume"></div>
+            </span>
+            <input
+              step="0.01"
+              id="volume-range"
+              type="range"
+              min="0"
+              max="2"
+              value="1"
+            />
+          </div>
         </div>
         <div id="main">
           <div id="top-panel"></div>

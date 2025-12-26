@@ -6,15 +6,23 @@ const temporRangeElt = document.getElementById(
 const tpcRangeElt = document.getElementById("tpc-range") as HTMLInputElement;
 const tpcDislayElt = document.getElementById("tpc") as HTMLDivElement;
 const playPauseBtn = document.getElementById("play") as HTMLDivElement;
+const volumeRangeElt = document.getElementById(
+  "volume-range"
+) as HTMLInputElement;
+const volumeDisplayElt = document.getElementById("volume") as HTMLInputElement;
 
 class Controls {
   tempo = 40;
   tpc = 4; // 60 / TPS = tempo
+  volume = 1;
   isPlaying: boolean = false;
 
   init() {
     playPauseBtn?.addEventListener("click", this.togglePlay);
+    volumeRangeElt?.addEventListener("click", (e) => this.updateVolume(e));
     tpcRangeElt?.addEventListener("change", (e) => this.updateTpc(e));
+    volumeRangeElt.value = this.volume.toString();
+    volumeDisplayElt.textContent = this.volume.toString();
     tpcRangeElt.value = this.tpc.toString();
     tpcDislayElt.textContent = this.tpc.toString();
   }
@@ -28,6 +36,14 @@ class Controls {
 
   public getTempo(): number {
     return parseInt(temporRangeElt.value);
+  }
+
+  private updateVolume(e: Event) {
+    const updatedValue = (e?.target as HTMLInputElement).value;
+    this.volume = parseFloat(updatedValue);
+    console.log("[Controls] UPDATE Volume: ", this.volume);
+    if (volumeDisplayElt) volumeDisplayElt.textContent = updatedValue;
+    Audio.setVolume(this.volume);
   }
   // use anonymous function expression so "this" can be referenced in the eventListener
   public togglePlay = () => {

@@ -1,7 +1,7 @@
 import type { BeatMapType } from "../components/types";
 import StepQueue from "../components/StepQueue";
 import UI from "../components/Ui";
-import Pulses from "../components/integration/Pulses";
+import Pulses from "../components/Pulses";
 import Controls from "../components/Controls";
 // let lastStep = -1;
 class TimeWorker {

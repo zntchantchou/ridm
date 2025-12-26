@@ -8,9 +8,6 @@ export interface Step {
 */
 class StepQueue {
   steps: Step[] = [];
-  constructor() {
-    console.log("[STEPQUEUE] created");
-  }
 
   head() {
     return this.steps[0];

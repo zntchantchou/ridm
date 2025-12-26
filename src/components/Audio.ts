@@ -45,7 +45,7 @@ class Audio {
 
     if (samplePath) {
       const sampleItems = this.defaultSamples.find((s) => s.name === name);
-      console.log("SAMPLE => \n", sampleItems);
+      // console.log("SAMPLE => \n", sampleItems);
       if (sampleItems) this.playSample(sampleItems.sample as AudioBuffer, time);
     }
   }

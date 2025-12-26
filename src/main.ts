@@ -2,7 +2,7 @@ import Controls from "./components/Controls";
 import Timerworker from "./worker/Timerworker";
 import Sequencer from "./components/Sequencer";
 import Audio from "./components/Audio";
-import Pulses from "./components/integration/Pulses";
+import Pulses from "./components/Pulses";
 import UI from "./components/Ui";
 
 window.addEventListener("load", init);

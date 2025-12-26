@@ -1,5 +1,6 @@
 import { filter, interval, Subscription, throttle } from "rxjs";
-import type Pulse from "./integration/Pulse";
+import Pulse from "./Pulse";
+import Pulses from "./Pulses";
 import Audio from "./Audio";
 import StepperControls from "./StepperControls";
 import Controls from "./Controls";
@@ -14,8 +15,6 @@ export interface StepperOptions {
 }
 
 class Stepper {
-  // Total number of steps for the row
-  // If a bigger multiple of 16 is present , consider biggerStepper / stepper to be the filteringRatio
   id?: number;
   beats = 4;
   stepsPerBeat = 4;
@@ -27,11 +26,8 @@ class Stepper {
   selectedSteps: boolean[] = Array(this.beats * this.stepsPerBeat).fill(false);
   controls: StepperControls | null = null;
   justUpdated = false;
-  /** e.g. "hh" */
   sampleName: string;
 
-  // Stepper should monitor which beats are selected
-  // Each pulsation, a Pulse needs to quickly know if / which sounds to play for the current stepnumber
   constructor({ beats, stepsPerBeat, id, sampleName }: StepperOptions) {
     this.beats = beats;
     this.stepsPerBeat = stepsPerBeat;
@@ -47,7 +43,8 @@ class Stepper {
   }
 
   listenToPulse(pulse: Pulse) {
-    this.pulseSubscription?.unsubscribe(); // cancel any previous subscription
+    console.log("LISTENTOPULSE ", pulse);
+    this.pulseSubscription?.unsubscribe();
     this.pulseSubscription = pulse.currentStepSubject
       .pipe(
         filter(({ stepNumber, totalSteps }) =>
@@ -64,10 +61,6 @@ class Stepper {
         },
       });
   }
-  // private isJustResizedStep(stepNumber: number) {
-  //   const lastStepDiff = stepNumber - this.lastStep;
-  //   return lastStepDiff !== 1 && lastStepDiff !== this.steps;
-  // }
 
   private isSelectedStep({
     totalSteps,
@@ -79,7 +72,6 @@ class Stepper {
     if (totalSteps === this.steps) return !!this.selectedSteps[stepNumber];
     const parentChildRatio = totalSteps / this.steps;
     const actualStep = stepNumber / parentChildRatio;
-    // console.log("actualStep ", actualStep);
     return Number.isInteger(actualStep) && !!this.selectedSteps[actualStep];
   }
   stop() {
@@ -103,15 +95,36 @@ class Stepper {
   }
 
   updateBeats(beats: number) {
+    const oldSteps = this.steps;
     this.updateSelectedSteps(this.stepsPerBeat * beats);
     this.beats = beats;
+    Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
   }
 
+  updateSteps({
+    beats,
+    stepsPerBeat,
+  }: {
+    beats?: number;
+    stepsPerBeat?: number;
+  }) {
+    const oldSteps = this.steps;
+    if (stepsPerBeat) this.stepsPerBeat = stepsPerBeat;
+    if (beats) this.beats = beats;
+    this.updateSelectedSteps(this.beats * this.stepsPerBeat);
+    Pulses.update(this, oldSteps, this.steps);
+    this.updateUi();
+    console.log("PULSES POST UPDATE", Pulses);
+  }
+
   updateStepsPerBeat(spb: number) {
+    const oldSteps = this.steps;
     this.updateSelectedSteps(this.beats * spb);
     this.stepsPerBeat = spb;
+    Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
+    console.log("PULSES POST UPDATE", Pulses);
   }
 
   convertNumbersToSteps(targetSize: number, numbers: number[]) {

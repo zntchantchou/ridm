@@ -12,7 +12,7 @@
 
 import { filter, interval, Subscription, throttle } from "rxjs";
 import type Pulse from "../experimental/Pulse";
-import Pulses from "./Pulses";
+import Pulses from "../Pulses";
 // import Audio from "../Audio";
 // import StepperControls from "../StepperControls";
 // import Controls from "../Controls";

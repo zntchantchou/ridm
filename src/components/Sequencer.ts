@@ -1,15 +1,15 @@
-import Stepper, { type StepperOptions } from "./Stepper.integration";
-import Pulses from "./integration/Pulses";
+import Stepper, { type StepperOptions } from "./Stepper";
+import Pulses from "./Pulses";
 import Controls from "./Controls";
 import { SAMPLES_DIRS } from "./Audio";
 
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
 class Sequencer {
-  pulses: Pulses | null = null;
+  pulses: typeof Pulses | null = null;
   steppers: Stepper[] = [];
 
-  constructor(pulses: Pulses) {
+  constructor(pulses: typeof Pulses) {
     this.pulses = pulses;
   }
 
@@ -41,7 +41,7 @@ class Sequencer {
     if (!target.dataset.stepperId) return;
     const stepper = this.getStepper(parseInt(target.dataset.stepperId));
     if (!stepper) return;
-    this.pulses?.update(stepper, stepper.steps, value);
+    // this.pulses?.update(stepper, stepper.steps, value);
     // stepper.updateBeats(value);
     stepper.updateSteps({ beats: value });
   };
@@ -52,7 +52,7 @@ class Sequencer {
     if (!target.dataset.stepperId) return;
     const stepper = this.getStepper(parseInt(target.dataset.stepperId));
     if (!stepper) return;
-    this.pulses?.update(stepper, stepper.steps, value);
+    // this.pulses?.update(stepper, stepper.steps, value);
     // stepper?.updateStepsPerBeat(value);
     stepper.updateSteps({ stepsPerBeat: value });
   };

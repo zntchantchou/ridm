@@ -1,4 +1,4 @@
-import Pulse from "../integration/Pulse";
+import Pulse from "../Pulse";
 import type Stepper from "../Stepper";
 
 /**

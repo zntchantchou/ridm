@@ -1,98 +1,52 @@
+import { Subject } from "rxjs";
+import type Stepper from "./Stepper";
 import Controls from "./Controls";
 import StepQueue, { type Step } from "./StepQueue";
-import { BehaviorSubject } from "rxjs";
 
-type PulseOptions = { steps: number; isLead?: boolean };
-
-/** A pulse is created for each existing stepper size */
 class Pulse {
-  steps: number = 0;
-  /** What pulses depend on this pulse, should be empty if lead is false */
-  subs: Pulse[] = [];
-  /** How many steppers currently listen to this pulse */
-  count: number = 1;
-  /** Only leads have subs that listen to them */
-  lead: boolean = false;
+  readonly steps: number;
+
+  private steppers: Set<Stepper>;
+
+  private subs: Pulse[] | null;
+
+  /** Whether this pulse is a lead (actively ticking) or child (passive, listening) */
+  lead: boolean;
+
+  currentStepSubject: Subject<{
+    stepNumber: number;
+    totalSteps: number;
+    time: number;
+  }>;
   private nextNoteTime: number = 0;
   private currentStep: number = 0;
-  tps: number = 0;
-  /** Source of the currently active step for all steppers to use */
-  currentStepSubject = new BehaviorSubject({
-    time: this.nextNoteTime,
-    totalSteps: this.steps,
-    stepNumber: this.currentStep,
-  });
-
-  constructor({ steps, isLead }: PulseOptions) {
-    this.steps = steps;
-    this.tps = Controls.tpc / steps;
-    if (isLead) this.lead = isLead;
-    // console.log("PULSE ", this);
-  }
-
-  /** look to discover next steps to add within the buffer's window (nextNoteWindowMs) */
-  discover(audioContextTime: number, discoverWindow: number) {
-    // console.log("[Pulse] discover ", audioContextTime);
-    while (this.nextNoteTime < audioContextTime + discoverWindow) {
-      this.pulsate();
-      this.next();
+  constructor(steps: number, lead: boolean = true) {
+    if (steps < 1) {
+      throw new Error(`Pulse steps must be >= 1, got ${steps}`);
     }
+
+    this.steps = steps;
+    this.steppers = new Set<Stepper>();
+    this.subs = null;
+    this.lead = lead;
+    this.currentStepSubject = new Subject();
   }
 
-  /** Queue the next step for this pulse */
-  pulsate() {
-    console.log("[Pulse] pulsate");
-    // if (!Controls.isPlaying) {
-    //   console.log("[Pulse] pulsate aborted");
-    //   return;
-    // }
-    const nextStep = {
-      stepNumber: this.currentStep,
-      time: this.nextNoteTime,
-      totalSteps: this.steps,
-    };
-
-    StepQueue.push(nextStep); // Consumed by UI
-    console.log("NEXT STEP ", nextStep);
-    this.currentStepSubject.next(nextStep); // Consumed by steppers => audio
-  }
-
-  /** Delay the nextStepTime by timePerStep, updates the current step */
   next() {
     if (this.currentStep < this.steps - 1) {
       this.currentStep++;
     } else {
       this.currentStep = 0;
     }
-    this.nextNoteTime += this.getTps(); // Adjust to current TPC
+    this.nextNoteTime += this.getTps();
   }
 
-  /** adds one to the number of steppers currently listening */
-  increment() {
-    this.count++;
-  }
-  /** adds one to the number of steppers currently listening */
-  decrement() {
-    this.count--;
-  }
-
-  addSub(pulse: Pulse) {
-    this.subs.push(pulse);
-  }
-
-  promote() {
-    this.lead = true;
-  }
-
-  /** set lead to false */
-  demote() {
-    this.lead = false;
-    this.clearSubs();
-    this.currentStepSubject.complete();
-  }
-
-  clearSubs() {
-    this.subs = [];
+  /** look to discover next steps to add within the buffer's window (nextNoteWindowMs) */
+  discover(audioContextTime: number, discoverWindow: number) {
+    while (this.nextNoteTime < audioContextTime + discoverWindow) {
+      this.pulsate(this.currentStep, this.nextNoteTime);
+      this.next();
+    }
   }
 
   getTps() {
@@ -100,7 +54,7 @@ class Pulse {
   }
 
   get empty() {
-    return this.subs.length === 0;
+    return !this.subs || this.subs?.length === 0;
   }
 
   /** calculate sub pulse current step based on its parent */
@@ -117,6 +71,149 @@ class Pulse {
         ? this.steps - 1
         : Math.floor(parentStep.stepNumber / parentChildRatio) - 1;
     return prevStep;
+  }
+
+  addStepper(stepper: Stepper): void {
+    this.steppers.add(stepper);
+  }
+
+  removeStepper(stepper: Stepper): boolean {
+    this.steppers.delete(stepper);
+    return this.steppers.size === 0;
+  }
+
+  hasSteppers(): boolean {
+    return this.steppers.size > 0;
+  }
+
+  /**
+   * Gets the set of steppers listening to this pulse.
+   */
+  getSteppers(): Set<Stepper> {
+    return new Set(this.steppers);
+  }
+
+  /**
+   * Adds a child pulse to this pulse's subs array.
+   */
+  addSub(pulse: Pulse): void {
+    if (this.subs === null) {
+      this.subs = [];
+    }
+
+    if (!this.subs.includes(pulse)) {
+      this.subs.push(pulse);
+    }
+  }
+
+  /** Removes a child pulse from this pulse's subs array. */
+  removeSub(pulse: Pulse): void {
+    if (this.subs === null) return;
+
+    const index = this.subs.indexOf(pulse);
+    if (index !== -1) {
+      this.subs.splice(index, 1);
+    }
+  }
+
+  clearSubs(): void {
+    this.subs = null;
+  }
+
+  /**
+   * return array of children pulses.
+   */
+  getSubs(): Pulse[] | null {
+    return this.subs === null ? null : [...this.subs];
+  }
+
+  hasSubs(): boolean {
+    return this.subs !== null && this.subs.length > 0;
+  }
+
+  /**
+   * Gets the count of steppers listening to this pulse.
+   */
+  get count(): number {
+    return this.steppers.size;
+  }
+
+  /**
+   * Gets all steppers from child pulses (one level deep).
+   * Does NOT include steppers from this pulse itself.
+   */
+  getChildrenSteppers(): Stepper[] {
+    if (!this.hasSubs()) return [];
+
+    const childSteppers: Stepper[] = [];
+    for (const childPulse of this.subs!) {
+      childSteppers.push(...childPulse.steppers);
+    }
+    return childSteppers;
+  }
+
+  /**
+   * Gets all steppers from this pulse AND all descendant pulses (recursive).
+   */
+  getAllSteppers(): Stepper[] {
+    const allSteppers: Stepper[] = [...this.steppers];
+
+    if (this.hasSubs()) {
+      for (const childPulse of this.subs!) {
+        allSteppers.push(...childPulse.getAllSteppers());
+      }
+    }
+
+    return allSteppers;
+  }
+
+  /**
+   * Checks if this pulse can be a parent of a pulse with the given steps.
+   */
+  isParentOf(steps: number): boolean {
+    return this.steps % steps === 0;
+  }
+
+  /**
+   * Checks if this pulse can be a child of a pulse with the given steps.
+   */
+  isChildOf(steps: number): boolean {
+    return steps % this.steps === 0;
+  }
+
+  /**
+   * Notifies all steppers listening to this pulse of the current step.
+   */
+  pulsate(stepNumber: number, time: number): void {
+    const nextStep = {
+      stepNumber,
+      totalSteps: this.steps,
+      time,
+    };
+    StepQueue.push(nextStep); // Cons
+    this.currentStepSubject.next(nextStep);
+  }
+
+  /**
+   * Returns a string representation of this pulse for debugging.
+   */
+  toString(): string {
+    const leadStr = this.lead ? "LEAD" : "child";
+    const subsStr =
+      this.subs === null
+        ? "null"
+        : `[${this.subs.map((s) => s.steps).join(", ")}]`;
+    return `Pulse(${this.steps}, ${leadStr}, steppers=${this.count}, subs=${subsStr})`;
+  }
+
+  /**
+   * Cleanup method to unsubscribe all observables.
+   * Should be called before deleting a pulse.
+   */
+  destroy(): void {
+    this.currentStepSubject.complete();
+    this.steppers.clear();
+    this.subs = null;
   }
 }
 

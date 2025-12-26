@@ -1,4 +1,4 @@
-import Pulses from "./integration/Pulses";
+import Pulses from "./Pulses";
 // import Sequencer from "./Sequencer";
 import StepQueue, { type Step } from "./StepQueue";
 
@@ -14,21 +14,17 @@ class UI {
   }
   /** start the animation */
   start() {
-    // console.log("[UI start]");
     this.isPlaying = true;
     this.animationId = requestAnimationFrame(this.draw);
   }
 
   /** pause the animation */
   pause() {
-    // console.log("[UI pause]");
     this.isPlaying = false;
-    // cancel animation frame
   }
 
   /** stop the animation */
   stop() {
-    // console.log("[UI stop]");
     this.isPlaying = false;
     if (this.animationId) cancelAnimationFrame(this.animationId);
   }
@@ -43,7 +39,6 @@ class UI {
   };
 
   private selectSteps(stepNumber: number, steps: number) {
-    // console.log("SELECT STEP : ", stepNumber, steps);
     return Array.from(
       document.querySelectorAll(
         `[data-steps="${steps}"][data-step="${stepNumber}"]`
@@ -52,7 +47,6 @@ class UI {
   }
 
   private updateUI(step: Step) {
-    // console.log("UPDATE UI");
     let currentStepElts: HTMLDivElement[] = [];
     let lastStepElements: HTMLDivElement[] = [];
     if (!this.pulses?.getLeadPulses().length) {

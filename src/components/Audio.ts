@@ -1,4 +1,5 @@
 import Controls from "./Controls";
+import type { SoundSettings } from "./Stepper";
 
 const samplesDirPath = "../../samples/defaults/";
 
@@ -32,24 +33,47 @@ class Audio {
     return this.ctx.decodeAudioData(ab);
   }
 
-  public playSample(buffer: AudioBuffer, time: number = 0) {
+  // get the an array of AudioNode[] from the stepper that plays the sound.
+  // First connect the stepper's nodes
+  // then connect the global AudioNodes (mainVolume, destination...)
+  public playSample(
+    buffer: AudioBuffer,
+    time: number = 0,
+    settings: SoundSettings[]
+  ) {
     if (!this.ctx || !Controls.isPlaying)
       throw Error("Must initialize audioContext with share audiocontext ");
     const src = new AudioBufferSourceNode(this.ctx, {
       buffer,
       playbackRate: 1,
     });
-    src.connect(this.mainVolume as GainNode).connect(this.ctx?.destination);
+    const globalNodes: AudioNode[] = [
+      this.mainVolume as GainNode,
+      this.ctx?.destination, // destination node must be the last node in the graph
+    ];
+    const trackNodes = settings.map((s) => s.node);
+    const allNodes = [...trackNodes, ...globalNodes];
+    let prevNode;
+    for (const [index, node] of allNodes.entries()) {
+      if (!index) {
+        prevNode = src.connect(node) as AudioNode;
+      } else {
+        prevNode?.connect(node);
+      }
+    }
     src.start(time, 0, buffer.duration);
   }
 
-  async playDefaultSample(name: string, time: number) {
+  async playDefaultSample(
+    name: string,
+    time: number,
+    settings: SoundSettings[]
+  ) {
     const samplePath = SAMPLES_DIRS.find((s) => s.name === name);
 
     if (samplePath) {
       const sampleItem = this.defaultSamples.find((s) => s.name === name);
-      // console.log("SAMPLE => \n", sampleItems);
-      if (sampleItem?.src) this.playSample(sampleItem.src, time);
+      if (sampleItem?.src) this.playSample(sampleItem.src, time, settings);
     }
   }
 
@@ -78,6 +102,16 @@ class Audio {
     console.log("[setVolume] value: ", value);
     if (!this.mainVolume) throw "Missing GainNode! at setVolume";
     this.mainVolume.gain.value = value;
+  }
+
+  public defaultSoundSettings(): SoundSettings[] {
+    console.log("THIS.CTX ", this.ctx);
+    return [
+      {
+        name: "volume",
+        node: new GainNode(this.ctx as AudioContext),
+      },
+    ];
   }
 }
 

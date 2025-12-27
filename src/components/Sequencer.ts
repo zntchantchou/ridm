@@ -1,6 +1,6 @@
 import Stepper, { type StepperColorType, type StepperOptions } from "./Stepper";
 import Pulses from "./Pulses";
-import { SAMPLES_DIRS } from "./Audio";
+import Audio, { SAMPLES_DIRS } from "./Audio";
 import StepperControls from "./StepperControls";
 import SoundPanel from "./SoundPanel";
 
@@ -47,6 +47,7 @@ class Sequencer {
       id: this.steppers.length,
       controls: stepperControls,
       color: options.color,
+      soundSettings: Audio.defaultSoundSettings(),
     });
 
     this.steppers.push(stepper);

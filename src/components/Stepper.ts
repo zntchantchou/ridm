@@ -15,7 +15,14 @@ export interface StepperOptions {
   sampleName: string;
   color: StepperColorType;
   controls: StepperControls;
+  soundSettings: SoundSettings[];
 }
+
+export type SoundSettings = {
+  name: string;
+  node: AudioNode;
+  options?: { [index: string]: string };
+};
 
 class Stepper {
   id?: number;
@@ -31,6 +38,7 @@ class Stepper {
   justUpdated = false;
   sampleName: string;
   color: StepperColorType | null = null;
+  soundSettings: SoundSettings[] = [];
 
   constructor({
     beats,
@@ -39,6 +47,7 @@ class Stepper {
     sampleName,
     controls,
     color,
+    soundSettings,
   }: StepperOptions) {
     this.beats = beats;
     this.stepsPerBeat = stepsPerBeat;
@@ -46,6 +55,7 @@ class Stepper {
     this.sampleName = sampleName;
     this.controls = controls;
     this.color = color;
+    this.soundSettings = soundSettings;
     this.render();
   }
 
@@ -61,7 +71,7 @@ class Stepper {
       .pipe(throttle(() => interval(Controls.tpc / this.steps)))
       .subscribe({
         next: ({ time }) => {
-          Audio.playDefaultSample(this.sampleName, time);
+          Audio.playDefaultSample(this.sampleName, time, this.soundSettings);
         },
         complete: () => {
           console.log("[STEPPER] PULSE HAS COMPLETED");

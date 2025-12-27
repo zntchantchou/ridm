@@ -38,12 +38,13 @@ class SoundPanel {
     const volumeRange = document.createElement("input");
     volumeRange.type = "range";
     volumeRange.min = "0";
+    volumeRange.value = "1";
     volumeRange.max = "2";
-    volumeRange.step = "0.01";
+    volumeRange.step = "0.1";
     nameValueSpan.id = "sample-name";
     // nameTitleSpan.textContent = "sample: ";
     volumeTitle.textContent = "volume";
-    volumeRange.id = "volume-range";
+    volumeRange.id = "stepper-volume-range";
     volumeGroup.appendChild(volumeTitle);
     volumeGroup.appendChild(volumeRange);
     // nameTitleSpan.textContent = "sample: ";
@@ -59,7 +60,23 @@ class SoundPanel {
       if (stepperCtrl)
         stepperCtrl.addEventListener("click", this.handleStepperSelection);
     }
+    const volumeRangeElt = document.getElementById("stepper-volume-range");
+    console.log("VOLUME RANGE", volumeRangeElt);
+    volumeRangeElt?.addEventListener("change", this.handleVolumeChange);
   }
+
+  private handleVolumeChange = (e: Event) => {
+    console.log("handleVolumeChange");
+    const target = e.target as HTMLInputElement;
+    const stepper = this.getSelectedStepper();
+    const volumeSetting = stepper?.soundSettings.find(
+      (s) => s.name === "volume"
+    );
+    const volumeNode = volumeSetting?.node as GainNode;
+    volumeNode.gain.value = parseFloat(target.value);
+    console.log("UPDATE VOLUME VALUE ", volumeNode);
+    console.log("UPDATE VOLUME Stepper ", stepper);
+  };
 
   private getSelectedStepper() {
     const selected = this.steppers.find(

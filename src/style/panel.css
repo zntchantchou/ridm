@@ -1,0 +1,20 @@
+#sample-details {
+  box-sizing: border-box;
+  padding: 0.6rem;
+  color: white;
+  background-color: rgb(24, 23, 23);
+  height: 100%;
+  width: 33%;
+  border-radius: 10px;
+}
+
+#sound-panel {
+  box-sizing: border-box;
+  padding: 0.3rem;
+  height: 100%;
+  width: 100%;
+}
+
+#sample-name {
+  font-size: 2rem;
+}

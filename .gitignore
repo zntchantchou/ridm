@@ -4,7 +4,10 @@ logs
 npm-debug.log*
 
 todos
-samples
+
+samples/AKAIMPC60
+samples/RolandTR909
+
 node_modules
 dist
 *.local

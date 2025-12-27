@@ -32,7 +32,7 @@ class SoundPanel {
     const stepper = this.getSelectedStepper() as Stepper;
     sampleNameElt!.textContent = stepper.sampleName;
     if (rootElt) {
-      rootElt.style.backgroundColor = stepper.color?.cssColor as string;
+      rootElt.style.background = `linear-gradient(0deg,rgba(0, 0, 0, 1) 0%, ${stepper.color?.cssColor} 100%)`;
     }
     const currentStepper = this.getSelectedStepper();
     const currentStepperControlsElt = currentStepper?.controls

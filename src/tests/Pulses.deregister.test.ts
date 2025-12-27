@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import Pulses from "./Pulses.ts";
-import Stepper from "./Stepper.ts";
-import Pulse from "./Pulse.ts";
+import Pulses from "../components/Pulses.ts";
+import Stepper from "../components/Stepper.ts";
+import Pulse from "../components/Pulse.ts";
 
 describe("Pulses.deregister() - Stepper updates", () => {
   let pulses: Pulses;

@@ -19,7 +19,11 @@ class Audio {
   private async preLoadDefaultSamples() {
     const samples = [];
     for (const { name, path } of SAMPLES_DIRS) {
-      samples.push({ name, path, src: await this.loadSample(path) });
+      samples.push({
+        name,
+        path,
+        src: (await this.loadSample(path)) as AudioBuffer,
+      });
     }
     this.defaultSamples = samples;
   }
@@ -27,10 +31,14 @@ class Audio {
   private async loadSample(path: string) {
     if (!this.ctx)
       throw Error("Must initialize audioContext with share audiocontext ");
-    const fullPath = `${samplesDirPath}/${path}`;
-    const fetched = await fetch(fullPath);
-    const ab = await fetched.arrayBuffer();
-    return this.ctx.decodeAudioData(ab);
+    try {
+      const fullPath = `${samplesDirPath}/${path}`;
+      const fetched = await fetch(fullPath);
+      const ab = await fetched.arrayBuffer();
+      return this.ctx.decodeAudioData(ab);
+    } catch (e) {
+      console.log("Error: ", e);
+    }
   }
 
   // get the an array of AudioNode[] from the stepper that plays the sound.
@@ -81,26 +89,26 @@ class Audio {
     }
   }
 
-  public playMetronome(beatNumber: number, time: number, steps: number = 0) {
-    // console.log("PLAY METRONOME ", beatNumber);
-    if (!this.ctx)
-      throw Error("Must initialize audioContext with share audiocontext ");
-    const osc = this.ctx?.createOscillator();
-    osc.connect(this.ctx?.destination);
+  // public playMetronome(beatNumber: number, time: number, steps: number = 0) {
+  //   // console.log("PLAY METRONOME ", beatNumber);
+  //   if (!this.ctx)
+  //     throw Error("Must initialize audioContext with share audiocontext ");
+  //   const osc = this.ctx?.createOscillator();
+  //   osc.connect(this.ctx?.destination);
 
-    // osc.frequency.value = 880.0;
-    // beat 0 == high pitch
-    // if (beatNumber % 16 === 0) osc.frequency.value = 880.0;
-    // quarter notes = medium pitch
-    // if (beatNumber % 32 === 0) osc.frequency.value = 220.0;
-    osc.frequency.value = 200 + 20 * steps;
+  //   // osc.frequency.value = 880.0;
+  //   // beat 0 == high pitch
+  //   // if (beatNumber % 16 === 0) osc.frequency.value = 880.0;
+  //   // quarter notes = medium pitch
+  //   // if (beatNumber % 32 === 0) osc.frequency.value = 220.0;
+  //   osc.frequency.value = 200 + 20 * steps;
 
-    // else if (beatNumber % 4 === 0) osc.frequency.value = 440.0;
-    // other 16th notes = low pitch
-    // else osc.frequency.value = 220.0;
-    osc.start(time);
-    osc.stop(time + 0.05);
-  }
+  //   // else if (beatNumber % 4 === 0) osc.frequency.value = 440.0;
+  //   // other 16th notes = low pitch
+  //   // else osc.frequency.value = 220.0;
+  //   osc.start(time);
+  //   osc.stop(time + 0.05);
+  // }
 
   public setVolume(value: number) {
     console.log("[setVolume] value: ", value);

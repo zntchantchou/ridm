@@ -6,6 +6,7 @@ const temporRangeElt = document.getElementById(
 const tpcRangeElt = document.getElementById("tpc-range") as HTMLInputElement;
 const tpcDislayElt = document.getElementById("tpc") as HTMLDivElement;
 const playPauseBtn = document.getElementById("play") as HTMLDivElement;
+const playPauseImg = document.getElementById("play-img") as HTMLImageElement;
 const volumeRangeElt = document.getElementById(
   "volume-range"
 ) as HTMLInputElement;
@@ -26,6 +27,7 @@ class Controls {
     volumeDisplayElt.textContent = this.volume.toString();
     tpcRangeElt.value = this.tpc.toString();
     tpcDislayElt.textContent = this.tpc.toString();
+    playPauseImg.src = "/play-round.svg";
   }
 
   private updateTpc(e: Event) {
@@ -51,8 +53,10 @@ class Controls {
     if (!this.isPlaying) {
       this.isPlaying = true;
       Audio.ctx?.resume(); // this resumes the current time
+      playPauseImg.src = "/pause-round.svg";
       return;
     }
+    playPauseImg.src = "/play-round.svg";
     this.isPlaying = false;
     Audio.ctx?.suspend(); // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
     // console.log("[TOGGLE PLAY]SET IS PLAYING TO FALSE", this.isPlaying);

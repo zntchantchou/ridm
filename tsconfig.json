@@ -5,6 +5,7 @@
     "module": "ESNext",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["vite/client"],
+ 
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -23,5 +24,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src"],
+     "exclude": [
+    "**/tests",
+    "**/*.test.ts",
+  ],
 }

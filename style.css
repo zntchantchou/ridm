@@ -46,10 +46,14 @@ body {
 
 .control-group {
   display: flex;
-  flex-direction: column;
   height: 5rem;
-  justify-content: space-between;
+  width: fit-content;
+  align-items: center;
   margin-right: 4rem;
+}
+
+.control-group input {
+  margin: 0 2rem;
 }
 
 #tempo {

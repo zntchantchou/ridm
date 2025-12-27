@@ -167,6 +167,10 @@ class Stepper {
     }
   }
 
+  public getAudioSetting(name: string) {
+    return this.soundSettings.find((setting) => setting.name === name);
+  }
+
   private render() {
     this.createStepElements();
     const stepper = document.createElement("div");

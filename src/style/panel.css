@@ -1,13 +1,3 @@
-.sample-details {
-  box-sizing: border-box;
-  padding: 0.6rem;
-  color: white;
-  background-color: rgb(24, 23, 23);
-  height: 100%;
-  min-width: 30rem;
-  border-radius: 10px;
-}
-
 #sound-panel {
   box-sizing: border-box;
   padding: 0.3rem;
@@ -17,4 +7,25 @@
 
 #sample-name {
   font-size: 2rem;
+}
+
+.sample-details {
+  box-sizing: border-box;
+  padding: 0.6rem;
+  color: white;
+  background-color: rgb(24, 23, 23);
+  height: 100%;
+  min-width: 25rem;
+  width: 40%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.effect-group {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
 }

@@ -1,5 +1,5 @@
 import Controls from "./Controls";
-import type { SoundSettings } from "./Stepper";
+import type { SoundSettings } from "./types";
 
 const samplesDirPath = "../../samples/defaults/";
 
@@ -109,11 +109,18 @@ class Audio {
   }
 
   public defaultSoundSettings(): SoundSettings[] {
-    console.log("THIS.CTX ", this.ctx);
+    // console.log("THIS.CTX ", this.ctx);
     return [
       {
         name: "volume",
-        node: new GainNode(this.ctx as AudioContext),
+        node: this.ctx?.createGain() as AudioNode,
+      },
+      {
+        name: "panning",
+        node: this.ctx?.createStereoPanner() as AudioNode,
+        // min
+        // max
+        // inputType
       },
     ];
   }

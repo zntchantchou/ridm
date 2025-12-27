@@ -53,15 +53,19 @@ class Audio {
     ];
     const trackNodes = settings.map((s) => s.node);
     const allNodes = [...trackNodes, ...globalNodes];
-    let prevNode;
-    for (const [index, node] of allNodes.entries()) {
-      if (!index) {
-        prevNode = src.connect(node) as AudioNode;
-      } else {
-        prevNode?.connect(node);
-      }
-    }
+    this.connectGraphToSource(src, allNodes);
     src.start(time, 0, buffer.duration);
+  }
+
+  private connectGraphToSource(src: AudioBufferSourceNode, nodes: AudioNode[]) {
+    let prevNode;
+    for (const [index, node] of nodes.entries()) {
+      if (!index || !prevNode) {
+        prevNode = src.connect(node) as AudioNode;
+        continue;
+      }
+      prevNode = prevNode?.connect(node);
+    }
   }
 
   async playDefaultSample(

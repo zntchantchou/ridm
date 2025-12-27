@@ -2,9 +2,9 @@ import { filter, interval, Subscription, throttle } from "rxjs";
 import Pulse from "./Pulse";
 import Pulses from "./Pulses";
 import Audio from "./Audio";
-// import StepperControls from "./StepperControls";
 import Controls from "./Controls";
 import type StepperControls from "./StepperControls";
+import type { SoundSettings } from "./types";
 
 const steppersDiv = document.getElementById("steppers");
 export type StepperColorType = { name: string; cssColor: string };
@@ -17,12 +17,6 @@ export interface StepperOptions {
   controls: StepperControls;
   soundSettings: SoundSettings[];
 }
-
-export type SoundSettings = {
-  name: string;
-  node: AudioNode;
-  options?: { [index: string]: string };
-};
 
 class Stepper {
   id?: number;

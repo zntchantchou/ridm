@@ -29,16 +29,20 @@ class SoundPanel {
 
   private initialize() {
     const sampleDetailsSection = document.createElement("div");
-    sampleDetailsSection.id = "sample-details";
+    // sampleDetailsSection.id = "sample-details";
+    sampleDetailsSection.classList.add("sample-details");
     const nameGroup = document.createElement("div");
     // const nameTitleSpan = document.createElement("span");
     const nameValueSpan = document.createElement("span");
     const volumeGroup = document.createElement("div");
     const volumeTitle = document.createElement("span");
     const volumeRange = document.createElement("input");
+    const volumeValue = document.createElement("span");
+    volumeValue.id = "volume-value";
     volumeRange.type = "range";
     volumeRange.min = "0";
     volumeRange.value = "1";
+    volumeValue.textContent = "1";
     volumeRange.max = "2";
     volumeRange.step = "0.1";
     nameValueSpan.id = "sample-name";
@@ -47,6 +51,7 @@ class SoundPanel {
     volumeRange.id = "stepper-volume-range";
     volumeGroup.appendChild(volumeTitle);
     volumeGroup.appendChild(volumeRange);
+    volumeGroup.appendChild(volumeValue);
     // nameTitleSpan.textContent = "sample: ";
     // nameGroup.appendChild(nameTitleSpan);
     nameGroup.appendChild(nameValueSpan);
@@ -74,6 +79,8 @@ class SoundPanel {
     );
     const volumeNode = volumeSetting?.node as GainNode;
     volumeNode.gain.value = parseFloat(target.value);
+    const volumeValue = document.getElementById("volume-value");
+    volumeValue!.textContent = target.value;
     console.log("UPDATE VOLUME VALUE ", volumeNode);
     console.log("UPDATE VOLUME Stepper ", stepper);
   };

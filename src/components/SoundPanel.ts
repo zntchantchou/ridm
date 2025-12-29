@@ -67,6 +67,11 @@ class SoundPanel {
     const panningRange = document.createElement("input");
     const panningValue = document.createElement("span");
 
+    const delayGroup = document.createElement("div");
+    const delayTitle = document.createElement("span");
+    const delayRange = document.createElement("input");
+    const delayValue = document.createElement("span");
+
     volumeValue.id = "volume-value";
     volumeRange.type = "range";
     volumeRange.min = "0";
@@ -88,19 +93,38 @@ class SoundPanel {
     panningValue.textContent = panningRange.value;
     panningValue.id = "panning-value";
 
+    delayTitle.textContent = "delay";
+    delayRange.type = "range";
+    delayRange.value = "0";
+    delayRange.min = "0";
+    delayRange.max = "1";
+    delayRange.step = "0.01";
+    delayRange.id = "delay-range";
+    delayValue.textContent = delayRange.value;
+    delayValue.id = "delay-value";
+
+    delayGroup.classList.add("effect-group");
     volumeGroup.classList.add("effect-group");
     panningGroup.classList.add("effect-group");
+
+    delayGroup.appendChild(delayTitle);
+    delayGroup.appendChild(delayRange);
+    delayGroup.appendChild(delayValue);
 
     volumeGroup.appendChild(volumeTitle);
     volumeGroup.appendChild(volumeRange);
     volumeGroup.appendChild(volumeValue);
+
     panningGroup.appendChild(panningTitle);
     panningGroup.appendChild(panningRange);
     panningGroup.appendChild(panningValue);
+
     nameGroup.appendChild(nameValueSpan);
+
     sampleDetailsSection.appendChild(nameGroup);
     sampleDetailsSection.appendChild(volumeGroup);
     sampleDetailsSection.appendChild(panningGroup);
+    sampleDetailsSection.appendChild(delayGroup);
     this.element?.appendChild(sampleDetailsSection);
   }
 
@@ -116,6 +140,11 @@ class SoundPanel {
       "panning-range"
     ) as HTMLInputElement;
     pannerRangeElt?.addEventListener("change", this.handlePanningChange);
+
+    const delayRangeElt = document.getElementById(
+      "delay-range"
+    ) as HTMLInputElement;
+    delayRangeElt?.addEventListener("change", this.handleDelayChange);
   }
 
   private handleVolumeChange = (e: Event) => {
@@ -140,6 +169,17 @@ class SoundPanel {
     const panningValueElt = document.getElementById("panning-value");
     panningValueElt!.textContent = target.value;
     console.log("PANNING CHANGE ", pannerNode.pan.value);
+  };
+
+  private handleDelayChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const stepper = this.getSelectedStepper();
+    const setting = stepper?.soundSettings.find((s) => s.name === "delay");
+    const delayNode = setting?.node as DelayNode;
+    delayNode.delayTime.value = parseFloat(target.value);
+    const panningValueElt = document.getElementById("delay-value");
+    panningValueElt!.textContent = target.value;
+    console.log("Delay CHANGE ", delayNode);
   };
 
   private getSelectedStepper() {

@@ -66,12 +66,15 @@ class Audio {
   }
 
   private connectGraphToSource(src: AudioBufferSourceNode, nodes: AudioNode[]) {
+    console.log("connectGraphToSource.. ");
     let prevNode;
     for (const [index, node] of nodes.entries()) {
       if (!index || !prevNode) {
         prevNode = src.connect(node) as AudioNode;
+        console.log("CONNECTING FIRST.. ", node);
         continue;
       }
+      console.log("CONNECTING.. ", node);
       prevNode = prevNode?.connect(node);
     }
   }
@@ -118,7 +121,14 @@ class Audio {
 
   public defaultSoundSettings(): SoundSettings[] {
     // console.log("THIS.CTX ", this.ctx);
+    // min
+    // max
+    // inputType
     return [
+      {
+        name: "delay",
+        node: this.ctx?.createDelay() as AudioNode, // number is maxDelayTime
+      },
       {
         name: "volume",
         node: this.ctx?.createGain() as AudioNode,
@@ -126,10 +136,12 @@ class Audio {
       {
         name: "panning",
         node: this.ctx?.createStereoPanner() as AudioNode,
-        // min
-        // max
-        // inputType
       },
+      // {
+      //   name: "delay",
+      //   node: this.ctx?.createDelay() as AudioNode,
+
+      // },
     ];
   }
 }

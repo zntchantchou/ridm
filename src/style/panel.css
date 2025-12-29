@@ -13,21 +13,22 @@
 
 .sample-details {
   box-sizing: border-box;
+  width: 100%;
   padding: 0.6rem;
   color: white;
   background-color: rgb(24, 23, 23);
   height: 100%;
   min-width: 25rem;
-  width: 40%;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
 }
 
 .effect-group {
   width: 90%;
+  max-width: 16rem;
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
 }

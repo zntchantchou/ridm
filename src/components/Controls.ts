@@ -20,7 +20,10 @@ class Controls {
   selectedStepper: number = 0;
 
   init() {
-    playPauseBtn?.addEventListener("click", this.togglePlay);
+    playPauseBtn?.addEventListener(
+      "click",
+      async () => await this.togglePlay()
+    );
     volumeRangeElt?.addEventListener("click", (e) => this.updateVolume(e));
     tpcRangeElt?.addEventListener("change", (e) => this.updateTpc(e));
     volumeRangeElt.value = this.volume.toString();
@@ -49,24 +52,21 @@ class Controls {
     Audio.setVolume(this.volume);
   }
   // use anonymous function expression so "this" can be referenced in the eventListener
-  public togglePlay = () => {
+  public togglePlay = async () => {
     if (!this.isPlaying) {
       this.isPlaying = true;
-      // Audio.ctx?.resume(); // this resumes the current time
+
       playPauseImg.src = "/pause-round.svg";
+      if (Audio.ctx?.state !== "running") return Audio.ctx?.resume();
       return;
     }
     playPauseImg.src = "/play-round.svg";
     this.isPlaying = false;
-
-    // Audio.ctx?.suspend(); // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
-    // console.log("[TOGGLE PLAY]SET IS PLAYING TO FALSE", this.isPlaying);
+    // We have to use rawContext because we are relying on our own note scheduling implementation (based on AudioContext.currentTime).
+    // Tone.Context does not allow an access to suspend, which is handled via the Transport component.
+    // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
+    return Audio.ctx?.rawContext?.suspend(Audio.ctx.now() as number);
   };
-  // Controls must return all step-control elements
-  // Sequencer will handle the update Events
-  // - To update the stepper and its properties
-  // - To rerender the given Stepper
-  // - To notify pulses of the new stepper
 }
 
 export default new Controls();

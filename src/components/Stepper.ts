@@ -65,7 +65,11 @@ class Stepper {
       .pipe(throttle(() => interval(Controls.tpc / this.steps)))
       .subscribe({
         next: ({ time }) => {
+          const currentTime = Audio.currentTime;
+          // Cannot just suspend time because we are using Tone.Context but not Tone.Transport
+          // if (currentTime && time >= currentTime) {
           Audio.playDefaultSample(this.sampleName, time, this.soundSettings);
+          // }
         },
         complete: () => {
           console.log("[STEPPER] PULSE HAS COMPLETED");

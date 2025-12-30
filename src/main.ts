@@ -9,9 +9,12 @@ import * as Tone from "tone";
 window.addEventListener("load", init);
 const playBtn = document.getElementById("play");
 // const ac = new AudioContext();
-const ac = new Tone.Context();
-const ui = new UI(ac, Pulses);
-const timeWorker = new Timerworker({ pulses: Pulses, audioContext: ac });
+const toneContext = new Tone.Context();
+const ui = new UI(toneContext, Pulses);
+const timeWorker = new Timerworker({
+  pulses: Pulses,
+  audioContext: toneContext,
+});
 let initialized = false;
 
 function init() {
@@ -25,9 +28,9 @@ playBtn?.addEventListener("click", async () => await handleStart());
 
 async function handleStart() {
   if (!initialized) {
-    await Audio.init(ac);
+    await Audio.init(toneContext);
     timeWorker.start(ui);
     initialized = true;
   }
-  if (!Controls.isPlaying) ac.resume();
+  if (!Controls.isPlaying) toneContext.resume();
 }

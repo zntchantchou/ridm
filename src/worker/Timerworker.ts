@@ -61,6 +61,7 @@ class TimeWorker {
     // Each Pulse still needs to know if it must play a stepper's sound at each step
     for (const pulse of this.pulses.getLeadPulses()) {
       console.log("[DISCOVERING]");
+      // WHAT IF we used a transport here to be able to stop it
       pulse.discover(this.audioContext?.currentTime, this.nextNoteWindowSec);
     }
   }

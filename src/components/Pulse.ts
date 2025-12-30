@@ -2,6 +2,7 @@ import { Subject } from "rxjs";
 import type Stepper from "./Stepper";
 import Controls from "./Controls";
 import StepQueue, { type Step } from "./StepQueue";
+import Audio from "./Audio";
 
 class Pulse {
   readonly steps: number;
@@ -190,6 +191,9 @@ class Pulse {
       totalSteps: this.steps,
       time,
     };
+    // if (typeof Audio.currentTime === "number" && time < Audio.currentTime)
+    //   return;
+
     StepQueue.push(nextStep); // Cons
     this.currentStepSubject.next(nextStep);
   }

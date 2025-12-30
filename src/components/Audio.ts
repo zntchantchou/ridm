@@ -6,16 +6,16 @@ import type { ToneSoundSettings } from "./types";
 const samplesDirPath = "../../samples/defaults/";
 
 class Audio {
-  ctx: Tone.Context | null = null; // initiate at null?
+  ctx: Tone.Context | null = null;
   mainVolume: GainNode | null = null;
   defaultSamples: DefaultSampleType[] = [];
 
-  public async init(audioContext: Tone.Context) {
-    if (!audioContext)
+  public async init(toneContext: Tone.Context) {
+    if (!toneContext)
       throw Error("Must initialize audioContext with shared audiocontext ");
     console.log("INIT");
-    this.ctx = audioContext;
-    Tone.setContext(this.ctx);
+    this.ctx = toneContext;
+    Tone.setContext(toneContext);
     this.preLoadDefaultSamples();
     await Tone.start();
     // this.mainVolume = new GainNode(this.ctx);
@@ -42,6 +42,7 @@ class Audio {
       // connecting the audio graph at preload
       // if done at play time the volume will ramp up as audionodes are connected each time the sample plays...
       const effectChain = this.toneSoundSettings().map((s) => s.node);
+      // console.log("HELLO", Tone.getDestination());
       player.chain(...effectChain, Tone.getDestination());
       return player;
     } catch (e) {
@@ -86,7 +87,7 @@ class Audio {
       },
       {
         name: "pitch",
-        node: new Tone.PitchShift({ pitch: 4 }),
+        node: new Tone.PitchShift({ pitch: 1 }),
         // because effects affect sound even at 0 especially pitchShift
         // they should be in a disconnected state and be loaded only when actually used (value !== default value)
       },
@@ -95,6 +96,10 @@ class Audio {
         node: new Tone.Volume(-10),
       },
     ];
+  }
+
+  get currentTime() {
+    return this.ctx?.currentTime;
   }
 }
 

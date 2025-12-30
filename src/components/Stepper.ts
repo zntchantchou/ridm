@@ -4,7 +4,7 @@ import Pulses from "./Pulses";
 import Audio from "./Audio";
 import Controls from "./Controls";
 import type StepperControls from "./StepperControls";
-import type { SoundSettings } from "./types";
+import type { ToneSoundSettings } from "./types";
 
 const steppersDiv = document.getElementById("steppers");
 export type StepperColorType = { name: string; cssColor: string };
@@ -15,7 +15,7 @@ export interface StepperOptions {
   sampleName: string;
   color: StepperColorType;
   controls: StepperControls;
-  soundSettings: SoundSettings[];
+  soundSettings: ToneSoundSettings[];
 }
 
 class Stepper {
@@ -32,7 +32,7 @@ class Stepper {
   justUpdated = false;
   sampleName: string;
   color: StepperColorType | null = null;
-  soundSettings: SoundSettings[] = [];
+  soundSettings: ToneSoundSettings[] = [];
 
   constructor({
     beats,

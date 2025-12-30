@@ -47,7 +47,7 @@ class Sequencer {
       id: this.steppers.length,
       controls: stepperControls,
       color: options.color,
-      soundSettings: Audio.defaultSoundSettings(),
+      soundSettings: Audio.toneSoundSettings(),
     });
 
     this.steppers.push(stepper);

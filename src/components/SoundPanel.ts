@@ -1,5 +1,5 @@
 import type Stepper from "./Stepper";
-import type { SoundSettings } from "./types";
+import type { SoundSettings, ToneSoundSettings } from "./types";
 const rootElt = document.getElementById("top-panel");
 const stepperControlElements =
   document.getElementsByClassName("stepper-controls");
@@ -15,7 +15,7 @@ class SoundPanel {
     this.element.id = "sound-panel";
     rootElt!.appendChild(this.element);
     this.initialize();
-    this.initializeEvents();
+    // this.initializeEvents();
     this.render();
   }
 
@@ -41,16 +41,20 @@ class SoundPanel {
     currentStepperControlsElt.style.borderLeft = `solid .3rem ${
       currentStepper!.color?.cssColor
     }`;
-    const volume = currentStepper?.getAudioSetting("volume") as SoundSettings;
-    const panning = currentStepper?.getAudioSetting("panning") as SoundSettings;
-    const volumeAsGain = volume.node as GainNode;
-    const panningAsPanner = panning.node as StereoPannerNode;
-    const volumeAsString = volumeAsGain.gain.value.toFixed(2);
-    const panningAsString = panningAsPanner.pan.value.toFixed(2);
-    volumeValueElt!.textContent = volumeAsString;
-    panningValueElt!.textContent = panningAsString;
-    panningRangeElt.value = panningAsString;
-    volumeRangeElt.value = volumeAsString;
+    const volume = currentStepper?.getAudioSetting(
+      "volume"
+    ) as ToneSoundSettings;
+    const panning = currentStepper?.getAudioSetting(
+      "panning"
+    ) as ToneSoundSettings;
+    // const volumeAsGain = volume.node as GainNode;
+    // const panningAsPanner = panning.node as StereoPannerNode;
+    // const volumeAsString = volumeAsGain.gain.value.toFixed(2);
+    // const panningAsString = panningAsPanner.pan.value.toFixed(2);
+    // volumeValueElt!.textContent = volumeAsString;
+    // panningValueElt!.textContent = panningAsString;
+    // panningRangeElt.value = panningAsString;
+    // volumeRangeElt.value = volumeAsString;
   }
 
   private initialize() {
@@ -148,38 +152,38 @@ class SoundPanel {
   }
 
   private handleVolumeChange = (e: Event) => {
-    console.log("handleVolumeChange");
-    const target = e.target as HTMLInputElement;
-    const stepper = this.getSelectedStepper();
-    const volumeSetting = stepper?.soundSettings.find(
-      (s) => s.name === "volume"
-    );
-    const volumeNode = volumeSetting?.node as GainNode;
-    volumeNode.gain.value = parseFloat(target.value);
-    const volumeValue = document.getElementById("volume-value");
-    volumeValue!.textContent = target.value;
+    // console.log("handleVolumeChange");
+    // const target = e.target as HTMLInputElement;
+    // const stepper = this.getSelectedStepper();
+    // const volumeSetting = stepper?.soundSettings.find(
+    //   (s) => s.name === "volume"
+    // );
+    // const volumeNode = volumeSetting?.node as GainNode;
+    // volumeNode.gain.value = parseFloat(target.value);
+    // const volumeValue = document.getElementById("volume-value");
+    // volumeValue!.textContent = target.value;
   };
 
   private handlePanningChange = (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    const stepper = this.getSelectedStepper();
-    const setting = stepper?.soundSettings.find((s) => s.name === "panning");
-    const pannerNode = setting?.node as StereoPannerNode;
-    pannerNode.pan.value = parseFloat(target.value);
-    const panningValueElt = document.getElementById("panning-value");
-    panningValueElt!.textContent = target.value;
-    console.log("PANNING CHANGE ", pannerNode.pan.value);
+    // const target = e.target as HTMLInputElement;
+    // const stepper = this.getSelectedStepper();
+    // const setting = stepper?.soundSettings.find((s) => s.name === "panning");
+    // const pannerNode = setting?.node as StereoPannerNode;
+    // pannerNode.pan.value = parseFloat(target.value);
+    // const panningValueElt = document.getElementById("panning-value");
+    // panningValueElt!.textContent = target.value;
+    // console.log("PANNING CHANGE ", pannerNode.pan.value);
   };
 
   private handleDelayChange = (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    const stepper = this.getSelectedStepper();
-    const setting = stepper?.soundSettings.find((s) => s.name === "delay");
-    const delayNode = setting?.node as DelayNode;
-    delayNode.delayTime.value = parseFloat(target.value);
-    const panningValueElt = document.getElementById("delay-value");
-    panningValueElt!.textContent = target.value;
-    console.log("Delay CHANGE ", delayNode);
+    // const target = e.target as HTMLInputElement;
+    // const stepper = this.getSelectedStepper();
+    // const setting = stepper?.soundSettings.find((s) => s.name === "delay");
+    // const delayNode = setting?.node as DelayNode;
+    // delayNode.delayTime.value = parseFloat(target.value);
+    // const panningValueElt = document.getElementById("delay-value");
+    // panningValueElt!.textContent = target.value;
+    // console.log("Delay CHANGE ", delayNode);
   };
 
   private getSelectedStepper() {

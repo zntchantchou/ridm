@@ -1,14 +1,15 @@
 import Pulses from "./Pulses";
 // import Sequencer from "./Sequencer";
 import StepQueue, { type Step } from "./StepQueue";
+import * as Tone from "tone";
 
 class UI {
-  audioContext: null | AudioContext;
+  audioContext: null | Tone.Context;
   lastStep: Step | null = null;
   isPlaying = false;
   animationId: number | null = null;
   pulses: typeof Pulses | null = null;
-  constructor(AC: AudioContext, pulses: typeof Pulses) {
+  constructor(AC: Tone.Context, pulses: typeof Pulses) {
     this.audioContext = AC;
     this.pulses = pulses;
   }
@@ -69,7 +70,6 @@ class UI {
       });
     }
 
-    console.log("UPDATE UI");
     if (lastStepElements.length && currentStepElts) {
       currentStepElts.forEach((elt, i) => {
         elt.dataset.ticking = "on";

@@ -3,6 +3,7 @@ import StepQueue from "../components/StepQueue";
 import UI from "../components/Ui";
 import Pulses from "../components/Pulses";
 import Controls from "../components/Controls";
+import * as Tone from "tone";
 // let lastStep = -1;
 class TimeWorker {
   pingRatio = 10;
@@ -11,7 +12,7 @@ class TimeWorker {
   worker?: Worker;
   beatMap?: undefined | BeatMapType;
   stepQueue: typeof StepQueue = StepQueue;
-  audioContext: AudioContext | null = null;
+  audioContext: Tone.Context | null = null;
   isPlaying = false;
   animationFrameId?: number = undefined;
   pulses: typeof Pulses | null = null;
@@ -22,7 +23,7 @@ class TimeWorker {
     audioContext,
   }: {
     pulses: typeof Pulses;
-    audioContext: AudioContext;
+    audioContext: Tone.Context;
   }) {
     this.audioContext = audioContext;
     if (pulses) this.pulses = pulses;
@@ -35,6 +36,7 @@ class TimeWorker {
     console.log("[Start]");
     this.ui = ui;
     this.ui?.start();
+    Tone.start();
     this.isPlaying = true;
     this.worker = new Worker(new URL("./worker.ts", import.meta.url));
     this.worker.onmessage = (e) => this.handleMessage(e);

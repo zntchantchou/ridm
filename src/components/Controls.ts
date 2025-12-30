@@ -52,13 +52,14 @@ class Controls {
   public togglePlay = () => {
     if (!this.isPlaying) {
       this.isPlaying = true;
-      Audio.ctx?.resume(); // this resumes the current time
+      // Audio.ctx?.resume(); // this resumes the current time
       playPauseImg.src = "/pause-round.svg";
       return;
     }
     playPauseImg.src = "/play-round.svg";
     this.isPlaying = false;
-    Audio.ctx?.suspend(); // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
+
+    // Audio.ctx?.suspend(); // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
     // console.log("[TOGGLE PLAY]SET IS PLAYING TO FALSE", this.isPlaying);
   };
   // Controls must return all step-control elements

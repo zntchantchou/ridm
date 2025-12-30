@@ -1,88 +1,64 @@
+import * as Tone from "tone";
+// import { ToneAudioNode } from "tone";
 import Controls from "./Controls";
-import type { SoundSettings } from "./types";
+import type { ToneSoundSettings } from "./types";
 
 const samplesDirPath = "../../samples/defaults/";
 
 class Audio {
-  ctx: AudioContext | null = null; // initiate at null?
+  ctx: Tone.Context | null = null; // initiate at null?
   mainVolume: GainNode | null = null;
   defaultSamples: DefaultSampleType[] = [];
 
-  public async init(audioContext: AudioContext) {
+  public async init(audioContext: Tone.Context) {
     if (!audioContext)
       throw Error("Must initialize audioContext with shared audiocontext ");
+    console.log("INIT");
     this.ctx = audioContext;
-    await this.preLoadDefaultSamples();
-    this.mainVolume = new GainNode(this.ctx);
+    Tone.setContext(this.ctx);
+    this.preLoadDefaultSamples();
+    await Tone.start();
+    // this.mainVolume = new GainNode(this.ctx);
   }
 
-  private async preLoadDefaultSamples() {
+  private preLoadDefaultSamples() {
     const samples = [];
     for (const { name, path } of SAMPLES_DIRS) {
       samples.push({
         name,
         path,
-        src: (await this.loadSample(path)) as AudioBuffer,
+        src: this.loadSample(path),
       });
     }
     this.defaultSamples = samples;
   }
 
-  private async loadSample(path: string) {
+  private loadSample(path: string): Tone.Player | undefined {
     if (!this.ctx)
       throw Error("Must initialize audioContext with share audiocontext ");
     try {
       const fullPath = `${samplesDirPath}/${path}`;
-      const fetched = await fetch(fullPath);
-      const ab = await fetched.arrayBuffer();
-      return this.ctx.decodeAudioData(ab);
+      const player = new Tone.Player(fullPath);
+      // connecting the audio graph at preload
+      // if done at play time the volume will ramp up as audionodes are connected each time the sample plays...
+      const effectChain = this.toneSoundSettings().map((s) => s.node);
+      player.chain(...effectChain, Tone.getDestination());
+      return player;
     } catch (e) {
       console.log("Error: ", e);
     }
   }
 
-  // get the an array of AudioNode[] from the stepper that plays the sound.
-  // First connect the stepper's nodes
-  // then connect the global AudioNodes (mainVolume, destination...)
-  public playSample(
-    buffer: AudioBuffer,
-    time: number = 0,
-    settings: SoundSettings[]
-  ) {
+  public playSample(player: Tone.Player, time: number = 0) {
     if (!this.ctx || !Controls.isPlaying)
       throw Error("Must initialize audioContext with share audiocontext ");
-    const src = new AudioBufferSourceNode(this.ctx, {
-      buffer,
-      playbackRate: 1,
-    });
-    const globalNodes: AudioNode[] = [
-      this.mainVolume as GainNode,
-      this.ctx?.destination, // destination node must be the last node in the graph
-    ];
-    const trackNodes = settings.map((s) => s.node);
-    const allNodes = [...trackNodes, ...globalNodes];
-    this.connectGraphToSource(src, allNodes);
-    src.start(time, 0, buffer.duration);
-  }
-
-  private connectGraphToSource(src: AudioBufferSourceNode, nodes: AudioNode[]) {
-    console.log("connectGraphToSource.. ");
-    let prevNode;
-    for (const [index, node] of nodes.entries()) {
-      if (!index || !prevNode) {
-        prevNode = src.connect(node) as AudioNode;
-        console.log("CONNECTING FIRST.. ", node);
-        continue;
-      }
-      console.log("CONNECTING.. ", node);
-      prevNode = prevNode?.connect(node);
-    }
+    player.start(time, 0, player.buffer.duration);
   }
 
   async playDefaultSample(
     name: string,
     time: number,
-    settings: SoundSettings[]
+    settings: ToneSoundSettings[]
   ) {
     const samplePath = SAMPLES_DIRS.find((s) => s.name === name);
 
@@ -92,56 +68,32 @@ class Audio {
     }
   }
 
-  // public playMetronome(beatNumber: number, time: number, steps: number = 0) {
-  //   // console.log("PLAY METRONOME ", beatNumber);
-  //   if (!this.ctx)
-  //     throw Error("Must initialize audioContext with share audiocontext ");
-  //   const osc = this.ctx?.createOscillator();
-  //   osc.connect(this.ctx?.destination);
-
-  //   // osc.frequency.value = 880.0;
-  //   // beat 0 == high pitch
-  //   // if (beatNumber % 16 === 0) osc.frequency.value = 880.0;
-  //   // quarter notes = medium pitch
-  //   // if (beatNumber % 32 === 0) osc.frequency.value = 220.0;
-  //   osc.frequency.value = 200 + 20 * steps;
-
-  //   // else if (beatNumber % 4 === 0) osc.frequency.value = 440.0;
-  //   // other 16th notes = low pitch
-  //   // else osc.frequency.value = 220.0;
-  //   osc.start(time);
-  //   osc.stop(time + 0.05);
-  // }
-
   public setVolume(value: number) {
     console.log("[setVolume] value: ", value);
     if (!this.mainVolume) throw "Missing GainNode! at setVolume";
     this.mainVolume.gain.value = value;
   }
 
-  public defaultSoundSettings(): SoundSettings[] {
-    // console.log("THIS.CTX ", this.ctx);
-    // min
-    // max
-    // inputType
+  public toneSoundSettings(): ToneSoundSettings[] {
     return [
       {
         name: "delay",
-        node: this.ctx?.createDelay() as AudioNode, // number is maxDelayTime
+        node: new Tone.PingPongDelay({
+          delayTime: "0.3",
+          feedback: 0.1,
+          wet: 0.3,
+        }),
+      },
+      {
+        name: "pitch",
+        node: new Tone.PitchShift({ pitch: 4 }),
+        // because effects affect sound even at 0 especially pitchShift
+        // they should be in a disconnected state and be loaded only when actually used (value !== default value)
       },
       {
         name: "volume",
-        node: this.ctx?.createGain() as AudioNode,
+        node: new Tone.Volume(-10),
       },
-      {
-        name: "panning",
-        node: this.ctx?.createStereoPanner() as AudioNode,
-      },
-      // {
-      //   name: "delay",
-      //   node: this.ctx?.createDelay() as AudioNode,
-
-      // },
     ];
   }
 }
@@ -191,5 +143,5 @@ export const SAMPLES_DIRS = [
 type DefaultSampleType = {
   name: string;
   path: string;
-  src: AudioBuffer;
+  src?: Tone.Player;
 };

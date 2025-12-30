@@ -1,14 +1,11 @@
 import * as Tone from "tone";
-// import { ToneAudioNode } from "tone";
-import Controls from "./Controls";
-import type { ToneSoundSettings } from "./types";
-
-const samplesDirPath = "../../samples/defaults/";
+import type { ToneSoundSettings, TrackEffect } from "./types";
 
 class Audio {
   ctx: Tone.Context | null = null;
   mainVolume: GainNode | null = null;
   defaultSamples: DefaultSampleType[] = [];
+  soundSettings: ToneSoundSettings[] = [];
 
   public async init(toneContext: Tone.Context) {
     if (!toneContext)
@@ -16,57 +13,7 @@ class Audio {
     console.log("INIT");
     this.ctx = toneContext;
     Tone.setContext(toneContext);
-    this.preLoadDefaultSamples();
     await Tone.start();
-    // this.mainVolume = new GainNode(this.ctx);
-  }
-
-  private preLoadDefaultSamples() {
-    const samples = [];
-    for (const { name, path } of SAMPLES_DIRS) {
-      samples.push({
-        name,
-        path,
-        src: this.loadSample(path),
-      });
-    }
-    this.defaultSamples = samples;
-  }
-
-  private loadSample(path: string): Tone.Player | undefined {
-    if (!this.ctx)
-      throw Error("Must initialize audioContext with share audiocontext ");
-    try {
-      const fullPath = `${samplesDirPath}/${path}`;
-      const player = new Tone.Player(fullPath);
-      // connecting the audio graph at preload
-      // if done at play time the volume will ramp up as audionodes are connected each time the sample plays...
-      const effectChain = this.toneSoundSettings().map((s) => s.node);
-      // console.log("HELLO", Tone.getDestination());
-      player.chain(...effectChain, Tone.getDestination());
-      return player;
-    } catch (e) {
-      console.log("Error: ", e);
-    }
-  }
-
-  public playSample(player: Tone.Player, time: number = 0) {
-    if (!this.ctx || !Controls.isPlaying)
-      throw Error("Must initialize audioContext with share audiocontext ");
-    player.start(time, 0, player.buffer.duration);
-  }
-
-  async playDefaultSample(
-    name: string,
-    time: number,
-    settings: ToneSoundSettings[]
-  ) {
-    const samplePath = SAMPLES_DIRS.find((s) => s.name === name);
-
-    if (samplePath) {
-      const sampleItem = this.defaultSamples.find((s) => s.name === name);
-      if (sampleItem?.src) this.playSample(sampleItem.src, time, settings);
-    }
   }
 
   public setVolume(value: number) {
@@ -75,8 +22,14 @@ class Audio {
     this.mainVolume.gain.value = value;
   }
 
-  public toneSoundSettings(): ToneSoundSettings[] {
+  public get defaultEffects(): TrackEffect[] {
     return [
+      {
+        name: "pitch",
+        node: new Tone.PitchShift({ pitch: 0 }),
+        // because effects affect sound even at 0 especially pitchShift
+        // they should be in a disconnected state and be loaded only when actually used (value !== default value)
+      },
       {
         name: "delay",
         node: new Tone.PingPongDelay({
@@ -86,17 +39,32 @@ class Audio {
         }),
       },
       {
-        name: "pitch",
-        node: new Tone.PitchShift({ pitch: 1 }),
-        // because effects affect sound even at 0 especially pitchShift
-        // they should be in a disconnected state and be loaded only when actually used (value !== default value)
-      },
-      {
         name: "volume",
-        node: new Tone.Volume(-10),
+        node: new Tone.Volume(0),
       },
     ];
   }
+
+  // Each effect chain must be easily associated with its track
+  // We need to know WHICH TRACK to update the effect for
+  // We need type safety when updating the effect
+
+  // private updateSoundSetting(name: EffectNameType, value: number) {
+  //   // create an update function for each effect type
+
+  //   const setting = this.getSoundSetting(name);
+  //   const node = setting?.node as Tone.PitchShift;
+  //   console.log("UPdATE ", node.pitch);
+  //   node.set({ pitch: value });
+  //   const nodes = this.soundSettings.map((s) => s.node);
+
+  //   // update only one track here
+  //   this.defaultSamples.forEach((s) => {
+  //     console.log("UPdATE DISCONNECT ");
+  //     s.src?.disconnect();
+  //     s.src?.chain(...nodes, Tone.getDestination());
+  //   });
+  // }
 
   get currentTime() {
     return this.ctx?.currentTime;
@@ -114,7 +82,6 @@ export const SAMPLES_DIRS = [
     name: "sd",
     path: "sd.wav",
   },
-
   {
     name: "hh",
     path: "hh.wav",
@@ -149,4 +116,5 @@ type DefaultSampleType = {
   name: string;
   path: string;
   src?: Tone.Player;
+  effects?: Tone.ToneAudioNode[];
 };

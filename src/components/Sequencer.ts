@@ -1,8 +1,9 @@
 import Stepper, { type StepperColorType, type StepperOptions } from "./Stepper";
 import Pulses from "./Pulses";
-import Audio, { SAMPLES_DIRS } from "./Audio";
+import { SAMPLES_DIRS } from "./Audio";
 import StepperControls from "./StepperControls";
 import SoundPanel from "./SoundPanel";
+import Track from "./Track";
 
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
@@ -42,14 +43,27 @@ class Sequencer {
       stepsPerBeats: options.stepsPerBeat,
       name: options.sampleName,
     });
+
+    const stepperTrack = new Track({
+      name: options.sampleName,
+      stepperId: this.steppers.length.toString(),
+    });
+
     const stepper = new Stepper({
       ...options,
       id: this.steppers.length,
       controls: stepperControls,
       color: options.color,
-      soundSettings: Audio.toneSoundSettings(),
+      // soundSettings: Audio.toneSoundSettings(),
+      track: stepperTrack,
     });
 
+    stepperTrack
+      .init()
+      .then(() => console.log("INITIALIZED TRACK"))
+      .catch((e) => console.log("TRACK INIT ERROR ", e));
+
+    console.log("TRACK ", stepperTrack);
     this.steppers.push(stepper);
     this.pulses?.register(stepper);
     this.controls.push(stepperControls);

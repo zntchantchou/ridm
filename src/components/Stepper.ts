@@ -1,10 +1,9 @@
 import { filter, interval, Subscription, throttle } from "rxjs";
 import Pulse from "./Pulse";
 import Pulses from "./Pulses";
-import Audio from "./Audio";
 import Controls from "./Controls";
 import type StepperControls from "./StepperControls";
-import type { ToneSoundSettings } from "./types";
+import type Track from "./Track";
 
 const steppersDiv = document.getElementById("steppers");
 export type StepperColorType = { name: string; cssColor: string };
@@ -15,7 +14,7 @@ export interface StepperOptions {
   sampleName: string;
   color: StepperColorType;
   controls: StepperControls;
-  soundSettings: ToneSoundSettings[];
+  track: Track;
 }
 
 class Stepper {
@@ -32,7 +31,7 @@ class Stepper {
   justUpdated = false;
   sampleName: string;
   color: StepperColorType | null = null;
-  soundSettings: ToneSoundSettings[] = [];
+  track?: Track;
 
   constructor({
     beats,
@@ -41,7 +40,7 @@ class Stepper {
     sampleName,
     controls,
     color,
-    soundSettings,
+    track,
   }: StepperOptions) {
     this.beats = beats;
     this.stepsPerBeat = stepsPerBeat;
@@ -49,7 +48,7 @@ class Stepper {
     this.sampleName = sampleName;
     this.controls = controls;
     this.color = color;
-    this.soundSettings = soundSettings;
+    this.track = track;
     this.render();
   }
 
@@ -64,13 +63,7 @@ class Stepper {
       ) // Only trigger if note is selected
       .pipe(throttle(() => interval(Controls.tpc / this.steps)))
       .subscribe({
-        next: ({ time }) => {
-          const currentTime = Audio.currentTime;
-          // Cannot just suspend time because we are using Tone.Context but not Tone.Transport
-          // if (currentTime && time >= currentTime) {
-          Audio.playDefaultSample(this.sampleName, time, this.soundSettings);
-          // }
-        },
+        next: ({ time }) => this?.track?.playSample(time),
         complete: () => {
           console.log("[STEPPER] PULSE HAS COMPLETED");
         },
@@ -169,10 +162,6 @@ class Stepper {
     for (const item of this.stepElements) {
       this.element.appendChild(item);
     }
-  }
-
-  public getAudioSetting(name: string) {
-    return this.soundSettings.find((setting) => setting.name === name);
   }
 
   private render() {

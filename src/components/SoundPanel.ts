@@ -1,5 +1,4 @@
 import type Stepper from "./Stepper";
-import type { SoundSettings, ToneSoundSettings } from "./types";
 const rootElt = document.getElementById("top-panel");
 const stepperControlElements =
   document.getElementsByClassName("stepper-controls");
@@ -41,12 +40,12 @@ class SoundPanel {
     currentStepperControlsElt.style.borderLeft = `solid .3rem ${
       currentStepper!.color?.cssColor
     }`;
-    const volume = currentStepper?.getAudioSetting(
-      "volume"
-    ) as ToneSoundSettings;
-    const panning = currentStepper?.getAudioSetting(
-      "panning"
-    ) as ToneSoundSettings;
+    // const volume = currentStepper?.getAudioSetting(
+    //   "volume"
+    // ) as ToneSoundSettings;
+    // const panning = currentStepper?.getAudioSetting(
+    //   "panning"
+    // ) as ToneSoundSettings;
     // const volumeAsGain = volume.node as GainNode;
     // const panningAsPanner = panning.node as StereoPannerNode;
     // const volumeAsString = volumeAsGain.gain.value.toFixed(2);

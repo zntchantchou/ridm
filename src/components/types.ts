@@ -14,3 +14,11 @@ export type ToneSoundSettings = {
   node: ToneAudioNode;
   options?: { [index: string]: string };
 };
+
+export type TrackEffect = {
+  name: string;
+  node: ToneAudioNode;
+  options?: { [index: string]: string };
+};
+
+export type EffectNameType = "string" | "pitch" | "volume";

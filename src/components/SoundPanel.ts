@@ -1,4 +1,6 @@
+import type { Subject } from "rxjs";
 import type Stepper from "./Stepper";
+import type { EffectUpdate } from "./types";
 const rootElt = document.getElementById("top-panel");
 const stepperControlElements =
   document.getElementsByClassName("stepper-controls");
@@ -7,14 +9,21 @@ class SoundPanel {
   selectedStepper = "0";
   steppers: Stepper[] = [];
   element?: HTMLDivElement;
+  effectUpdateSubject: Subject<EffectUpdate>;
 
-  constructor({ steppers }: { steppers: Stepper[] }) {
+  constructor({
+    steppers,
+    effectUpdateSubject,
+  }: {
+    steppers: Stepper[];
+    effectUpdateSubject: Subject<EffectUpdate>;
+  }) {
     this.steppers = steppers;
+    this.effectUpdateSubject = effectUpdateSubject;
     this.element = document.createElement("div");
     this.element.id = "sound-panel";
     rootElt!.appendChild(this.element);
     this.initialize();
-    // this.initializeEvents();
     this.render();
   }
 
@@ -29,6 +38,7 @@ class SoundPanel {
       "volume-range"
     ) as HTMLInputElement;
     const stepper = this.getSelectedStepper() as Stepper;
+    // console.log("This ", this.getSelectedStepper());
     sampleNameElt!.textContent = stepper.sampleName;
     if (rootElt) {
       rootElt.style.background = `linear-gradient(0deg,rgba(0, 0, 0, 1) 0%, ${stepper.color?.cssColor} 100%)`;
@@ -186,10 +196,10 @@ class SoundPanel {
   };
 
   private getSelectedStepper() {
-    const selected = this.steppers.find(
-      (s) => s.id?.toString() === this.selectedStepper
-    );
-    // console.log("selected: ", selected);
+    const selected = this.steppers.find((s) => {
+      console.log("STEPPER ID: ", s.id, this.selectedStepper);
+      return s.id?.toString() === this.selectedStepper;
+    });
     return selected;
   }
 

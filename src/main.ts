@@ -17,10 +17,11 @@ const timeWorker = new Timerworker({
 });
 let initialized = false;
 
-function init() {
+async function init() {
   Controls.init();
+  await Audio.init(toneContext);
   const sequencer = new Sequencer(Pulses);
-  sequencer.initialize();
+  await sequencer.initialize();
 }
 
 // handle start / pause
@@ -28,7 +29,7 @@ playBtn?.addEventListener("click", async () => await handleStart());
 
 async function handleStart() {
   if (!initialized) {
-    await Audio.init(toneContext);
+    await Audio.start();
     timeWorker.start(ui);
     initialized = true;
   }

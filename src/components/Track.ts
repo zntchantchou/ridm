@@ -1,8 +1,8 @@
 import * as Tone from "tone";
 import Audio from "./Audio.ts";
-import type { Subscription } from "rxjs";
+import { filter, type Subject, type Subscription } from "rxjs";
 import Controls from "./Controls";
-import type { TrackEffect } from "./types.ts";
+import type { EffectNameType, EffectUpdate, TrackEffect } from "./types.ts";
 
 const samplesDirPath = "../../samples/defaults/";
 
@@ -12,6 +12,7 @@ export type TrackOptions = {
   source?: Tone.Player;
   effects?: TrackEffect[];
   samplePath?: string;
+  effectUpdateSubject: Subject<EffectUpdate>;
 };
 
 class Track {
@@ -22,16 +23,32 @@ class Track {
   effects?: TrackEffect[];
   effectUpdateSubscription?: Subscription;
   channel?: Tone.Channel; // handle volume, pan, mute, solo
+  effectUpdateSubject: Subject<EffectUpdate>;
+  updateMethodsMap: Map<EffectNameType, (update: EffectUpdate) => void> =
+    new Map();
 
-  constructor({ stepperId, name, samplePath }: TrackOptions) {
+  constructor({
+    stepperId,
+    name,
+    samplePath,
+    effectUpdateSubject,
+  }: TrackOptions) {
     this.name = name;
     this.stepperId = stepperId;
+    this.effectUpdateSubject = effectUpdateSubject;
     if (samplePath) this.samplePath = samplePath;
   }
 
   async init() {
+    Tone.setContext(Audio.ctx as Tone.Context);
     this.loadSample();
     this.loadEffects();
+    this.initializeUpdateMethods();
+    this.effectUpdateSubject
+      .pipe(
+        filter((update: EffectUpdate) => update.stepperId === this.stepperId)
+      )
+      .subscribe(this.handleEffectUpdate);
   }
 
   private loadSample() {
@@ -41,11 +58,14 @@ class Track {
   }
 
   private loadEffects() {
+    if (!this.channel) {
+      this.channel = new Tone.Channel();
+    }
+
     this.effects = Audio.defaultEffects;
     const effectNodes = this.effects?.map((effect) => effect.node);
-    this.channel = new Tone.Channel();
-    this.channel.set({ volume: -20 });
-    this.source?.chain(...effectNodes, this.channel, Tone.getDestination());
+    effectNodes.push(this.channel);
+    this.source?.chain(...effectNodes, Tone.getDestination());
   }
 
   public playSample(time: number = 0) {
@@ -53,9 +73,28 @@ class Track {
       this.source?.start(time, 0, this.source.buffer.duration);
   }
 
-  // init
-  //  effects should be set to default effects (from Audio?)
-  //  source must be created from path
+  private handleEffectUpdate = (update: EffectUpdate) => {
+    // console.log("[handleEffectUpdate] ", name, stepperId, value);
+    const updateFn = this.updateMethodsMap.get(update.name);
+    if (updateFn) updateFn(update);
+  };
+
+  private handleSoloUpdate = (value: EffectUpdate) => {
+    this?.channel?.set({ solo: value.value.solo });
+    this.source?.disconnect();
+    this.loadEffects();
+  };
+
+  private handleMuteUpdate = (value: EffectUpdate) => {
+    this?.channel?.set({ mute: value.value.mute });
+    this.source?.disconnect();
+    this.loadEffects();
+  };
+
+  private initializeUpdateMethods() {
+    this.updateMethodsMap.set("solo", this.handleSoloUpdate);
+    this.updateMethodsMap.set("mute", this.handleMuteUpdate);
+  }
 }
 
 export default Track;

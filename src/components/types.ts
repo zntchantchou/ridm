@@ -1,4 +1,4 @@
-import type { ToneAudioNode } from "tone";
+import * as Tone from "tone";
 import type Stepper from "./Stepper";
 
 export type BeatMapType = Map<string, { steppers: Stepper[] }>;
@@ -11,14 +11,26 @@ export type SoundSettings = {
 
 export type ToneSoundSettings = {
   name: string;
-  node: ToneAudioNode;
+  node: Tone.ToneAudioNode;
   options?: { [index: string]: string };
 };
 
 export type TrackEffect = {
   name: string;
-  node: ToneAudioNode;
+  node: Tone.ToneAudioNode;
   options?: { [index: string]: string };
 };
 
-export type EffectNameType = "string" | "pitch" | "volume";
+export type EffectNameType =
+  | "pitch"
+  | "volume"
+  | "panning"
+  | "delay"
+  | "mute"
+  | "solo";
+
+export type EffectUpdate = {
+  name: EffectNameType;
+  stepperId: string;
+  value: Partial<Tone.ChannelOptions>;
+};

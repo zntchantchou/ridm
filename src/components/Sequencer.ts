@@ -4,26 +4,36 @@ import { SAMPLES_DIRS } from "./Audio";
 import StepperControls from "./StepperControls";
 import SoundPanel from "./SoundPanel";
 import Track from "./Track";
+import { Subject } from "rxjs";
+import type { EffectUpdate } from "./types";
 
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
+
 class Sequencer {
   pulses: typeof Pulses | null = null;
   steppers: Stepper[] = [];
   controls: StepperControls[] = [];
-
+  effectUpdateSubject = new Subject<EffectUpdate>();
+  // effectUpdate Subject takes an effectUpdate
+  // effect id
+  // stepper id
+  // value is the parameters to be set on the effect (ToneAudioNode)
   constructor(pulses: typeof Pulses) {
     this.pulses = pulses;
   }
 
-  initialize() {
-    this.registerDefaults();
+  async initialize() {
+    await this.registerDefaults();
     this.setupStepperResizeEvents();
-    new SoundPanel({ steppers: this.steppers });
+    new SoundPanel({
+      steppers: this.steppers,
+      effectUpdateSubject: this.effectUpdateSubject,
+    });
   }
 
-  private registerDefaults() {
-    DEFAULT_STEPPERS.forEach((elt, i) => {
+  private async registerDefaults() {
+    const registrationPromises = DEFAULT_STEPPERS.map((elt, i) => {
       this.register({
         ...elt,
         id: i,
@@ -31,9 +41,10 @@ class Sequencer {
         color: COLORS[i],
       });
     });
+    return Promise.all(registrationPromises);
   }
 
-  private register(options: StepperOptions) {
+  private async register(options: StepperOptions) {
     const steps = options.stepsPerBeat * options.beats;
     if (steps < 1 || steps > 100) return;
 
@@ -42,28 +53,25 @@ class Sequencer {
       beats: options.beats,
       stepsPerBeats: options.stepsPerBeat,
       name: options.sampleName,
+      effectUpdateSubject: this.effectUpdateSubject,
     });
 
     const stepperTrack = new Track({
       name: options.sampleName,
-      stepperId: this.steppers.length.toString(),
+      stepperId: options.id.toString(),
+      effectUpdateSubject: this.effectUpdateSubject,
     });
 
     const stepper = new Stepper({
       ...options,
-      id: this.steppers.length,
       controls: stepperControls,
       color: options.color,
-      // soundSettings: Audio.toneSoundSettings(),
+      sampleName: options.sampleName,
       track: stepperTrack,
     });
 
-    stepperTrack
-      .init()
-      .then(() => console.log("INITIALIZED TRACK"))
-      .catch((e) => console.log("TRACK INIT ERROR ", e));
+    await stepperTrack.init();
 
-    console.log("TRACK ", stepperTrack);
     this.steppers.push(stepper);
     this.pulses?.register(stepper);
     this.controls.push(stepperControls);

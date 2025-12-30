@@ -10,9 +10,12 @@ class Audio {
   public async init(toneContext: Tone.Context) {
     if (!toneContext)
       throw Error("Must initialize audioContext with shared audiocontext ");
-    console.log("INIT");
     this.ctx = toneContext;
     Tone.setContext(toneContext);
+  }
+
+  public async start() {
+    console.log("AUDIO START");
     await Tone.start();
   }
 
@@ -33,14 +36,14 @@ class Audio {
       {
         name: "delay",
         node: new Tone.PingPongDelay({
-          delayTime: "0.3",
-          feedback: 0.1,
-          wet: 0.3,
+          delayTime: "0",
+          feedback: 0,
+          wet: 0,
         }),
       },
       {
         name: "volume",
-        node: new Tone.Volume(0),
+        node: new Tone.Volume(-10),
       },
     ];
   }

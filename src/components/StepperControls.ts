@@ -1,3 +1,14 @@
+import type { Subject } from "rxjs";
+import type { EffectUpdate } from "./types";
+
+type StepperControlsOptions = {
+  effectUpdateSubject: Subject<EffectUpdate>;
+  stepperId: number;
+  stepsPerBeats: number;
+  beats: number;
+  name: string;
+};
+
 const controlsPanelElt = document.getElementById("steppers-controls");
 
 class StepperControls {
@@ -10,34 +21,46 @@ class StepperControls {
   maxSteps = 10;
   maxBeats = 10;
   name: string;
+  effectUpdateSubject: Subject<EffectUpdate>;
+  soloCheckBox?: HTMLInputElement;
+  muteCheckBox?: HTMLInputElement;
 
   constructor({
     stepsPerBeats,
     beats,
     stepperId,
     name,
-  }: {
-    stepperId: number;
-    stepsPerBeats: number;
-    beats: number;
-    name: string;
-  }) {
-    // console.log("[StepperControls]");
+    effectUpdateSubject,
+  }: StepperControlsOptions) {
     this.stepperId = stepperId;
     this.stepsPerBeats = stepsPerBeats;
     this.beats = beats;
     this.name = name;
+    this.effectUpdateSubject = effectUpdateSubject;
     this.render();
+    this.initializeEvents();
   }
 
   private render() {
     this.element = document.createElement("div");
     this.element.classList.add("stepper-controls");
     this.element.dataset["stepperId"] = this.stepperId.toString();
+    const muteLabel = document.createElement("span");
+    const soloLabel = document.createElement("span");
+    this.soloCheckBox = document.createElement("input");
+    this.muteCheckBox = document.createElement("input");
+
     const beatsLabel = document.createElement("span");
     const stepsPerBeatLabel = document.createElement("span");
     const beatsInput = document.createElement("input");
     const stepsPerBeatInput = document.createElement("input");
+    soloLabel.textContent = "S";
+    muteLabel.textContent = "M";
+    this.soloCheckBox.type = "checkbox";
+    this.muteCheckBox.type = "checkbox";
+    this.soloCheckBox.checked = false;
+    this.soloCheckBox.checked = false;
+
     beatsLabel.textContent = "beats";
     stepsPerBeatLabel.textContent = "steps";
     beatsInput.type = "number";
@@ -56,12 +79,43 @@ class StepperControls {
     nameElt.classList.add("stepperControlName");
     nameElt.textContent = this.name;
     this.element.appendChild(nameElt);
+    this.element.appendChild(soloLabel);
+    this.element.appendChild(this.soloCheckBox);
+    this.element.appendChild(muteLabel);
+    this.element.appendChild(this.muteCheckBox);
     this.element.appendChild(beatsLabel);
     this.element.appendChild(beatsInput);
     this.element.appendChild(stepsPerBeatLabel);
     this.element.appendChild(stepsPerBeatInput);
     controlsPanelElt?.appendChild(this.element);
   }
+
+  private initializeEvents() {
+    this.soloCheckBox?.addEventListener("change", this.handleSolo);
+    this.muteCheckBox?.addEventListener("change", this.handleMute);
+  }
+
+  private handleSolo = (e: Event) => {
+    const soloTarget = e.target as HTMLInputElement;
+    console.log("HANDLE SOLO ", soloTarget.checked);
+    this.effectUpdateSubject.next({
+      name: "solo",
+      stepperId: this.stepperId.toString(),
+      value: { mute: soloTarget.checked },
+    });
+    console.log("STEPPER CTRL ", this);
+  };
+
+  private handleMute = (e: Event) => {
+    const muteTarget = e.target as HTMLInputElement;
+    console.log("HANDLE MUTE ", muteTarget.checked);
+    this.effectUpdateSubject.next({
+      name: "mute",
+      stepperId: this.stepperId.toString(),
+      value: { mute: muteTarget.checked },
+    });
+    console.log("STEPPER CTRL ", this);
+  };
 }
 
 export default StepperControls;

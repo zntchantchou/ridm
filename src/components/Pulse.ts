@@ -2,7 +2,6 @@ import { Subject } from "rxjs";
 import type Stepper from "./Stepper";
 import Controls from "./Controls";
 import StepQueue, { type Step } from "./StepQueue";
-import Audio from "./Audio";
 
 class Pulse {
   readonly steps: number;

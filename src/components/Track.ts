@@ -94,6 +94,8 @@ class Track {
   private initializeUpdateMethods() {
     this.updateMethodsMap.set("solo", this.handleSoloUpdate);
     this.updateMethodsMap.set("mute", this.handleMuteUpdate);
+    // this.updateMethodsMap.set("panning", this.handleMuteUpdate);
+    // this.updateMethodsMap.set("volume", this.handleMuteUpdate);
   }
 }
 

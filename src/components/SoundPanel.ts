@@ -2,6 +2,7 @@ import type { Subject } from "rxjs";
 import type Stepper from "./Stepper";
 import type { EffectUpdate } from "./types";
 const rootElt = document.getElementById("top-panel");
+const stepperElements = document.getElementsByClassName("stepper");
 const stepperControlElements =
   document.getElementsByClassName("stepper-controls");
 
@@ -24,6 +25,7 @@ class SoundPanel {
     this.element.id = "sound-panel";
     rootElt!.appendChild(this.element);
     this.initialize();
+    this.initializeEvents();
     this.render();
   }
 
@@ -87,10 +89,10 @@ class SoundPanel {
 
     volumeValue.id = "volume-value";
     volumeRange.type = "range";
-    volumeRange.min = "0";
+    volumeRange.min = "-40";
     volumeRange.value = "1";
     volumeValue.textContent = "1";
-    volumeRange.max = "2";
+    volumeRange.max = "90";
     volumeRange.step = "0.1";
     nameValueSpan.id = "sample-name";
     volumeTitle.textContent = "volume";
@@ -142,27 +144,28 @@ class SoundPanel {
   }
 
   private initializeEvents() {
-    for (const stepperCtrl of stepperControlElements) {
-      if (stepperCtrl)
-        stepperCtrl.addEventListener("click", this.handleStepperSelection);
+    for (const elt of [...stepperControlElements, ...stepperElements]) {
+      elt.addEventListener("click", this.handleStepperSelection);
     }
+
     const volumeRangeElt = document.getElementById("stepper-volume-range");
     console.log("VOLUME RANGE", volumeRangeElt);
     volumeRangeElt?.addEventListener("change", this.handleVolumeChange);
+
     const pannerRangeElt = document.getElementById(
       "panning-range"
     ) as HTMLInputElement;
     pannerRangeElt?.addEventListener("change", this.handlePanningChange);
 
-    const delayRangeElt = document.getElementById(
-      "delay-range"
-    ) as HTMLInputElement;
-    delayRangeElt?.addEventListener("change", this.handleDelayChange);
+    // const delayRangeElt = document.getElementById(
+    //   "delay-range"
+    // ) as HTMLInputElement;
+    // delayRangeElt?.addEventListener("change", this.handleDelayChange);
   }
 
   private handleVolumeChange = (e: Event) => {
-    // console.log("handleVolumeChange");
-    // const target = e.target as HTMLInputElement;
+    console.log("handleVolumeChange");
+
     // const stepper = this.getSelectedStepper();
     // const volumeSetting = stepper?.soundSettings.find(
     //   (s) => s.name === "volume"
@@ -174,6 +177,7 @@ class SoundPanel {
   };
 
   private handlePanningChange = (e: Event) => {
+    console.log("handlePanningChange ");
     // const target = e.target as HTMLInputElement;
     // const stepper = this.getSelectedStepper();
     // const setting = stepper?.soundSettings.find((s) => s.name === "panning");
@@ -181,7 +185,6 @@ class SoundPanel {
     // pannerNode.pan.value = parseFloat(target.value);
     // const panningValueElt = document.getElementById("panning-value");
     // panningValueElt!.textContent = target.value;
-    // console.log("PANNING CHANGE ", pannerNode.pan.value);
   };
 
   private handleDelayChange = (e: Event) => {

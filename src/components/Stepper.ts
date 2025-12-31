@@ -92,7 +92,7 @@ class Stepper {
     const updatedSteps = [];
     for (const step of selectedSteps) {
       if (step === 0) {
-        updatedSteps.push(0);
+        updatedSteps.push(step);
         continue;
       }
       const nextSelectedStep = Math.floor(step * ratio);
@@ -127,21 +127,19 @@ class Stepper {
   }
 
   updateStepsPerBeat(spb: number) {
+    console.log("PULSES POST UPDATE", Pulses);
     const oldSteps = this.steps;
     this.updateSelectedSteps(this.beats * spb);
     this.stepsPerBeat = spb;
     Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
-    console.log("PULSES POST UPDATE", Pulses);
   }
 
   convertNumbersToSteps(targetSize: number, numbers: number[]) {
     if (!numbers.length) return [];
     const steps: boolean[] = Array(targetSize)
       .fill(false)
-      .map((_, i) => {
-        return numbers.includes(i);
-      });
+      .map((_, i) => numbers.includes(i));
     return steps;
   }
 
@@ -168,6 +166,7 @@ class Stepper {
     this.createStepElements();
     const stepper = document.createElement("div");
     stepper.classList.add("stepper");
+    stepper.dataset.stepperId = this.id?.toString();
     steppersDiv?.appendChild(stepper);
     for (const item of this.stepElements) {
       stepper.appendChild(item);

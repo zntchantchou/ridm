@@ -32,5 +32,5 @@ export type EffectNameType =
 export type EffectUpdate = {
   name: EffectNameType;
   stepperId: string;
-  value: Partial<Tone.ChannelOptions>;
+  value: Partial<Tone.ChannelOptions | Tone.DelayOptions>;
 };

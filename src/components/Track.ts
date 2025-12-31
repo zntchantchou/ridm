@@ -80,13 +80,31 @@ class Track {
   };
 
   private handleSoloUpdate = (value: EffectUpdate) => {
-    this?.channel?.set({ solo: value.value.solo });
+    const v = value.value as Tone.ChannelOptions;
+    this?.channel?.set({ solo: v.solo });
     this.source?.disconnect();
     this.loadEffects();
   };
 
   private handleMuteUpdate = (value: EffectUpdate) => {
-    this?.channel?.set({ mute: value.value.mute });
+    const v = value.value as Tone.ChannelOptions;
+    this?.channel?.set({ mute: v.mute });
+    this.source?.disconnect();
+    this.loadEffects();
+  };
+
+  private handlePanningUpdate = (value: EffectUpdate) => {
+    console.log("Panning UPDATE");
+    const v = value.value as Tone.ChannelOptions;
+    this?.channel?.set({ pan: v.pan });
+    this.source?.disconnect();
+    this.loadEffects();
+  };
+
+  private handleVolumeUpdate = (value: EffectUpdate) => {
+    console.log("Panning UPDATE");
+    const v = value.value as Tone.ChannelOptions;
+    this?.channel?.set({ volume: v.volume });
     this.source?.disconnect();
     this.loadEffects();
   };
@@ -94,8 +112,8 @@ class Track {
   private initializeUpdateMethods() {
     this.updateMethodsMap.set("solo", this.handleSoloUpdate);
     this.updateMethodsMap.set("mute", this.handleMuteUpdate);
-    // this.updateMethodsMap.set("panning", this.handleMuteUpdate);
-    // this.updateMethodsMap.set("volume", this.handleMuteUpdate);
+    this.updateMethodsMap.set("panning", this.handlePanningUpdate);
+    this.updateMethodsMap.set("volume", this.handleVolumeUpdate);
   }
 }
 

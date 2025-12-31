@@ -92,7 +92,7 @@ class SoundPanel {
     volumeRange.min = "-40";
     volumeRange.value = "1";
     volumeValue.textContent = "1";
-    volumeRange.max = "90";
+    volumeRange.max = "40";
     volumeRange.step = "0.1";
     nameValueSpan.id = "sample-name";
     volumeTitle.textContent = "volume";
@@ -157,45 +157,55 @@ class SoundPanel {
     ) as HTMLInputElement;
     pannerRangeElt?.addEventListener("change", this.handlePanningChange);
 
-    // const delayRangeElt = document.getElementById(
-    //   "delay-range"
-    // ) as HTMLInputElement;
-    // delayRangeElt?.addEventListener("change", this.handleDelayChange);
+    const delayRangeElt = document.getElementById(
+      "delay-range"
+    ) as HTMLInputElement;
+    delayRangeElt?.addEventListener("change", this.handleDelayChange);
   }
 
   private handleVolumeChange = (e: Event) => {
-    console.log("handleVolumeChange");
-
-    // const stepper = this.getSelectedStepper();
-    // const volumeSetting = stepper?.soundSettings.find(
-    //   (s) => s.name === "volume"
-    // );
-    // const volumeNode = volumeSetting?.node as GainNode;
-    // volumeNode.gain.value = parseFloat(target.value);
+    const target = e.target as HTMLInputElement;
+    console.log("handleVolumeChange", {
+      name: "volume",
+      stepperId: this.selectedStepper,
+      value: { volume: parseFloat(target.value) },
+    });
+    this.effectUpdateSubject.next({
+      name: "volume",
+      stepperId: this.selectedStepper,
+      value: { volume: parseFloat(target.value) },
+    });
     // const volumeValue = document.getElementById("volume-value");
     // volumeValue!.textContent = target.value;
   };
 
   private handlePanningChange = (e: Event) => {
-    console.log("handlePanningChange ");
-    // const target = e.target as HTMLInputElement;
-    // const stepper = this.getSelectedStepper();
-    // const setting = stepper?.soundSettings.find((s) => s.name === "panning");
-    // const pannerNode = setting?.node as StereoPannerNode;
-    // pannerNode.pan.value = parseFloat(target.value);
-    // const panningValueElt = document.getElementById("panning-value");
-    // panningValueElt!.textContent = target.value;
+    const target = e.target as HTMLInputElement;
+    console.log("handlePanningChange ", {
+      name: "panning",
+      stepperId: this.selectedStepper,
+      value: { pan: parseFloat(target.value) },
+    });
+    this.effectUpdateSubject.next({
+      name: "panning",
+      stepperId: this.selectedStepper,
+      value: { pan: parseFloat(target.value) },
+    });
   };
 
   private handleDelayChange = (e: Event) => {
-    // const target = e.target as HTMLInputElement;
-    // const stepper = this.getSelectedStepper();
-    // const setting = stepper?.soundSettings.find((s) => s.name === "delay");
-    // const delayNode = setting?.node as DelayNode;
-    // delayNode.delayTime.value = parseFloat(target.value);
-    // const panningValueElt = document.getElementById("delay-value");
-    // panningValueElt!.textContent = target.value;
-    // console.log("Delay CHANGE ", delayNode);
+    const target = e.target as HTMLInputElement;
+    console.log("handleDelayChange ", {
+      name: "delay",
+      stepperId: this.selectedStepper,
+      value: { lol: parseFloat(target.value) },
+    });
+    this.effectUpdateSubject.next({
+      name: "delay",
+      stepperId: this.selectedStepper,
+      // add max delay
+      value: { delayTime: parseFloat(target.value) },
+    });
   };
 
   private getSelectedStepper() {

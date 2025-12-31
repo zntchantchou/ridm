@@ -1,6 +1,8 @@
 import type { Subject } from "rxjs";
 import type Stepper from "./Stepper";
-import type { EffectUpdate } from "../types";
+import * as Tone from "tone";
+import type { EffectNameType, EffectUpdate } from "../types";
+
 const rootElt = document.getElementById("top-panel");
 const stepperElements = document.getElementsByClassName("stepper");
 const stepperControlElements =
@@ -11,6 +13,13 @@ class SoundPanel {
   steppers: Stepper[] = [];
   element?: HTMLDivElement;
   effectUpdateSubject: Subject<EffectUpdate>;
+  panningRange?: HTMLInputElement;
+  volumeRange?: HTMLInputElement;
+  delayWetRange?: HTMLInputElement;
+  delayFeedbackRange?: HTMLInputElement;
+  delayTimeRange?: HTMLInputElement;
+  panningValue?: HTMLSpanElement;
+  volumeValue?: HTMLSpanElement;
 
   constructor({
     steppers,
@@ -31,17 +40,24 @@ class SoundPanel {
 
   render() {
     const sampleNameElt = document.getElementById("sample-name");
-    const volumeValueElt = document.getElementById("volume-value");
-    const panningValueElt = document.getElementById("panning-value");
-    const panningRangeElt = document.getElementById(
-      "panning-range"
-    ) as HTMLInputElement;
-    const volumeRangeElt = document.getElementById(
-      "volume-range"
-    ) as HTMLInputElement;
     const stepper = this.getSelectedStepper() as Stepper;
-    // console.log("This ", this.getSelectedStepper());
     sampleNameElt!.textContent = stepper.sampleName;
+    this.setBackground();
+    // DELAY
+    const delayValues = this.getEffectValues("delay") as Tone.FeedbackDelay;
+    this!.delayTimeRange!.value = delayValues.delayTime.toString();
+    this!.delayFeedbackRange!.value = delayValues.feedback.toString();
+    this!.delayWetRange!.value = delayValues.wet.toString();
+    // VOLUME
+    const channel = stepper.track?.channel?.get();
+    this!.panningRange!.value = channel?.pan.toString() as string;
+    this!.panningValue!.textContent = channel?.pan.toString() as string;
+    this!.volumeRange!.value = channel?.volume.toString() as string;
+    this!.volumeValue!.textContent = channel?.volume.toFixed(1) as string;
+  }
+
+  private setBackground() {
+    const stepper = this.getSelectedStepper() as Stepper;
     if (rootElt) {
       rootElt.style.background = `linear-gradient(0deg,rgba(0, 0, 0, 1) 0%, ${stepper.color?.cssColor} 100%)`;
     }
@@ -52,20 +68,6 @@ class SoundPanel {
     currentStepperControlsElt.style.borderLeft = `solid .3rem ${
       currentStepper!.color?.cssColor
     }`;
-    // const volume = currentStepper?.getAudioSetting(
-    //   "volume"
-    // ) as ToneSoundSettings;
-    // const panning = currentStepper?.getAudioSetting(
-    //   "panning"
-    // ) as ToneSoundSettings;
-    // const volumeAsGain = volume.node as GainNode;
-    // const panningAsPanner = panning.node as StereoPannerNode;
-    // const volumeAsString = volumeAsGain.gain.value.toFixed(2);
-    // const panningAsString = panningAsPanner.pan.value.toFixed(2);
-    // volumeValueElt!.textContent = volumeAsString;
-    // panningValueElt!.textContent = panningAsString;
-    // panningRangeElt.value = panningAsString;
-    // volumeRangeElt.value = volumeAsString;
   }
 
   private initialize() {
@@ -73,108 +75,13 @@ class SoundPanel {
     sampleDetailsSection.classList.add("sample-details");
     const nameGroup = document.createElement("div");
     const nameValueSpan = document.createElement("span");
-    const volumeGroup = document.createElement("div");
-    const volumeTitle = document.createElement("span");
-    const volumeRange = document.createElement("input");
-    const volumeValue = document.createElement("span");
-    const panningGroup = document.createElement("div");
-    const panningTitle = document.createElement("span");
-    const panningRange = document.createElement("input");
-    const panningValue = document.createElement("span");
-    // DELAY
-    const delayGroup = document.createElement("div");
-    const delayTimeTitle = document.createElement("span");
-    const delayWetTitle = document.createElement("span");
-    const delayFeedbackTitle = document.createElement("span");
-    const delayFeedbackRange = document.createElement("input");
-    const delayFeedbackValue = document.createElement("span");
-    const delayTimeRange = document.createElement("input");
-    const delayTimeValue = document.createElement("span");
-    const delayWetRange = document.createElement("input");
-    const delayWetValue = document.createElement("span");
-
-    // VOLUME
-    volumeValue.id = "volume-value";
-    volumeRange.type = "range";
-    volumeRange.min = "-40";
-    volumeRange.value = "1";
-    volumeValue.textContent = "1";
-    volumeRange.max = "40";
-    volumeRange.step = "0.1";
     nameValueSpan.id = "sample-name";
-    volumeTitle.textContent = "volume";
-    volumeRange.id = "stepper-volume-range";
-
-    // PANNING
-    panningTitle.textContent = "panning";
-    panningRange.type = "range";
-    panningRange.value = "0";
-    panningRange.min = "-1";
-    panningRange.max = "1";
-    panningRange.step = "0.01";
-    panningRange.id = "panning-range";
-    panningValue.textContent = panningRange.value;
-    panningValue.id = "panning-value";
-
-    delayTimeTitle.textContent = "delay";
-    // TIME
-    delayTimeRange.type = "range";
-    delayTimeRange.value = "0";
-    delayTimeRange.min = "0";
-    delayTimeRange.max = "1";
-    delayTimeRange.step = "0.01";
-    delayTimeRange.id = "delay-time-range";
-    delayTimeValue.textContent = delayTimeRange.value;
-    delayTimeValue.id = "delay-time-value";
-    // FEEDBACK
-    delayFeedbackTitle.textContent = "delay feedback";
-    delayFeedbackRange.type = "range";
-    delayFeedbackRange.value = "0";
-    delayFeedbackRange.min = "0";
-    delayFeedbackRange.max = "1";
-    delayFeedbackRange.step = "0.01";
-    delayFeedbackRange.id = "delay-feedback-range";
-    delayFeedbackValue.textContent = delayFeedbackRange.value;
-    delayFeedbackValue.id = "delay-feedback-value";
-    // WET
-    delayWetTitle.textContent = "delay wet";
-    delayWetRange.type = "range";
-    delayWetRange.value = "0";
-    delayWetRange.min = "0";
-    delayWetRange.max = "1";
-    delayWetRange.step = "0.01";
-    delayWetRange.id = "delay-wet-range";
-    delayWetValue.textContent = delayWetRange.value;
-    delayWetValue.id = "delay-wet-value";
-
-    delayGroup.classList.add("effect-group");
-    volumeGroup.classList.add("effect-group");
-    panningGroup.classList.add("effect-group");
-
-    delayGroup.appendChild(delayTimeTitle);
-    delayGroup.appendChild(delayTimeRange);
-    delayGroup.appendChild(delayTimeValue);
-    delayGroup.appendChild(delayFeedbackTitle);
-    delayGroup.appendChild(delayFeedbackRange);
-    delayGroup.appendChild(delayFeedbackValue);
-    delayGroup.appendChild(delayWetTitle);
-    delayGroup.appendChild(delayWetRange);
-    delayGroup.appendChild(delayWetValue);
-
-    volumeGroup.appendChild(volumeTitle);
-    volumeGroup.appendChild(volumeRange);
-    volumeGroup.appendChild(volumeValue);
-
-    panningGroup.appendChild(panningTitle);
-    panningGroup.appendChild(panningRange);
-    panningGroup.appendChild(panningValue);
 
     nameGroup.appendChild(nameValueSpan);
-
     sampleDetailsSection.appendChild(nameGroup);
-    sampleDetailsSection.appendChild(volumeGroup);
-    sampleDetailsSection.appendChild(panningGroup);
-    sampleDetailsSection.appendChild(delayGroup);
+    sampleDetailsSection.appendChild(this.generateVolumeGroup());
+    sampleDetailsSection.appendChild(this.generatePanningGroup());
+    sampleDetailsSection.appendChild(this.generateDelayGroup());
     this.element?.appendChild(sampleDetailsSection);
   }
 
@@ -220,6 +127,7 @@ class SoundPanel {
       stepperId: this.selectedStepper,
       value: { volume: parseFloat(target.value) },
     });
+    this.render();
     // const volumeValue = document.getElementById("volume-value");
     // volumeValue!.textContent = target.value;
   };
@@ -236,6 +144,7 @@ class SoundPanel {
       stepperId: this.selectedStepper,
       value: { pan: parseFloat(target.value) },
     });
+    this.render();
   };
 
   private handleDelayChange = (e: Event) => {
@@ -258,6 +167,7 @@ class SoundPanel {
       stepperId: this.selectedStepper,
       value: updateValue,
     });
+    this.render();
   };
 
   private getSelectedStepper() {
@@ -290,6 +200,113 @@ class SoundPanel {
     this.render();
     e.preventDefault();
   };
+
+  private generatePanningGroup() {
+    const panningGroup = document.createElement("div");
+    const panningTitle = document.createElement("span");
+    this.panningRange = document.createElement("input");
+    this.panningValue = document.createElement("span");
+    panningTitle.textContent = "panning";
+    this.panningRange.type = "range";
+    this.panningRange.value = "0";
+    this.panningRange.min = "-1";
+    this.panningRange.max = "1";
+    this.panningRange.step = "0.01";
+    this.panningRange.id = "panning-range";
+    this.panningValue.textContent = this.panningRange.value;
+    this.panningValue.id = "panning-value";
+    panningGroup.classList.add("effect-group");
+    panningGroup.appendChild(panningTitle);
+    panningGroup.appendChild(this.panningRange);
+    panningGroup.appendChild(this.panningValue);
+    return panningGroup;
+  }
+
+  private generateDelayGroup() {
+    // DELAY
+    const delayGroup = document.createElement("div");
+    const delayTimeTitle = document.createElement("span");
+    const delayWetTitle = document.createElement("span");
+    const delayFeedbackTitle = document.createElement("span");
+    this.delayFeedbackRange = document.createElement("input");
+    const delayFeedbackValue = document.createElement("span");
+    this.delayTimeRange = document.createElement("input");
+    const delayTimeValue = document.createElement("span");
+    this.delayWetRange = document.createElement("input");
+    const delayWetValue = document.createElement("span");
+    delayTimeTitle.textContent = "delay";
+    // TIME
+    this.delayTimeRange.type = "range";
+    this.delayTimeRange.value = "0";
+    this.delayTimeRange.min = "0";
+    this.delayTimeRange.max = "1";
+    this.delayTimeRange.step = "0.01";
+    this.delayTimeRange.id = "delay-time-range";
+    delayTimeValue.textContent = this.delayTimeRange.value;
+    delayTimeValue.id = "delay-time-value";
+    // FEEDBACK
+    delayFeedbackTitle.textContent = "delay feedback";
+    this.delayFeedbackRange.type = "range";
+    this.delayFeedbackRange.value = "0";
+    this.delayFeedbackRange.min = "0";
+    this.delayFeedbackRange.max = "1";
+    this.delayFeedbackRange.step = "0.01";
+    this.delayFeedbackRange.id = "delay-feedback-range";
+    delayFeedbackValue.textContent = this.delayFeedbackRange.value;
+    delayFeedbackValue.id = "delay-feedback-value";
+    // WET
+    delayWetTitle.textContent = "delay wet";
+    this.delayWetRange.type = "range";
+    this.delayWetRange.value = "0";
+    this.delayWetRange.min = "0";
+    this.delayWetRange.max = "1";
+    this.delayWetRange.step = "0.01";
+    this.delayWetRange.id = "delay-wet-range";
+    delayWetValue.textContent = this.delayWetRange.value;
+    delayWetValue.id = "delay-wet-value";
+
+    delayGroup.classList.add("effect-group");
+    delayGroup.appendChild(delayTimeTitle);
+    delayGroup.appendChild(this.delayTimeRange);
+    delayGroup.appendChild(delayTimeValue);
+    delayGroup.appendChild(delayFeedbackTitle);
+    delayGroup.appendChild(this.delayFeedbackRange);
+    delayGroup.appendChild(delayFeedbackValue);
+    delayGroup.appendChild(delayWetTitle);
+    delayGroup.appendChild(this.delayWetRange);
+    delayGroup.appendChild(delayWetValue);
+    return delayGroup;
+  }
+
+  private generateVolumeGroup() {
+    // VOLUME
+    const volumeGroup = document.createElement("div");
+    const volumeTitle = document.createElement("span");
+    this.volumeRange = document.createElement("input");
+    this.volumeValue = document.createElement("span");
+    this.volumeValue.id = "volume-value";
+    this.volumeRange.type = "range";
+    this.volumeRange.min = "-40";
+    this.volumeRange.value = "1";
+    this.volumeValue.textContent = "1";
+    this.volumeRange.max = "40";
+    this.volumeRange.step = "0.1";
+    volumeTitle.textContent = "volume";
+    this.volumeRange.id = "stepper-volume-range";
+    volumeGroup.classList.add("effect-group");
+    volumeGroup.appendChild(volumeTitle);
+    volumeGroup.appendChild(this.volumeRange);
+    volumeGroup.appendChild(this.volumeValue);
+    return volumeGroup;
+  }
+
+  private getEffectValues(
+    name: EffectNameType
+  ): Tone.ToneAudioNodeOptions | undefined {
+    const effects = this.getSelectedStepper()?.track?.effects;
+    const effect = effects?.find((e) => e.name === name)?.node.get();
+    return effect;
+  }
 }
 
 export default SoundPanel;

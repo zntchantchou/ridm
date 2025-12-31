@@ -81,12 +81,19 @@ class SoundPanel {
     const panningTitle = document.createElement("span");
     const panningRange = document.createElement("input");
     const panningValue = document.createElement("span");
-
+    // DELAY
     const delayGroup = document.createElement("div");
-    const delayTitle = document.createElement("span");
-    const delayRange = document.createElement("input");
-    const delayValue = document.createElement("span");
+    const delayTimeTitle = document.createElement("span");
+    const delayWetTitle = document.createElement("span");
+    const delayFeedbackTitle = document.createElement("span");
+    const delayFeedbackRange = document.createElement("input");
+    const delayFeedbackValue = document.createElement("span");
+    const delayTimeRange = document.createElement("input");
+    const delayTimeValue = document.createElement("span");
+    const delayWetRange = document.createElement("input");
+    const delayWetValue = document.createElement("span");
 
+    // VOLUME
     volumeValue.id = "volume-value";
     volumeRange.type = "range";
     volumeRange.min = "-40";
@@ -98,6 +105,7 @@ class SoundPanel {
     volumeTitle.textContent = "volume";
     volumeRange.id = "stepper-volume-range";
 
+    // PANNING
     panningTitle.textContent = "panning";
     panningRange.type = "range";
     panningRange.value = "0";
@@ -108,23 +116,50 @@ class SoundPanel {
     panningValue.textContent = panningRange.value;
     panningValue.id = "panning-value";
 
-    delayTitle.textContent = "delay";
-    delayRange.type = "range";
-    delayRange.value = "0";
-    delayRange.min = "0";
-    delayRange.max = "1";
-    delayRange.step = "0.01";
-    delayRange.id = "delay-range";
-    delayValue.textContent = delayRange.value;
-    delayValue.id = "delay-value";
+    delayTimeTitle.textContent = "delay";
+    // TIME
+    delayTimeRange.type = "range";
+    delayTimeRange.value = "0";
+    delayTimeRange.min = "0";
+    delayTimeRange.max = "1";
+    delayTimeRange.step = "0.01";
+    delayTimeRange.id = "delay-time-range";
+    delayTimeValue.textContent = delayTimeRange.value;
+    delayTimeValue.id = "delay-time-value";
+    // FEEDBACK
+    delayFeedbackTitle.textContent = "delay feedback";
+    delayFeedbackRange.type = "range";
+    delayFeedbackRange.value = "0";
+    delayFeedbackRange.min = "0";
+    delayFeedbackRange.max = "1";
+    delayFeedbackRange.step = "0.01";
+    delayFeedbackRange.id = "delay-feedback-range";
+    delayFeedbackValue.textContent = delayFeedbackRange.value;
+    delayFeedbackValue.id = "delay-feedback-value";
+    // WET
+    delayWetTitle.textContent = "delay wet";
+    delayWetRange.type = "range";
+    delayWetRange.value = "0";
+    delayWetRange.min = "0";
+    delayWetRange.max = "1";
+    delayWetRange.step = "0.01";
+    delayWetRange.id = "delay-wet-range";
+    delayWetValue.textContent = delayWetRange.value;
+    delayWetValue.id = "delay-wet-value";
 
     delayGroup.classList.add("effect-group");
     volumeGroup.classList.add("effect-group");
     panningGroup.classList.add("effect-group");
 
-    delayGroup.appendChild(delayTitle);
-    delayGroup.appendChild(delayRange);
-    delayGroup.appendChild(delayValue);
+    delayGroup.appendChild(delayTimeTitle);
+    delayGroup.appendChild(delayTimeRange);
+    delayGroup.appendChild(delayTimeValue);
+    delayGroup.appendChild(delayFeedbackTitle);
+    delayGroup.appendChild(delayFeedbackRange);
+    delayGroup.appendChild(delayFeedbackValue);
+    delayGroup.appendChild(delayWetTitle);
+    delayGroup.appendChild(delayWetRange);
+    delayGroup.appendChild(delayWetValue);
 
     volumeGroup.appendChild(volumeTitle);
     volumeGroup.appendChild(volumeRange);
@@ -157,10 +192,20 @@ class SoundPanel {
     ) as HTMLInputElement;
     pannerRangeElt?.addEventListener("change", this.handlePanningChange);
 
-    const delayRangeElt = document.getElementById(
-      "delay-range"
+    const delayTimeRange = document.getElementById(
+      "delay-time-range"
     ) as HTMLInputElement;
-    delayRangeElt?.addEventListener("change", this.handleDelayChange);
+
+    const delayFeedbackRange = document.getElementById(
+      "delay-feedback-range"
+    ) as HTMLInputElement;
+    const delayWetRange = document.getElementById(
+      "delay-wet-range"
+    ) as HTMLInputElement;
+
+    [delayTimeRange, delayFeedbackRange, delayWetRange].forEach((elt) =>
+      elt.addEventListener("change", this.handleDelayChange)
+    );
   }
 
   private handleVolumeChange = (e: Event) => {
@@ -195,16 +240,23 @@ class SoundPanel {
 
   private handleDelayChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
-    console.log("handleDelayChange ", {
-      name: "delay",
-      stepperId: this.selectedStepper,
-      value: { lol: parseFloat(target.value) },
-    });
+    console.log("TARGET-ID ", target.id);
+    const rangeValue = parseFloat(target.value);
+    const updateValue: { feedback?: number; wet?: number; delayTime?: number } =
+      {};
+
+    if (target.id.includes("feedback")) {
+      updateValue.feedback = rangeValue;
+    } else if (target.id.includes("wet")) {
+      updateValue.wet = rangeValue;
+    } else {
+      updateValue.delayTime = rangeValue;
+    }
+
     this.effectUpdateSubject.next({
       name: "delay",
       stepperId: this.selectedStepper,
-      // add max delay
-      value: { delayTime: parseFloat(target.value) },
+      value: updateValue,
     });
   };
 

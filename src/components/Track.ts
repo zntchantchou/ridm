@@ -22,6 +22,7 @@ class Track {
   source?: Tone.Player;
   effects?: TrackEffect[];
   effectUpdateSubscription?: Subscription;
+  effectsInitialized = false;
   channel?: Tone.Channel; // handle volume, pan, mute, solo
   effectUpdateSubject: Subject<EffectUpdate>;
   updateMethodsMap: Map<EffectNameType, (update: EffectUpdate) => void> =
@@ -58,14 +59,20 @@ class Track {
   }
 
   private loadEffects() {
+    if (!this.effectsInitialized) this.initializeEffects();
+    const effectNodes = this.effects?.map(
+      (effect) => effect.node
+    ) as Tone.ToneAudioNode[];
+    effectNodes.push(this.channel as Tone.ToneAudioNode);
+    this.source?.chain(...effectNodes, Tone.getDestination());
+  }
+
+  private initializeEffects() {
     if (!this.channel) {
       this.channel = new Tone.Channel();
     }
-
     this.effects = Audio.defaultEffects;
-    const effectNodes = this.effects?.map((effect) => effect.node);
-    effectNodes.push(this.channel);
-    this.source?.chain(...effectNodes, Tone.getDestination());
+    this.effectsInitialized = true;
   }
 
   public playSample(time: number = 0) {
@@ -82,31 +89,31 @@ class Track {
   private handleSoloUpdate = (value: EffectUpdate) => {
     const v = value.value as Tone.ChannelOptions;
     this?.channel?.set({ solo: v.solo });
-    this.source?.disconnect();
-    this.loadEffects();
   };
 
   private handleMuteUpdate = (value: EffectUpdate) => {
     const v = value.value as Tone.ChannelOptions;
     this?.channel?.set({ mute: v.mute });
-    this.source?.disconnect();
-    this.loadEffects();
   };
 
   private handlePanningUpdate = (value: EffectUpdate) => {
     console.log("Panning UPDATE");
     const v = value.value as Tone.ChannelOptions;
     this?.channel?.set({ pan: v.pan });
-    this.source?.disconnect();
-    this.loadEffects();
   };
 
   private handleVolumeUpdate = (value: EffectUpdate) => {
     console.log("Panning UPDATE");
     const v = value.value as Tone.ChannelOptions;
     this?.channel?.set({ volume: v.volume });
-    this.source?.disconnect();
-    this.loadEffects();
+  };
+
+  private handleDelayUpdate = (value: EffectUpdate) => {
+    console.log("handleDelayUpdate UPDATE");
+    const effect = this.effects?.find((e) => e.name === "delay");
+    if (!effect) return;
+    const delayOptions = value.value as Tone.FeedbackDelayOptions;
+    effect?.node.set({ ...delayOptions });
   };
 
   private initializeUpdateMethods() {
@@ -114,6 +121,7 @@ class Track {
     this.updateMethodsMap.set("mute", this.handleMuteUpdate);
     this.updateMethodsMap.set("panning", this.handlePanningUpdate);
     this.updateMethodsMap.set("volume", this.handleVolumeUpdate);
+    this.updateMethodsMap.set("delay", this.handleDelayUpdate);
   }
 }
 

@@ -35,7 +35,7 @@ class Audio {
       },
       {
         name: "delay",
-        node: new Tone.PingPongDelay({
+        node: new Tone.FeedbackDelay({
           delayTime: "0",
           feedback: 0,
           wet: 0,

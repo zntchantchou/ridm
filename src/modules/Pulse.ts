@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
-import type Stepper from "./Stepper";
-import Controls from "./Controls";
+import type Stepper from "../components/Stepper";
+import Controls from "../components/Controls";
 import StepQueue, { type Step } from "./StepQueue";
 
 class Pulse {

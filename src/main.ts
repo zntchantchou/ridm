@@ -1,8 +1,8 @@
 import Controls from "./components/Controls";
-import Timerworker from "./worker/Timerworker";
-import Sequencer from "./components/Sequencer";
-import Audio from "./components/Audio";
-import Pulses from "./components/Pulses";
+import Timerworker from "./modules/Timerworker";
+import Sequencer from "./modules/Sequencer";
+import Audio from "./modules/Audio";
+import Pulses from "./modules/Pulses";
 import UI from "./components/Ui";
 import * as Tone from "tone";
 

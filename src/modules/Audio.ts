@@ -1,5 +1,5 @@
 import * as Tone from "tone";
-import type { ToneSoundSettings, TrackEffect } from "./types";
+import type { ToneSoundSettings, TrackEffect } from "../types";
 
 class Audio {
   ctx: Tone.Context | null = null;

@@ -1,5 +1,5 @@
+import Stepper from "../components/Stepper";
 import Pulse from "./Pulse";
-import Stepper from "./Stepper";
 
 class Pulses {
   /** Map of all pulses, indexed by step count for O(1) lookup */

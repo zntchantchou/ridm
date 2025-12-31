@@ -1,11 +1,14 @@
-import Stepper, { type StepperColorType, type StepperOptions } from "./Stepper";
-import Pulses from "./Pulses";
-import { SAMPLES_DIRS } from "./Audio";
-import StepperControls from "./StepperControls";
-import SoundPanel from "./SoundPanel";
-import Track from "./Track";
 import { Subject } from "rxjs";
-import type { EffectUpdate } from "./types";
+import Stepper, {
+  type StepperColorType,
+  type StepperOptions,
+} from "../components/Stepper";
+import StepperControls from "../components/StepperControls";
+import SoundPanel from "../components/SoundPanel";
+import Pulses from "./Pulses";
+import Track from "./Track";
+import { SAMPLES_DIRS } from "./Audio";
+import type { EffectUpdate } from "../types";
 
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */

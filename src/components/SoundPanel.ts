@@ -1,6 +1,6 @@
 import type { Subject } from "rxjs";
 import type Stepper from "./Stepper";
-import type { EffectUpdate } from "./types";
+import type { EffectUpdate } from "../types";
 const rootElt = document.getElementById("top-panel");
 const stepperElements = document.getElementsByClassName("stepper");
 const stepperControlElements =

@@ -1,8 +1,8 @@
 import * as Tone from "tone";
 import Audio from "./Audio.ts";
 import { filter, type Subject, type Subscription } from "rxjs";
-import Controls from "./Controls";
-import type { EffectNameType, EffectUpdate, TrackEffect } from "./types.ts";
+import Controls from "../components/Controls";
+import type { EffectNameType, EffectUpdate, TrackEffect } from "../types.ts";
 
 const samplesDirPath = "../../samples/defaults/";
 

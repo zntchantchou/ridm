@@ -1,7 +1,7 @@
-import type { BeatMapType } from "../components/types";
-import StepQueue from "../components/StepQueue";
+import type { BeatMapType } from "../types";
+import StepQueue from "./StepQueue";
 import UI from "../components/Ui";
-import Pulses from "../components/Pulses";
+import Pulses from "./Pulses";
 import Controls from "../components/Controls";
 import * as Tone from "tone";
 // let lastStep = -1;
@@ -38,7 +38,7 @@ class TimeWorker {
     this.ui?.start();
     Tone.start();
     this.isPlaying = true;
-    this.worker = new Worker(new URL("./worker.ts", import.meta.url));
+    this.worker = new Worker(new URL("../worker/worker.ts", import.meta.url));
     this.worker.onmessage = (e) => this.handleMessage(e);
     this.worker.postMessage({ event: "start" });
     this.worker.postMessage({

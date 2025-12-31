@@ -1,6 +1,5 @@
-import Pulses from "./Pulses";
-// import Sequencer from "./Sequencer";
-import StepQueue, { type Step } from "./StepQueue";
+import Pulses from "../modules/Pulses";
+import StepQueue, { type Step } from "../modules/StepQueue";
 import * as Tone from "tone";
 
 class UI {

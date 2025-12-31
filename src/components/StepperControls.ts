@@ -1,5 +1,5 @@
 import type { Subject } from "rxjs";
-import type { EffectUpdate } from "./types";
+import type { EffectUpdate } from "../types";
 
 type StepperControlsOptions = {
   effectUpdateSubject: Subject<EffectUpdate>;

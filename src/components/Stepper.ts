@@ -1,9 +1,9 @@
 import { filter, interval, Subscription, throttle } from "rxjs";
-import Pulse from "./Pulse";
-import Pulses from "./Pulses";
+import Pulse from "../modules/Pulse";
+import Pulses from "../modules/Pulses";
+import type Track from "../modules/Track";
 import Controls from "./Controls";
 import type StepperControls from "./StepperControls";
-import type Track from "./Track";
 
 const steppersDiv = document.getElementById("steppers");
 export type StepperColorType = { name: string; cssColor: string };

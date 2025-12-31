@@ -1,4 +1,4 @@
-import Audio from "./Audio";
+import Audio from "../modules/Audio";
 
 const temporRangeElt = document.getElementById(
   "tempo-range"

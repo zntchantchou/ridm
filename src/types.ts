@@ -1,5 +1,5 @@
 import * as Tone from "tone";
-import type Stepper from "./Stepper";
+import type Stepper from "./components/Stepper";
 
 export type BeatMapType = Map<string, { steppers: Stepper[] }>;
 
@@ -29,8 +29,12 @@ export type EffectNameType =
   | "mute"
   | "solo";
 
+export type EffectValue = Partial<
+  Tone.ChannelOptions | Tone.FeedbackDelayOptions
+>;
+
 export type EffectUpdate = {
   name: EffectNameType;
   stepperId: string;
-  value: Partial<Tone.ChannelOptions | Tone.FeedbackDelayOptions>;
+  value: EffectValue;
 };

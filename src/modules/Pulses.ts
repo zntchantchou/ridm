@@ -44,12 +44,16 @@ class Pulses {
       const newPulse = new Pulse(steps, true);
       newPulse.addStepper(stepper);
       this.pulses.set(steps, newPulse);
+      const childrenSteppers: Stepper[] = [];
 
       // Demote all children and adopt their subs (flat structure)
       for (const childPulse of childPulses) {
+        childrenSteppers.push(...Array.from(childPulse.getSteppers()));
         if (childPulse.hasSubs()) {
           const childSubs = childPulse.getSubs()!;
+
           for (const sub of childSubs) {
+            childrenSteppers.push(...Array.from(sub.getSteppers()));
             newPulse.addSub(sub);
           }
           childPulse.clearSubs();
@@ -60,8 +64,8 @@ class Pulses {
         newPulse.addSub(childPulse);
 
         // Update steppers to listen to new parent
-        const childSteppers = childPulse.getSteppers();
-        for (const childStepper of childSteppers) {
+        // const childSteppers = childPulse.getSteppers();
+        for (const childStepper of childrenSteppers) {
           childStepper.listenToPulse(newPulse);
         }
       }
@@ -391,5 +395,7 @@ class Pulses {
     };
   }
 }
+
+export const PulseClass = Pulses;
 
 export default new Pulses();

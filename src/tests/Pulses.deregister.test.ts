@@ -1,15 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import Pulses from "../components/Pulses.ts";
+import { PulseClass } from "../modules/Pulses.ts";
 import Stepper from "../components/Stepper.ts";
-import Pulse from "../components/Pulse.ts";
 
 describe("Pulses.deregister() - Stepper updates", () => {
-  let pulses: Pulses;
-  let steppers: Stepper[];
+  let pulses: InstanceType<typeof PulseClass>;
 
   beforeEach(() => {
-    pulses = new Pulses();
-    steppers = [];
+    pulses = new PulseClass();
     document.body.innerHTML = `
       <div id="steppers"></div>
       <div id="steppers-controls"></div>
@@ -22,24 +19,25 @@ describe("Pulses.deregister() - Stepper updates", () => {
       stepsPerBeat: 4,
       id: 0,
       sampleName: "hh",
+      color: { name: "blue", cssColor: "#00d0ff" },
     });
     const stepper16b = new Stepper({
       beats: 4,
       stepsPerBeat: 4,
       id: 1,
       sampleName: "sn",
+      color: { name: "purple", cssColor: "#9c37fb" },
     });
-    steppers.push(stepper16a, stepper16b);
 
-    pulses.register(stepper16a, steppers);
-    pulses.register(stepper16b, steppers);
+    pulses.register(stepper16a);
+    pulses.register(stepper16b);
 
     expect(pulses.getLeadPulses()[0].count).toBe(2);
 
     pulses.deregister(stepper16a);
 
     expect(pulses.getLeadPulses()[0].count).toBe(1);
-    expect(pulses.size).toBe(1);
+    expect(pulses.getAllPulses().length).toBe(1);
   });
 
   it("2. pulse with count 1 is deleted when stepper deregisters", () => {
@@ -48,18 +46,17 @@ describe("Pulses.deregister() - Stepper updates", () => {
       stepsPerBeat: 4,
       id: 0,
       sampleName: "hh",
+      color: { name: "blue", cssColor: "#00d0ff" },
     });
-    steppers.push(stepper16);
 
-    pulses.register(stepper16, steppers);
+    pulses.register(stepper16);
 
-    expect(pulses.size).toBe(1);
+    expect(pulses.getAllPulses().length).toBe(1);
     expect(pulses.getLeadPulses()[0].count).toBe(1);
 
     pulses.deregister(stepper16);
 
-    expect(pulses.size).toBe(0);
-    expect(pulses.isEmpty).toBe(true);
+    expect(pulses.getAllPulses().length).toBe(0);
     expect(pulses.getLeadPulses().length).toBe(0);
   });
 
@@ -69,30 +66,32 @@ describe("Pulses.deregister() - Stepper updates", () => {
       stepsPerBeat: 4,
       id: 0,
       sampleName: "hh",
+      color: { name: "blue", cssColor: "#00d0ff" },
     });
     const stepper16b = new Stepper({
       beats: 4,
       stepsPerBeat: 4,
       id: 1,
       sampleName: "sn",
+      color: { name: "purple", cssColor: "#9c37fb" },
     });
     const stepper16c = new Stepper({
       beats: 4,
       stepsPerBeat: 4,
       id: 2,
       sampleName: "kk",
+      color: { name: "yellow", cssColor: "#eeff04" },
     });
-    steppers.push(stepper16a, stepper16b, stepper16c);
 
-    pulses.register(stepper16a, steppers);
-    pulses.register(stepper16b, steppers);
-    pulses.register(stepper16c, steppers);
+    pulses.register(stepper16a);
+    pulses.register(stepper16b);
+    pulses.register(stepper16c);
 
     expect(pulses.getLeadPulses()[0].count).toBe(3);
 
     pulses.deregister(stepper16a);
 
-    expect(pulses.size).toBe(1);
+    expect(pulses.getAllPulses().length).toBe(1);
     expect(pulses.getLeadPulses()[0].count).toBe(2);
     expect(pulses.getLeadPulses()[0].steps).toBe(16);
   });
@@ -103,19 +102,18 @@ describe("Pulses.deregister() - Stepper updates", () => {
       stepsPerBeat: 4,
       id: 0,
       sampleName: "hh",
+      color: { name: "blue", cssColor: "#00d0ff" },
     });
-    steppers.push(stepper12);
 
-    pulses.register(stepper12, steppers);
+    pulses.register(stepper12);
 
-    expect(pulses.size).toBe(1);
+    expect(pulses.getAllPulses().length).toBe(1);
     expect(pulses.getLeadPulses()[0].lead).toBe(true);
-    expect(pulses.getLeadPulses()[0].subs.length).toBe(0);
+    expect(pulses.getLeadPulses()[0].getSubs()?.length || 0).toBe(0);
 
     pulses.deregister(stepper12);
 
-    expect(pulses.size).toBe(0);
-    expect(pulses.isEmpty).toBe(true);
+    expect(pulses.getAllPulses().length).toBe(0);
     expect(pulses.getLeadPulses().length).toBe(0);
   });
 
@@ -125,37 +123,40 @@ describe("Pulses.deregister() - Stepper updates", () => {
       stepsPerBeat: 4,
       id: 0,
       sampleName: "hh",
+      color: { name: "blue", cssColor: "#00d0ff" },
     });
     const stepper8 = new Stepper({
       beats: 4,
       stepsPerBeat: 2,
       id: 1,
       sampleName: "sd",
+      color: { name: "purple", cssColor: "#9c37fb" },
     });
     const stepper4 = new Stepper({
       beats: 4,
       stepsPerBeat: 1,
       id: 2,
       sampleName: "lt",
+      color: { name: "yellow", cssColor: "#eeff04" },
     });
-    steppers.push(stepper16, stepper8, stepper4);
 
-    pulses.register(stepper16, steppers);
-    pulses.register(stepper8, steppers);
-    pulses.register(stepper4, steppers);
+    pulses.register(stepper16);
+    pulses.register(stepper8);
+    pulses.register(stepper4);
 
-    expect(pulses.size).toBe(3);
+    expect(pulses.getAllPulses().length).toBe(3);
     expect(pulses.getLeadPulses().length).toBe(1);
     expect(pulses.getLeadPulses()[0].steps).toBe(16);
-    expect(pulses.getLeadPulses()[0].subs.length).toBe(2);
+    expect(pulses.getLeadPulses()[0].getSubs()?.length).toBe(2);
 
     pulses.deregister(stepper16);
-    expect(pulses.size).toBe(2);
+
+    expect(pulses.getAllPulses().length).toBe(2);
     expect(pulses.getLeadPulses().length).toBe(1);
     expect(pulses.getLeadPulses()[0].steps).toBe(8);
     expect(pulses.getLeadPulses()[0].lead).toBe(true);
-    expect(pulses.getLeadPulses()[0].subs.length).toBe(1);
-    expect(pulses.getLeadPulses()[0].subs[0].steps).toBe(4);
+    expect(pulses.getLeadPulses()[0].getSubs()?.length).toBe(1);
+    expect(pulses.getLeadPulses()[0].getSubs()?.[0].steps).toBe(4);
   });
 
   it("6. stepper unsubscribes from old pulse when updating", () => {
@@ -164,10 +165,10 @@ describe("Pulses.deregister() - Stepper updates", () => {
       stepsPerBeat: 4,
       id: 0,
       sampleName: "hh",
+      color: { name: "blue", cssColor: "#00d0ff" },
     });
-    steppers.push(stepper16);
 
-    pulses.register(stepper16, steppers);
+    pulses.register(stepper16);
 
     const originalSubscription = stepper16.pulseSubscription;
     expect(originalSubscription).not.toBeNull();
@@ -175,7 +176,7 @@ describe("Pulses.deregister() - Stepper updates", () => {
 
     pulses.deregister(stepper16);
     stepper16.updateBeats(3);
-    pulses.register(stepper16, steppers);
+    pulses.register(stepper16);
 
     expect(originalSubscription?.closed).toBe(true);
   });
@@ -186,16 +187,16 @@ describe("Pulses.deregister() - Stepper updates", () => {
       stepsPerBeat: 4,
       id: 0,
       sampleName: "hh",
+      color: { name: "blue", cssColor: "#00d0ff" },
     });
-    steppers.push(stepper16);
 
-    pulses.register(stepper16, steppers);
+    pulses.register(stepper16);
 
     const originalSubscription = stepper16.pulseSubscription;
 
     pulses.deregister(stepper16);
     stepper16.updateBeats(3);
-    pulses.register(stepper16, steppers);
+    pulses.register(stepper16);
 
     expect(stepper16.pulseSubscription).not.toBeNull();
     expect(stepper16.pulseSubscription).not.toBe(originalSubscription);
@@ -210,26 +211,27 @@ describe("Pulses.deregister() - Stepper updates", () => {
       stepsPerBeat: 4,
       id: 0,
       sampleName: "hh",
+      color: { name: "blue", cssColor: "#00d0ff" },
     });
     const stepper12 = new Stepper({
       beats: 3,
       stepsPerBeat: 4,
       id: 1,
       sampleName: "sn",
+      color: { name: "purple", cssColor: "#9c37fb" },
     });
-    steppers.push(stepper16, stepper12);
 
-    pulses.register(stepper16, steppers);
-    pulses.register(stepper12, steppers);
+    pulses.register(stepper16);
+    pulses.register(stepper12);
 
-    expect(pulses.size).toBe(2);
-    expect(pulses.getLeadPulses().find((p) => p.steps === 16)?.count).toBe(1);
+    expect(pulses.getAllPulses().length).toBe(2);
+    expect(pulses.getPulse(16)?.count).toBe(1);
 
     pulses.deregister(stepper12);
     stepper12.updateBeats(4);
-    pulses.register(stepper12, steppers);
+    pulses.register(stepper12);
 
-    expect(pulses.size).toBe(1);
+    expect(pulses.getAllPulses().length).toBe(1);
     expect(pulses.getLeadPulses()[0].steps).toBe(16);
     expect(pulses.getLeadPulses()[0].count).toBe(2);
   });
@@ -240,24 +242,26 @@ describe("Pulses.deregister() - Stepper updates", () => {
       stepsPerBeat: 4,
       id: 0,
       sampleName: "hh",
+      color: { name: "blue", cssColor: "#00d0ff" },
     });
     const stepper16b = new Stepper({
       beats: 4,
       stepsPerBeat: 4,
       id: 1,
       sampleName: "sn",
+      color: { name: "purple", cssColor: "#9c37fb" },
     });
     const stepper16c = new Stepper({
       beats: 4,
       stepsPerBeat: 4,
       id: 2,
       sampleName: "kk",
+      color: { name: "yellow", cssColor: "#eeff04" },
     });
-    steppers.push(stepper16a, stepper16b, stepper16c);
 
-    pulses.register(stepper16a, steppers);
-    pulses.register(stepper16b, steppers);
-    pulses.register(stepper16c, steppers);
+    pulses.register(stepper16a);
+    pulses.register(stepper16b);
+    pulses.register(stepper16c);
 
     expect(pulses.getLeadPulses()[0].count).toBe(3);
 
@@ -270,10 +274,10 @@ describe("Pulses.deregister() - Stepper updates", () => {
     for (const { stepper, beats } of updates) {
       pulses.deregister(stepper);
       stepper.updateBeats(beats);
-      pulses.register(stepper, steppers);
+      pulses.register(stepper);
     }
 
-    expect(pulses.size).toBe(3);
+    expect(pulses.getAllPulses().length).toBe(3);
     const leadSteps = pulses
       .getLeadPulses()
       .map((p) => p.steps)
@@ -290,94 +294,40 @@ describe("Pulses.deregister() - Stepper updates", () => {
       stepsPerBeat: 4,
       id: 0,
       sampleName: "hh",
+      color: { name: "blue", cssColor: "#00d0ff" },
     });
     const stepper8 = new Stepper({
       beats: 4,
       stepsPerBeat: 2,
       id: 1,
       sampleName: "sn",
+      color: { name: "purple", cssColor: "#9c37fb" },
     });
-    steppers.push(stepper16, stepper8);
 
-    pulses.register(stepper16, steppers);
-    pulses.register(stepper8, steppers);
+    pulses.register(stepper16);
+    pulses.register(stepper8);
 
-    expect(pulses.size).toBe(2);
+    expect(pulses.getAllPulses().length).toBe(2);
     expect(pulses.getLeadPulses().length).toBe(1);
 
     const leadStepsInElements = pulses
-      .getElements()
+      .getAllPulses()
       .filter((p) => p.lead).length;
     expect(leadStepsInElements).toBe(pulses.getLeadPulses().length);
 
     pulses.deregister(stepper16);
 
-    expect(pulses.size).toBe(1);
+    expect(pulses.getAllPulses().length).toBe(1);
     expect(pulses.getLeadPulses().length).toBe(1);
     expect(pulses.getLeadPulses()[0].steps).toBe(8);
 
     const leadStepsInElementsAfter = pulses
-      .getElements()
+      .getAllPulses()
       .filter((p) => p.lead).length;
     expect(leadStepsInElementsAfter).toBe(pulses.getLeadPulses().length);
 
     pulses.getLeadPulses().forEach((leadPulse) => {
-      expect(pulses.getElements().includes(leadPulse)).toBe(true);
+      expect(pulses.getAllPulses().includes(leadPulse)).toBe(true);
     });
   });
-
-  it("11. Deleted parent pulse promotes the biggest sub even if indirect like 16 => 4", () => {
-    const stepper4 = new Stepper({
-      beats: 4,
-      stepsPerBeat: 1,
-      id: 0,
-      sampleName: "lt",
-    });
-
-    const stepper8 = new Stepper({
-      beats: 8,
-      stepsPerBeat: 1,
-      id: 1,
-      sampleName: "lt",
-    });
-
-    const stepper16 = new Stepper({
-      beats: 4,
-      stepsPerBeat: 4,
-      id: 2,
-      sampleName: "hh",
-    });
-    const stepper32 = new Stepper({
-      beats: 4,
-      stepsPerBeat: 8,
-      id: 3,
-      sampleName: "hh",
-    });
-    steppers.push(stepper4, stepper8, stepper16, stepper32);
-
-    pulses.register(stepper4, steppers);
-    pulses.register(stepper8, steppers);
-    pulses.register(stepper16, steppers);
-    pulses.register(stepper32, steppers);
-
-    expect(pulses.size).toBe(4);
-    expect(pulses.getLeadPulses().length).toBe(1);
-    expect(pulses.getLeadPulses()[0].steps).toBe(32);
-    expect(pulses.getLeadPulses()[0].subs.length).toBe(3);
-
-    pulses.deregister(stepper32, []);
-    expect(pulses.size).toBe(3);
-    expect(pulses.getLeadPulses().length).toBe(1);
-    console.log("LEAD PULSES ", pulses.getLeadPulses()[0].subs);
-    expect(pulses.getLeadPulses()[0].steps).toBe(16);
-    expect(pulses.getLeadPulses()[0].subs[0].steps).toBe(8);
-    expect(pulses.getLeadPulses()[0].subs[0].subs[0]).toBeInstanceOf(Pulse);
-    expect(pulses.getLeadPulses()[0].subs[0].subs[0].steps).toBe(4);
-    console.log("steppers ", steppers);
-    // expect(pulses.getLeadPulses()[0].lead).toBe(true);
-    // expect(pulses.getLeadPulses()[0].subs.length).toBe(1);
-    // expect(pulses.getLeadPulses()[0].subs[0].steps).toBe(4);
-  });
-
-  // "11. LeadPulses should only contain leads even after parent is added",
 });

@@ -13,8 +13,8 @@ export interface StepperOptions {
   id: number;
   sampleName: string;
   color: StepperColorType;
-  controls: StepperControls;
-  track: Track;
+  controls?: StepperControls;
+  track?: Track;
 }
 
 class Stepper {
@@ -46,7 +46,7 @@ class Stepper {
     this.stepsPerBeat = stepsPerBeat;
     this.id = id;
     this.sampleName = sampleName;
-    this.controls = controls;
+    if (controls) this.controls = controls;
     this.color = color;
     this.track = track;
     this.render();

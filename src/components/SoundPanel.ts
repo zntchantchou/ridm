@@ -172,7 +172,6 @@ class SoundPanel {
 
   private getSelectedStepper() {
     const selected = this.steppers.find((s) => {
-      console.log("STEPPER ID: ", s.id, this.selectedStepper);
       return s.id?.toString() === this.selectedStepper;
     });
     return selected;

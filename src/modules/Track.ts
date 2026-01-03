@@ -64,6 +64,9 @@ class Track {
       (effect) => effect.node
     ) as Tone.ToneAudioNode[];
     effectNodes.push(this.channel as Tone.ToneAudioNode);
+    // EITHER We can add a volume node like so:
+    // effectNodes.push(new Tone.Volume(10));
+    // OR We could add a second channel for the whole app
     this.source?.chain(...effectNodes, Tone.getDestination());
   }
 
@@ -97,19 +100,16 @@ class Track {
   };
 
   private handlePanningUpdate = (value: EffectUpdate) => {
-    console.log("Panning UPDATE");
     const v = value.value as Tone.ChannelOptions;
     this?.channel?.set({ pan: v.pan });
   };
 
   private handleVolumeUpdate = (value: EffectUpdate) => {
-    console.log("Panning UPDATE");
     const v = value.value as Tone.ChannelOptions;
     this?.channel?.set({ volume: v.volume });
   };
 
   private handleDelayUpdate = (value: EffectUpdate) => {
-    console.log("handleDelayUpdate UPDATE");
     const effect = this.effects?.find((e) => e.name === "delay");
     if (!effect) return;
     const delayOptions = value.value as Tone.FeedbackDelayOptions;

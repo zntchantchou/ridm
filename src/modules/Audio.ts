@@ -27,9 +27,13 @@ class Audio {
 
   public get defaultEffects(): TrackEffect[] {
     return [
+      // {
+      //   name: "reverb",
+      //   node: new Tone.Reverb({ decay: 0, preDelay: 0, wet: 0 }),
+      // },
       {
         name: "pitch",
-        node: new Tone.PitchShift({ pitch: 0 }),
+        node: new Tone.PitchShift({ pitch: 1 }),
         // because effects affect sound even at 0 especially pitchShift
         // they should be in a disconnected state and be loaded only when actually used (value !== default value)
       },

@@ -1,4 +1,5 @@
 @import url("./src/style/panel.css");
+@import url("./src/style/knob.css");
 
 body {
   height: 100vh;
@@ -12,7 +13,7 @@ body {
 
 #app {
   height: 100%;
-  background-color: #cacaca;
+  background-color: #32383f;
   width: 100%;
   display: flex;
   justify-content: center;

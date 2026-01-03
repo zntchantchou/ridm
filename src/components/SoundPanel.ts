@@ -2,6 +2,7 @@ import type { Subject } from "rxjs";
 import type Stepper from "./Stepper";
 import * as Tone from "tone";
 import type { EffectNameType, EffectUpdate } from "../types";
+import Knob from "./Knob/Knob";
 
 const rootElt = document.getElementById("top-panel");
 const stepperElements = document.getElementsByClassName("stepper");
@@ -82,6 +83,18 @@ class SoundPanel {
     sampleDetailsSection.appendChild(this.generateVolumeGroup());
     sampleDetailsSection.appendChild(this.generatePanningGroup());
     sampleDetailsSection.appendChild(this.generateDelayGroup());
+    new Knob({
+      min: 0,
+      max: 50,
+      onChange: (v) => console.log("onChange from parent in knob!!!"),
+      size: "3",
+      fillColor: this.getSelectedStepper()?.color?.cssColor || "blue",
+      value: 0,
+      id: "1",
+      label: "salut",
+      parentElt: sampleDetailsSection,
+    });
+
     this.element?.appendChild(sampleDetailsSection);
   }
 

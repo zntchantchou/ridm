@@ -1,5 +1,7 @@
+@import url("./src/style/reset.css");
 @import url("./src/style/panel.css");
 @import url("./src/style/knob.css");
+@import url("./src/style/panel-section.css");
 
 body {
   height: 100vh;

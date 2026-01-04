@@ -2,7 +2,7 @@ import type { Subject } from "rxjs";
 import type Stepper from "./Stepper";
 import * as Tone from "tone";
 import type { EffectNameType, EffectUpdate } from "../types";
-import Knob from "./Knob/Knob";
+import PanelSection from "./PanelSection/PanelSection";
 
 const rootElt = document.getElementById("top-panel");
 const stepperElements = document.getElementsByClassName("stepper");
@@ -83,19 +83,34 @@ class SoundPanel {
     sampleDetailsSection.appendChild(this.generateVolumeGroup());
     sampleDetailsSection.appendChild(this.generatePanningGroup());
     sampleDetailsSection.appendChild(this.generateDelayGroup());
-    new Knob({
-      min: 0,
-      max: 50,
-      onChange: (v) => console.log("onChange from parent in knob!!!"),
-      size: "3",
-      fillColor: this.getSelectedStepper()?.color?.cssColor || "blue",
-      value: 0,
-      id: "1",
-      label: "salut",
-      parentElt: sampleDetailsSection,
-    });
 
     this.element?.appendChild(sampleDetailsSection);
+    new PanelSection({
+      title: "delay",
+      settings: [
+        {
+          label: "wet",
+          name: "wet",
+          inputType: "knob",
+          min: 0,
+          max: 1,
+          size: 4,
+          value: 0.3,
+          onChange: (v) => console.log("KNOB IS WORKING!! : ", v),
+        },
+        {
+          label: "feedback",
+          name: "feedback",
+          inputType: "knob",
+          min: -1,
+          max: 1,
+          size: 4,
+          value: 0,
+          onChange: (v) => console.log("KNOB IS WORKING!! : ", v),
+        },
+      ],
+      parentElt: this.element as HTMLDivElement,
+    });
   }
 
   private initializeEvents() {

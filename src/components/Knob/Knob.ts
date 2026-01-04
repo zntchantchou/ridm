@@ -9,7 +9,7 @@ export type KnobOptions = {
   max: number;
   fillColor: string;
   /** size in rem */
-  size: string;
+  size: number;
   parentElt: HTMLDivElement;
 };
 
@@ -34,7 +34,7 @@ class Knob {
   moveListener?: number;
   clickListener?: number;
   releaseListener?: number;
-  size: string;
+  size: number;
   dragObs?: Observable<Event>;
   dragSubscription?: Subscription;
   valueUpdateSubscription?: Subscription;
@@ -60,8 +60,8 @@ class Knob {
     this.label = label;
     this.value = value;
     this.min = min;
-    this.id = id;
     this.max = max;
+    this.id = id;
     this.size = size;
     this.fillColor = fillColor;
     this.onChange = onChange;
@@ -87,6 +87,9 @@ class Knob {
     this.knobContainerElt.style.width = `${this.size}rem`;
     this.knobContainerElt.style.height = `${this.size}rem`;
     this.rootElt.style.width = `${this.size}rem`;
+    this.rootElt.style.height = `${this.size}rem`;
+    console.log("RENDERING KNOW ", this.size);
+    // this.rootElt.style.width = `${this.size}rem`;
     this.ringElt = document.createElement("div");
     this.ringElt.classList.add("ring");
     this.ringFillElt = document.createElement("div");
@@ -127,21 +130,25 @@ class Knob {
     document.addEventListener("pointerup", this.handleRelease);
     this.dragSubscription = this.dragObs
       ?.pipe(throttleTime(100))
-      .subscribe(() => this.triggerUpdate()); // this actually updates the setting that this knob controls, hence throttling
+      .subscribe(this.triggerUpdate); // this actually updates the setting that this knob controls, hence throttling
     this.startY = e.clientY;
   };
 
   private triggerUpdate = () => {
+    console.log("TRIGGER UPDATE ", this.getValue());
     this.onChange(this.getValue());
   };
 
   private updatePosition() {
     const value = this.initialized ? parseFloat(this.getValue()) : this.value;
-    const ratio = value / this.max;
+    // console.log("UPDATE POSITION ", value);
+    const ratio = value ? value / this.max : value;
+    // console.log("UPDATE ratio ", ratio);
     const angle = this.maxRotation * ratio;
     const rotation = this.min >= 0 ? angle - this.maxRotation / 2 : angle;
     this.knobIndicatorContainerElt!.style.transform = `rotate(${rotation}deg)`;
     this.currentY = angle;
+    // console.log("ANGLE: ", angle);
     this.updateRingColor();
   }
 
@@ -159,12 +166,18 @@ class Knob {
   private updateRingColor() {
     const getBg = (startingAngle: number) =>
       `conic-gradient(${this.fillColor} ${startingAngle}deg, rgba(255,255,255,0.0) 0 360deg, ${this.fillColor} 0deg)`;
+    console.log("CURRENT Y: ", this.currentY);
     if (this.min < 0) {
       if (this.currentY > 0) {
+        // debugger;
         this.ringFillElt!.style.background = getBg(this.currentY);
         return;
       }
-      this.ringFillElt!.style.background = getBg(360 + this.currentY);
+      this.ringFillElt!.style.background = `conic-gradient(${
+        this.fillColor
+      } 0deg, rgba(255,255,255,0.0) 0 ${360 + this.currentY}deg, ${
+        this.fillColor
+      } 0deg)`;
       return;
     }
     this.ringFillElt!.style.background = `conic-gradient(from ${
@@ -172,13 +185,16 @@ class Knob {
     }deg, ${this.fillColor} ${
       this.currentY
     }deg, rgba(255,255,255,0.0) 0 360deg, ${this.fillColor} 0deg)`;
+
+    // debugger;
     return;
   }
 
-  private handleRelease = (e: Event) => {
+  private handleRelease = () => {
     document.removeEventListener("pointermove", this.handleMove);
     document.removeEventListener("pointerup", this.handleRelease);
     this.lastRotation = this.currentY;
+    this.triggerUpdate();
     this.dragSubscription?.unsubscribe();
     if (this.labelElt) this.labelElt.textContent = this.getValue();
   };
@@ -186,25 +202,12 @@ class Knob {
   private getValue() {
     // ABSOLUTE
     if (!this.initialized) return this.value.toString();
-    const valueUp = (this.currentY / this.maxRotation) * this.max;
-    const valueDown = -((this.currentY / this.maxRotation) * this.min);
-    if (this.min < 0) {
-      if (this.currentY > 0) {
-        return Math.abs(valueUp).toFixed(2);
-      }
-      if (this.currentY < 0) {
-        return valueDown.toFixed(2);
-      }
-      return "0";
-    }
-    // POSITIVE
-    if (this.currentY > 0) {
-      return Math.abs(valueUp).toFixed(2);
-    }
+    const valueUp = Math.abs((this.currentY / this.maxRotation) * this.max);
+    const valueDown = -1 * (this.currentY / this.maxRotation) * this.min;
     if (this.currentY < 0) {
       return valueDown.toFixed(2);
     }
-    return Math.abs(valueUp).toFixed(2);
+    return valueUp.toFixed(2);
   }
 }
 

@@ -15,10 +15,14 @@
   justify-content: center;
   position: relative;
 }
+
 .knob-label-container {
   color: bisque;
   display: flex;
   justify-content: center;
+}
+.knob-label {
+  font-size: 0.85rem;
 }
 
 .ring {
@@ -42,7 +46,7 @@
 
 .space {
   position: absolute;
-  background-color: #32383f;
+  background-color: rgb(21, 21, 21);
   border-radius: 50%;
   width: calc((100%) - var(--ring-width));
   height: calc((100%) - var(--ring-width));
@@ -57,6 +61,7 @@
   border-radius: 50%;
   width: calc((100%) - (var(--ring-width) + var(--ring-space)));
   height: calc((100%) - (var(--ring-width) + var(--ring-space)));
+  cursor: pointer;
 }
 
 .knob-indicator-container {

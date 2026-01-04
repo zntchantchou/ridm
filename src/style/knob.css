@@ -7,6 +7,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  margin: 0.6rem;
+  height: fit-content;
 }
 
 .knob-container {
@@ -14,15 +17,22 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  margin-top: 0.6rem;
 }
 
-.knob-label-container {
-  color: bisque;
+.knob-value-container {
+  color: #fff;
   display: flex;
   justify-content: center;
 }
+
+.knob-value,
 .knob-label {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+}
+
+.knob-label {
+  color: #fff;
 }
 
 .ring {

@@ -6,7 +6,7 @@ type PanelSetting = {
   inputType: "knob";
   min: number;
   max: number;
-  onChange: (value: string) => void;
+  onChange: (value: string, name: string) => void;
   parentElt?: HTMLDivElement;
   size?: number;
   value?: number;
@@ -50,10 +50,11 @@ class PanelSection {
     label,
     onChange,
     parentElt,
-    size,
+    size = 3.4,
     value = 0,
     min = 0,
     max = 1,
+    name,
   }: PanelSetting) {
     new Knob({
       label: label,
@@ -64,6 +65,7 @@ class PanelSection {
       fillColor: "beige",
       onChange,
       size: size || 3,
+      name,
       parentElt: parentElt as HTMLDivElement,
     });
   }

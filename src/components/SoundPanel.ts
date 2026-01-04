@@ -82,7 +82,7 @@ class SoundPanel {
     sampleDetailsSection.appendChild(nameGroup);
     sampleDetailsSection.appendChild(this.generateVolumeGroup());
     sampleDetailsSection.appendChild(this.generatePanningGroup());
-    sampleDetailsSection.appendChild(this.generateDelayGroup());
+    // sampleDetailsSection.appendChild(this.generateDelayGroup());
 
     this.element?.appendChild(sampleDetailsSection);
     new PanelSection({
@@ -94,19 +94,26 @@ class SoundPanel {
           inputType: "knob",
           min: 0,
           max: 1,
-          size: 4,
           value: 0.3,
-          onChange: (v) => console.log("KNOB IS WORKING!! : ", v),
+          onChange: this.handleDelayChange,
         },
         {
           label: "feedback",
           name: "feedback",
           inputType: "knob",
-          min: -1,
+          min: 0,
           max: 1,
-          size: 4,
           value: 0,
-          onChange: (v) => console.log("KNOB IS WORKING!! : ", v),
+          onChange: this.handleDelayChange,
+        },
+        {
+          label: "time",
+          name: "delayTime",
+          inputType: "knob",
+          min: 0,
+          max: 1,
+          value: 0,
+          onChange: this.handleDelayChange,
         },
       ],
       parentElt: this.element as HTMLDivElement,
@@ -126,21 +133,6 @@ class SoundPanel {
       "panning-range"
     ) as HTMLInputElement;
     pannerRangeElt?.addEventListener("change", this.handlePanningChange);
-
-    const delayTimeRange = document.getElementById(
-      "delay-time-range"
-    ) as HTMLInputElement;
-
-    const delayFeedbackRange = document.getElementById(
-      "delay-feedback-range"
-    ) as HTMLInputElement;
-    const delayWetRange = document.getElementById(
-      "delay-wet-range"
-    ) as HTMLInputElement;
-
-    [delayTimeRange, delayFeedbackRange, delayWetRange].forEach((elt) =>
-      elt.addEventListener("change", this.handleDelayChange)
-    );
   }
 
   private handleVolumeChange = (e: Event) => {
@@ -156,8 +148,6 @@ class SoundPanel {
       value: { volume: parseFloat(target.value) },
     });
     this.render();
-    // const volumeValue = document.getElementById("volume-value");
-    // volumeValue!.textContent = target.value;
   };
 
   private handlePanningChange = (e: Event) => {
@@ -175,21 +165,23 @@ class SoundPanel {
     this.render();
   };
 
-  private handleDelayChange = (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    console.log("TARGET-ID ", target.id);
-    const rangeValue = parseFloat(target.value);
+  private handleDelayChange = (value: string, name: string) => {
+    // const target = e.target as HTMLInputElement;
+    console.log("HANDLE DELAY CHANGE");
+    const rangeValue = parseFloat(value);
     const updateValue: { feedback?: number; wet?: number; delayTime?: number } =
       {};
-
-    if (target.id.includes("feedback")) {
-      updateValue.feedback = rangeValue;
-    } else if (target.id.includes("wet")) {
-      updateValue.wet = rangeValue;
-    } else {
-      updateValue.delayTime = rangeValue;
+    switch (name) {
+      case "feedback":
+        updateValue.feedback = rangeValue;
+        break;
+      case "wet":
+        updateValue.wet = rangeValue;
+        break;
+      case "delayTime":
+        updateValue.delayTime = rangeValue;
+        break;
     }
-
     this.effectUpdateSubject.next({
       name: "delay",
       stepperId: this.selectedStepper,
@@ -247,62 +239,6 @@ class SoundPanel {
     panningGroup.appendChild(this.panningRange);
     panningGroup.appendChild(this.panningValue);
     return panningGroup;
-  }
-
-  private generateDelayGroup() {
-    // DELAY
-    const delayGroup = document.createElement("div");
-    const delayTimeTitle = document.createElement("span");
-    const delayWetTitle = document.createElement("span");
-    const delayFeedbackTitle = document.createElement("span");
-    this.delayFeedbackRange = document.createElement("input");
-    const delayFeedbackValue = document.createElement("span");
-    this.delayTimeRange = document.createElement("input");
-    const delayTimeValue = document.createElement("span");
-    this.delayWetRange = document.createElement("input");
-    const delayWetValue = document.createElement("span");
-    delayTimeTitle.textContent = "delay";
-    // TIME
-    this.delayTimeRange.type = "range";
-    this.delayTimeRange.value = "0";
-    this.delayTimeRange.min = "0";
-    this.delayTimeRange.max = "1";
-    this.delayTimeRange.step = "0.01";
-    this.delayTimeRange.id = "delay-time-range";
-    delayTimeValue.textContent = this.delayTimeRange.value;
-    delayTimeValue.id = "delay-time-value";
-    // FEEDBACK
-    delayFeedbackTitle.textContent = "delay feedback";
-    this.delayFeedbackRange.type = "range";
-    this.delayFeedbackRange.value = "0";
-    this.delayFeedbackRange.min = "0";
-    this.delayFeedbackRange.max = "1";
-    this.delayFeedbackRange.step = "0.01";
-    this.delayFeedbackRange.id = "delay-feedback-range";
-    delayFeedbackValue.textContent = this.delayFeedbackRange.value;
-    delayFeedbackValue.id = "delay-feedback-value";
-    // WET
-    delayWetTitle.textContent = "delay wet";
-    this.delayWetRange.type = "range";
-    this.delayWetRange.value = "0";
-    this.delayWetRange.min = "0";
-    this.delayWetRange.max = "1";
-    this.delayWetRange.step = "0.01";
-    this.delayWetRange.id = "delay-wet-range";
-    delayWetValue.textContent = this.delayWetRange.value;
-    delayWetValue.id = "delay-wet-value";
-
-    delayGroup.classList.add("effect-group");
-    delayGroup.appendChild(delayTimeTitle);
-    delayGroup.appendChild(this.delayTimeRange);
-    delayGroup.appendChild(delayTimeValue);
-    delayGroup.appendChild(delayFeedbackTitle);
-    delayGroup.appendChild(this.delayFeedbackRange);
-    delayGroup.appendChild(delayFeedbackValue);
-    delayGroup.appendChild(delayWetTitle);
-    delayGroup.appendChild(this.delayWetRange);
-    delayGroup.appendChild(delayWetValue);
-    return delayGroup;
   }
 
   private generateVolumeGroup() {

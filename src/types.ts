@@ -27,10 +27,11 @@ export type EffectNameType =
   | "panning"
   | "delay"
   | "mute"
+  | "reverb"
   | "solo";
 
 export type EffectValue = Partial<
-  Tone.ChannelOptions | Tone.FeedbackDelayOptions
+  Tone.ChannelOptions | Tone.FeedbackDelayOptions | Tone.PitchShiftOptions
 >;
 
 export type EffectUpdate = {

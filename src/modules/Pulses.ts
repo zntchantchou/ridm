@@ -337,37 +337,30 @@ class Pulses {
     }
   }
 
-  /**
-   * Returns a debug string representation of the Pulses system.
-   */
-  toString(): string {
-    const leadPulses = this.getLeadPulses();
-    const allPulses = this.getAllPulses();
+  // /**
+  //  * Returns a debug string representation of the Pulses system.
+  //  */
+  // toString(): string {
+  //   const leadPulses = this.getLeadPulses();
+  //   const allPulses = this.getAllPulses();
 
-    let output = `Pulses System:\n`;
-    output += `  Total pulses: ${allPulses.length}\n`;
-    output += `  Lead pulses: ${leadPulses.length}\n`;
-    output += `  leadSteps: [${this.leadSteps.join(", ")}]\n\n`;
+  //   let output = `Pulses System:\n`;
+  //   output += `  Total pulses: ${allPulses.length}\n`;
+  //   output += `  Lead pulses: ${leadPulses.length}\n`;
+  //   output += `  leadSteps: [${this.leadSteps.join(", ")}]\n\n`;
 
-    output += `Lead Pulses:\n`;
-    for (const pulse of leadPulses) {
-      output += `  ${pulse.toString()}\n`;
-      if (pulse.hasSubs()) {
-        for (const sub of pulse.getSubs()!) {
-          output += `    └─ ${sub.toString()}\n`;
-        }
-      }
-    }
+  //   output += `Lead Pulses:\n`;
+  //   for (const pulse of leadPulses) {
+  //     output += `  ${pulse.toString()}\n`;
+  //     if (pulse.hasSubs()) {
+  //       for (const sub of pulse.getSubs()!) {
+  //         output += `    └─ ${sub.toString()}\n`;
+  //       }
+  //     }
+  //   }
 
-    return output;
-  }
-
-  /**
-   * Prints the current state to console for debugging.
-   */
-  printState(): void {
-    console.log(this.toString());
-  }
+  //   return output;
+  // }
 
   /**
    * Gets statistics about the Pulses system.

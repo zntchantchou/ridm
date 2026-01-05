@@ -50,7 +50,7 @@ class PanelSection {
     label,
     onChange,
     parentElt,
-    size = 3.4,
+    size = 3,
     value = 0,
     min = 0,
     max = 1,

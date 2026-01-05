@@ -84,7 +84,7 @@ class Track {
   }
 
   private handleEffectUpdate = (update: EffectUpdate) => {
-    // console.log("[handleEffectUpdate] ", name, stepperId, value);
+    console.log("[handleEffectUpdate] update ", update);
     const updateFn = this.updateMethodsMap.get(update.name);
     if (updateFn) updateFn(update);
   };
@@ -116,12 +116,34 @@ class Track {
     effect?.node.set({ ...delayOptions });
   };
 
+  private handleReverbUpdate = (value: EffectUpdate) => {
+    console.log("TRACK handle reverb update ", value);
+    const effect = this.effects?.find((e) => e.name === "reverb");
+    if (!effect) return;
+    const options = value.value as Tone.ReverbOptions;
+    effect?.node.set({ ...options });
+  };
+
+  private handlePitchUpdate = (value: EffectUpdate) => {
+    console.log("TRACK handle pitch update ", value);
+    const effect = this.effects?.find((e) => e.name === "pitch");
+    if (!effect) return;
+    const pitchOptions = value.value as Tone.PitchShiftOptions;
+    const options = {
+      ...pitchOptions,
+      pitch: Math.round(pitchOptions.pitch as number),
+    };
+    effect?.node.set({ ...options });
+  };
+
   private initializeUpdateMethods() {
     this.updateMethodsMap.set("solo", this.handleSoloUpdate);
     this.updateMethodsMap.set("mute", this.handleMuteUpdate);
     this.updateMethodsMap.set("panning", this.handlePanningUpdate);
     this.updateMethodsMap.set("volume", this.handleVolumeUpdate);
     this.updateMethodsMap.set("delay", this.handleDelayUpdate);
+    this.updateMethodsMap.set("reverb", this.handleReverbUpdate);
+    this.updateMethodsMap.set("pitch", this.handlePitchUpdate);
   }
 }
 

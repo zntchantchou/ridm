@@ -26,14 +26,15 @@ class Audio {
   }
 
   public get defaultEffects(): TrackEffect[] {
+    // for each stepper effect values should be persisted
     return [
-      // {
-      //   name: "reverb",
-      //   node: new Tone.Reverb({ decay: 0, preDelay: 0, wet: 0 }),
-      // },
+      {
+        name: "reverb",
+        node: new Tone.Reverb({ decay: 0.001, preDelay: 0, wet: 0 }),
+      },
       {
         name: "pitch",
-        node: new Tone.PitchShift({ pitch: 1 }),
+        node: new Tone.PitchShift({ pitch: 5, windowSize: 0.1, wet: 1 }),
         // because effects affect sound even at 0 especially pitchShift
         // they should be in a disconnected state and be loaded only when actually used (value !== default value)
       },
@@ -51,27 +52,6 @@ class Audio {
       },
     ];
   }
-
-  // Each effect chain must be easily associated with its track
-  // We need to know WHICH TRACK to update the effect for
-  // We need type safety when updating the effect
-
-  // private updateSoundSetting(name: EffectNameType, value: number) {
-  //   // create an update function for each effect type
-
-  //   const setting = this.getSoundSetting(name);
-  //   const node = setting?.node as Tone.PitchShift;
-  //   console.log("UPdATE ", node.pitch);
-  //   node.set({ pitch: value });
-  //   const nodes = this.soundSettings.map((s) => s.node);
-
-  //   // update only one track here
-  //   this.defaultSamples.forEach((s) => {
-  //     console.log("UPdATE DISCONNECT ");
-  //     s.src?.disconnect();
-  //     s.src?.chain(...nodes, Tone.getDestination());
-  //   });
-  // }
 
   get currentTime() {
     return this.ctx?.currentTime;

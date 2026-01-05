@@ -1,8 +1,8 @@
 import type { Subject } from "rxjs";
 import type Stepper from "./Stepper";
-import * as Tone from "tone";
-import type { EffectNameType, EffectUpdate } from "../types";
+import type { EffectNameType, EffectUpdate, EffectValue } from "../types";
 import PanelSection from "./PanelSection/PanelSection";
+import type { PitchShiftOptions } from "tone";
 
 const rootElt = document.getElementById("top-panel");
 const stepperElements = document.getElementsByClassName("stepper");
@@ -44,17 +44,13 @@ class SoundPanel {
     const stepper = this.getSelectedStepper() as Stepper;
     sampleNameElt!.textContent = stepper.sampleName;
     this.setBackground();
-    // DELAY
-    const delayValues = this.getEffectValues("delay") as Tone.FeedbackDelay;
-    this!.delayTimeRange!.value = delayValues.delayTime.toString();
-    this!.delayFeedbackRange!.value = delayValues.feedback.toString();
-    this!.delayWetRange!.value = delayValues.wet.toString();
     // VOLUME
     const channel = stepper.track?.channel?.get();
     this!.panningRange!.value = channel?.pan.toString() as string;
     this!.panningValue!.textContent = channel?.pan.toString() as string;
     this!.volumeRange!.value = channel?.volume.toString() as string;
     this!.volumeValue!.textContent = channel?.volume.toFixed(1) as string;
+    // this.knobs
   }
 
   private setBackground() {
@@ -82,8 +78,6 @@ class SoundPanel {
     sampleDetailsSection.appendChild(nameGroup);
     sampleDetailsSection.appendChild(this.generateVolumeGroup());
     sampleDetailsSection.appendChild(this.generatePanningGroup());
-    // sampleDetailsSection.appendChild(this.generateDelayGroup());
-
     this.element?.appendChild(sampleDetailsSection);
     new PanelSection({
       title: "delay",
@@ -94,7 +88,7 @@ class SoundPanel {
           inputType: "knob",
           min: 0,
           max: 1,
-          value: 0.3,
+          value: 0,
           onChange: this.handleDelayChange,
         },
         {
@@ -118,6 +112,73 @@ class SoundPanel {
       ],
       parentElt: this.element as HTMLDivElement,
     });
+    new PanelSection({
+      title: "reverb",
+      settings: [
+        {
+          label: "wet",
+          name: "wet",
+          inputType: "knob",
+          min: 0,
+          max: 1,
+          value: 0,
+          onChange: this.handleReverbChange,
+        },
+        {
+          label: "decay",
+          name: "decay",
+          inputType: "knob",
+          min: 0,
+          max: 10,
+          value: 0,
+          onChange: this.handleReverbChange,
+        },
+        {
+          label: "predelay",
+          name: "preDelay",
+          inputType: "knob",
+          min: 0,
+          max: 6,
+          value: 0,
+          onChange: this.handleReverbChange,
+        },
+      ],
+      parentElt: this.element as HTMLDivElement,
+    });
+
+    new PanelSection({
+      title: "pitch",
+      settings: [
+        {
+          label: "interval",
+          name: "pitch",
+          inputType: "knob",
+          min: -8,
+          max: 8,
+          value: (this.getEffectValues("pitch") as PitchShiftOptions).pitch,
+          onChange: this.handlePitchChange,
+        },
+        {
+          label: "windowSize",
+          name: "windowSize",
+          inputType: "knob",
+          min: 0,
+          max: 4,
+          value: 0,
+          onChange: this.handlePitchChange,
+        },
+        {
+          label: "wet",
+          name: "wet",
+          inputType: "knob",
+          min: 0,
+          max: 1,
+          value: 0,
+          onChange: this.handlePitchChange,
+        },
+      ],
+      parentElt: this.element as HTMLDivElement,
+    });
   }
 
   private initializeEvents() {
@@ -137,11 +198,6 @@ class SoundPanel {
 
   private handleVolumeChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
-    console.log("handleVolumeChange", {
-      name: "volume",
-      stepperId: this.selectedStepper,
-      value: { volume: parseFloat(target.value) },
-    });
     this.effectUpdateSubject.next({
       name: "volume",
       stepperId: this.selectedStepper,
@@ -152,11 +208,6 @@ class SoundPanel {
 
   private handlePanningChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
-    console.log("handlePanningChange ", {
-      name: "panning",
-      stepperId: this.selectedStepper,
-      value: { pan: parseFloat(target.value) },
-    });
     this.effectUpdateSubject.next({
       name: "panning",
       stepperId: this.selectedStepper,
@@ -184,6 +235,55 @@ class SoundPanel {
     }
     this.effectUpdateSubject.next({
       name: "delay",
+      stepperId: this.selectedStepper,
+      value: updateValue,
+    });
+    this.render();
+  };
+
+  private handleReverbChange = (value: string, name: string) => {
+    // const target = e.target as HTMLInputElement;
+    console.log("HANDLE REVERB CHANGE");
+    const rangeValue = parseFloat(value);
+    const updateValue: { preDelay?: number; wet?: number; decay?: number } = {};
+    switch (name) {
+      case "decay":
+        updateValue.decay = rangeValue;
+        break;
+      case "wet":
+        updateValue.wet = rangeValue;
+        break;
+      case "preDelay":
+        updateValue.preDelay = rangeValue;
+        break;
+    }
+    this.effectUpdateSubject.next({
+      name: "reverb",
+      stepperId: this.selectedStepper,
+      value: updateValue,
+    });
+    this.render();
+  };
+
+  private handlePitchChange = (value: string, name: string) => {
+    // const target = e.target as HTMLInputElement;
+    console.log("HANDLE PITCH CHANGE");
+    const rangeValue = parseFloat(value);
+    const updateValue: { pitch?: number; wet?: number; windowSize?: number } =
+      {};
+    switch (name) {
+      case "pitch":
+        updateValue.pitch = rangeValue;
+        break;
+      case "wet":
+        updateValue.wet = rangeValue;
+        break;
+      case "preDelay":
+        updateValue.windowSize = rangeValue;
+        break;
+    }
+    this.effectUpdateSubject.next({
+      name: "pitch",
       stepperId: this.selectedStepper,
       value: updateValue,
     });
@@ -263,9 +363,7 @@ class SoundPanel {
     return volumeGroup;
   }
 
-  private getEffectValues(
-    name: EffectNameType
-  ): Tone.ToneAudioNodeOptions | undefined {
+  private getEffectValues(name: EffectNameType): EffectValue | undefined {
     const effects = this.getSelectedStepper()?.track?.effects;
     const effect = effects?.find((e) => e.name === name)?.node.get();
     return effect;

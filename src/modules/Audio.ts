@@ -34,7 +34,7 @@ class Audio {
       },
       {
         name: "pitch",
-        node: new Tone.PitchShift({ pitch: 5, windowSize: 0.1, wet: 1 }),
+        node: new Tone.PitchShift({ pitch: 1, windowSize: 0.1, wet: 0 }),
         // because effects affect sound even at 0 especially pitchShift
         // they should be in a disconnected state and be loaded only when actually used (value !== default value)
       },

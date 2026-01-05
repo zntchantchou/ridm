@@ -31,7 +31,10 @@ export type EffectNameType =
   | "solo";
 
 export type EffectValue = Partial<
-  Tone.ChannelOptions | Tone.FeedbackDelayOptions | Tone.PitchShiftOptions
+  | Tone.ChannelOptions
+  | Tone.FeedbackDelayOptions
+  | Tone.PitchShiftOptions
+  | Tone.ReverbOptions
 >;
 
 export type EffectUpdate = {

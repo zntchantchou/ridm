@@ -1,8 +1,6 @@
-import type { Subject } from "rxjs";
-import type { EffectUpdate } from "../types";
+import State from "../state/State";
 
 type StepperControlsOptions = {
-  effectUpdateSubject: Subject<EffectUpdate>;
   stepperId: number;
   stepsPerBeats: number;
   beats: number;
@@ -21,7 +19,6 @@ class StepperControls {
   maxSteps = 10;
   maxBeats = 10;
   name: string;
-  effectUpdateSubject: Subject<EffectUpdate>;
   soloCheckBox?: HTMLInputElement;
   muteCheckBox?: HTMLInputElement;
 
@@ -30,13 +27,11 @@ class StepperControls {
     beats,
     stepperId,
     name,
-    effectUpdateSubject,
   }: StepperControlsOptions) {
     this.stepperId = stepperId;
     this.stepsPerBeats = stepsPerBeats;
     this.beats = beats;
     this.name = name;
-    this.effectUpdateSubject = effectUpdateSubject;
     this.render();
     this.initializeEvents();
   }
@@ -98,7 +93,7 @@ class StepperControls {
   private handleSolo = (e: Event) => {
     const soloTarget = e.target as HTMLInputElement;
     console.log("HANDLE SOLO ", soloTarget.checked);
-    this.effectUpdateSubject.next({
+    State.effectUpdateSubject.next({
       name: "solo",
       stepperId: this.stepperId.toString(),
       value: { mute: soloTarget.checked },
@@ -109,7 +104,7 @@ class StepperControls {
   private handleMute = (e: Event) => {
     const muteTarget = e.target as HTMLInputElement;
     console.log("HANDLE MUTE ", muteTarget.checked);
-    this.effectUpdateSubject.next({
+    State.effectUpdateSubject.next({
       name: "mute",
       stepperId: this.stepperId.toString(),
       value: { mute: muteTarget.checked },

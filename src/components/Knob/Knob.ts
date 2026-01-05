@@ -144,7 +144,6 @@ class Knob {
   };
 
   private triggerUpdate = () => {
-    console.log("TRIGGER UPDATE ", this.getValue());
     this.onChange(this.getValue(), this.name);
   };
 

@@ -1,4 +1,3 @@
-import { Subject } from "rxjs";
 import Stepper, {
   type StepperColorType,
   type StepperOptions,
@@ -8,7 +7,6 @@ import SoundPanel from "../components/SoundPanel";
 import Pulses from "./Pulses";
 import Track from "./Track";
 import { SAMPLES_DIRS } from "./Audio";
-import type { EffectUpdate } from "../types";
 
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
@@ -17,7 +15,6 @@ class Sequencer {
   pulses: typeof Pulses | null = null;
   steppers: Stepper[] = [];
   controls: StepperControls[] = [];
-  effectUpdateSubject = new Subject<EffectUpdate>();
   // effectUpdate Subject takes an effectUpdate
   // effect id
   // stepper id
@@ -31,7 +28,6 @@ class Sequencer {
     this.setupStepperResizeEvents();
     new SoundPanel({
       steppers: this.steppers,
-      effectUpdateSubject: this.effectUpdateSubject,
     });
   }
 
@@ -56,13 +52,11 @@ class Sequencer {
       beats: options.beats,
       stepsPerBeats: options.stepsPerBeat,
       name: options.sampleName,
-      effectUpdateSubject: this.effectUpdateSubject,
     });
 
     const stepperTrack = new Track({
       name: options.sampleName,
       stepperId: options.id.toString(),
-      effectUpdateSubject: this.effectUpdateSubject,
     });
 
     const stepper = new Stepper({

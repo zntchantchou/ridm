@@ -1,8 +1,9 @@
 import * as Tone from "tone";
 import Audio from "./Audio.ts";
-import { filter, type Subject, type Subscription } from "rxjs";
+import { filter, type Subscription } from "rxjs";
 import Controls from "../components/Controls";
 import type { EffectNameType, EffectUpdate, TrackEffect } from "../types.ts";
+import State from "../state/State.ts";
 
 const samplesDirPath = "../../samples/defaults/";
 
@@ -12,7 +13,6 @@ export type TrackOptions = {
   source?: Tone.Player;
   effects?: TrackEffect[];
   samplePath?: string;
-  effectUpdateSubject: Subject<EffectUpdate>;
 };
 
 class Track {
@@ -24,19 +24,12 @@ class Track {
   effectUpdateSubscription?: Subscription;
   effectsInitialized = false;
   channel?: Tone.Channel; // handle volume, pan, mute, solo
-  effectUpdateSubject: Subject<EffectUpdate>;
   updateMethodsMap: Map<EffectNameType, (update: EffectUpdate) => void> =
     new Map();
 
-  constructor({
-    stepperId,
-    name,
-    samplePath,
-    effectUpdateSubject,
-  }: TrackOptions) {
+  constructor({ stepperId, name, samplePath }: TrackOptions) {
     this.name = name;
     this.stepperId = stepperId;
-    this.effectUpdateSubject = effectUpdateSubject;
     if (samplePath) this.samplePath = samplePath;
   }
 
@@ -45,7 +38,7 @@ class Track {
     this.loadSample();
     this.loadEffects();
     this.initializeUpdateMethods();
-    this.effectUpdateSubject
+    State.effectUpdateSubject
       .pipe(
         filter((update: EffectUpdate) => update.stepperId === this.stepperId)
       )

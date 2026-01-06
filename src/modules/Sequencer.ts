@@ -4,10 +4,10 @@ import SoundPanel from "../components/SoundPanel";
 import Pulses from "./Pulses";
 import Track from "./Track";
 import State from "../state/state";
-import { fromEvent, Subscription, throttleTime } from "rxjs";
+import { debounceTime, fromEvent, Subscription } from "rxjs";
 
 const DEBOUNCE_TIME_MS = 200;
-/** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
+/** Coordinates steppers and their pulses. Phißlosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
 
 class Sequencer {
@@ -68,14 +68,14 @@ class Sequencer {
   private setupStepperResizeEvents() {
     this.stepperBeatsUpdateSubscriptions = this.getBeatsInputs().map((e) => {
       return fromEvent(e, "change")
-        .pipe(throttleTime(DEBOUNCE_TIME_MS))
+        .pipe(debounceTime(DEBOUNCE_TIME_MS))
         .subscribe(this.handleBeatsUpdate);
     });
 
     this.stepperStepsUpdateSubscriptions = this.getStepsPerBeatInputs().map(
       (e) => {
         return fromEvent(e, "change")
-          .pipe(throttleTime(DEBOUNCE_TIME_MS))
+          .pipe(debounceTime(DEBOUNCE_TIME_MS))
           .subscribe(this.handleStepsPerBeatUpdate);
       }
     );

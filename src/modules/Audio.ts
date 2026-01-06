@@ -1,5 +1,11 @@
 import * as Tone from "tone";
-import type { ToneSoundSettings, TrackEffect } from "../types";
+import type {
+  EffectNameType,
+  EffectValue,
+  ToneSoundSettings,
+  TrackEffect,
+} from "../types";
+import { INITIAL_EFFECTS } from "../state/state.constants";
 
 class Audio {
   ctx: Tone.Context | null = null;
@@ -25,32 +31,32 @@ class Audio {
     this.mainVolume.gain.value = value;
   }
 
+  public createEffect(
+    name: EffectNameType,
+    value: EffectValue
+  ): Tone.ToneAudioNode {
+    switch (name) {
+      case "reverb":
+        return new Tone.Reverb(value);
+      case "pitch":
+        return new Tone.PitchShift(value);
+      case "delay":
+        return new Tone.FeedbackDelay(value);
+      case "volume":
+        return new Tone.Volume(value);
+      default:
+        throw new Error(`Effect ${name} not recognized`);
+    }
+  }
+
   public get defaultEffects(): TrackEffect[] {
-    // for each stepper effect values should be persisted
-    return [
-      {
-        name: "reverb",
-        node: new Tone.Reverb({ decay: 0.001, preDelay: 0, wet: 0 }),
-      },
-      {
-        name: "pitch",
-        node: new Tone.PitchShift({ pitch: 1, windowSize: 0.1, wet: 0 }),
-        // because effects affect sound even at 0 especially pitchShift
-        // they should be in a disconnected state and be loaded only when actually used (value !== default value)
-      },
-      {
-        name: "delay",
-        node: new Tone.FeedbackDelay({
-          delayTime: "0",
-          feedback: 0,
-          wet: 0,
-        }),
-      },
-      {
-        name: "volume",
-        node: new Tone.Volume(-10),
-      },
-    ];
+    return INITIAL_EFFECTS.map((effect) => {
+      const node = this.createEffect(effect.name, effect.value);
+      return {
+        name: effect.name,
+        node,
+      };
+    });
   }
 
   get currentTime() {

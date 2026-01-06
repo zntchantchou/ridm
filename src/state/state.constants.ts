@@ -1,4 +1,5 @@
 import type { StepperColorType } from "../components/Stepper";
+import type { Effect } from "./state.types";
 import { generateRandomSteps } from "./state.utils";
 
 export const COLORS: StepperColorType[] = [
@@ -81,3 +82,28 @@ export const DEFAULT_STEPPER_OPTIONS = {
   stepsPerBeat: 4,
   selectedSteps: generateRandomSteps({ stepsPerBeat: 4, beats: 4 }),
 };
+
+export const INITIAL_EFFECTS: Effect[] = [
+  {
+    name: "reverb",
+    value: { decay: 0.001, preDelay: 0, wet: 0 },
+  },
+  {
+    name: "pitch",
+    value: { pitch: 1, windowSize: 0.1, wet: 0 },
+  },
+  {
+    name: "delay",
+    value: {
+      delayTime: 0,
+      feedback: 0,
+      wet: 0,
+    },
+  },
+  {
+    name: "volume",
+    value: {
+      volume: 0,
+    },
+  },
+];

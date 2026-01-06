@@ -7,35 +7,11 @@ import type {
 } from "./state.types";
 import type { EffectNameType, EffectUpdate } from "../types";
 import type { StepperOptions } from "../components/Stepper";
-import { COLORS, SAMPLES_DIRS } from "./state.constants";
+import { COLORS, INITIAL_EFFECTS, SAMPLES_DIRS } from "./state.constants";
 import { generateRandomSteps } from "./state.utils";
 
 // because effects affect sound even at 0 especially pitchShift
-// they should be in a disconnected state and be loaded only when actually used (value !== default value)
-const INITITAL_EFFECTS: Effect[] = [
-  {
-    name: "reverb",
-    value: { decay: 0.001, preDelay: 0, wet: 0 },
-  },
-  {
-    name: "pitch",
-    value: { pitch: 1, windowSize: 0.1, wet: 0 },
-  },
-  {
-    name: "delay",
-    value: {
-      delayTime: 0,
-      feedback: 0,
-      wet: 0,
-    },
-  },
-  {
-    name: "volume",
-    value: {
-      volume: 0,
-    },
-  },
-];
+// they should be in a disconnected state, loaded only when activated and used
 
 class State {
   // should be private
@@ -56,11 +32,10 @@ class State {
   getInitialState() {
     const effects = new Map<StepperIdType, Effect[]>();
     const steppers = new Map<StepperIdType, StepperOptions>();
-
     for (let i = 0; i < 8; i++) {
-      const beats = Math.floor(Math.random() * 8) + 2;
-      const stepsPerBeat = Math.floor(Math.random() * 8) + 1;
-      effects.set(i as StepperIdType, INITITAL_EFFECTS);
+      const beats = Math.floor(Math.random() * 4) + 2;
+      const stepsPerBeat = Math.floor(Math.random() * 4) + 1; // deep copy
+      effects.set(i as StepperIdType, INITIAL_EFFECTS);
       steppers.set(i as StepperIdType, {
         beats,
         stepsPerBeat,
@@ -84,7 +59,7 @@ class State {
     if (index < 0) return;
     const updatedValue = { ...existingEffects[index].value, ...update.value };
     const updatedEffects = [...existingEffects];
-    updatedEffects[index] = { ...existingEffects[index], value: updatedValue }; // Copy the Effect object too!
+    updatedEffects[index] = { ...existingEffects[index], value: updatedValue };
     this.effects.set(id, updatedEffects);
   };
 
@@ -100,6 +75,10 @@ class State {
 
   getInitialStepperOptions() {
     return Array.from(this.steppers.values());
+  }
+
+  getStepperEffects(stepperId: StepperIdType) {
+    return this.effects.get(stepperId);
   }
 }
 

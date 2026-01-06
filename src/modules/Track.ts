@@ -4,6 +4,7 @@ import { filter, type Subscription } from "rxjs";
 import Controls from "../components/Controls";
 import type { EffectNameType, EffectUpdate, TrackEffect } from "../types.ts";
 import State from "../state/state.ts";
+import type { Effect, StepperIdType } from "../state/state.types.ts";
 
 const samplesDirPath = "../../samples/defaults/";
 
@@ -20,7 +21,7 @@ class Track {
   samplePath?: string;
   stepperId: string;
   source?: Tone.Player;
-  effects?: TrackEffect[];
+  effects: TrackEffect[] = [];
   effectUpdateSubscription?: Subscription;
   effectsInitialized = false;
   channel?: Tone.Channel; // handles volume, pan, mute, solo
@@ -64,7 +65,8 @@ class Track {
     if (!this.channel) {
       this.channel = new Tone.Channel();
     }
-    this.effects = Audio.defaultEffects;
+    const effects = Audio.defaultEffects;
+    if (effects) this.effects = effects;
     this.effectsInitialized = true;
   }
 
@@ -101,21 +103,21 @@ class Track {
 
   private handleDelayUpdate = (value: EffectUpdate) => {
     const effect = this.effects?.find((e) => e.name === "delay");
-    if (!effect) return;
+    if (!effect || !effect.node) return;
     const delayOptions = value.value as Tone.FeedbackDelayOptions;
     effect?.node.set({ ...delayOptions });
   };
 
   private handleReverbUpdate = (value: EffectUpdate) => {
     const effect = this.effects?.find((e) => e.name === "reverb");
-    if (!effect) return;
+    if (!effect || !effect.node) return;
     const options = value.value as Tone.ReverbOptions;
     effect?.node.set({ ...options });
   };
 
   private handlePitchUpdate = (value: EffectUpdate) => {
     const effect = this.effects?.find((e) => e.name === "pitch");
-    if (!effect) return;
+    if (!effect || !effect.node) return;
     const pitchOptions = value.value as Tone.PitchShiftOptions;
     const options = { ...pitchOptions };
     if (!Number.isNaN(pitchOptions.pitch)) {

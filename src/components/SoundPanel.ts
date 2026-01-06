@@ -314,7 +314,7 @@ class SoundPanel {
       rootElt.style.backgroundColor = currentStepper!.color?.cssColor;
     }
     this.render();
-    e.preventDefault();
+    // e.preventDefault();
   };
 
   private generatePanningGroup() {

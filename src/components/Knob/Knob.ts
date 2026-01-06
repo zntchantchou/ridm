@@ -43,7 +43,7 @@ class Knob {
   clickListener?: number;
   releaseListener?: number;
   size: number;
-  dragObs?: Observable<Event>;
+  dragObs: Observable<Event> | null = null;
   dragSubscription?: Subscription;
   // VALUES
   startY = 0;
@@ -137,6 +137,7 @@ class Knob {
       "pointerdown",
       this.handleClick
     );
+    // should we really track dragging movement across the whole document
     this.dragObs = fromEvent(document, "pointermove");
     State.currentStepperId.subscribe(this.handleSelectedStepperChange);
   }
@@ -158,6 +159,8 @@ class Knob {
   private handleClick = (e: PointerEvent) => {
     document.addEventListener("pointermove", this.handleMove);
     document.addEventListener("pointerup", this.handleRelease);
+    console.log("DRAG SUBSCRIPTION ", this.dragSubscription);
+    console.log("DRAG OBS ", this.dragObs);
     this.dragSubscription = this.dragObs
       ?.pipe(throttleTime(100))
       .subscribe(() => this.triggerUpdate()); // this actually updates the setting that this knob controls, hence throttling
@@ -217,6 +220,7 @@ class Knob {
     this.lastRotation = this.currentY;
     if (this.valueElt) this.valueElt.textContent = this.getValue();
     this.dragSubscription?.unsubscribe();
+    this.dragObs = null;
     document.removeEventListener("pointermove", this.handleMove);
     document.removeEventListener("pointerup", this.handleRelease);
     this.triggerUpdate();

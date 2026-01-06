@@ -6,7 +6,7 @@ import StepperControls from "../components/StepperControls";
 import SoundPanel from "../components/SoundPanel";
 import Pulses from "./Pulses";
 import Track from "./Track";
-import { SAMPLES_DIRS } from "./Audio";
+import State from "../state/State";
 
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
@@ -15,35 +15,24 @@ class Sequencer {
   pulses: typeof Pulses | null = null;
   steppers: Stepper[] = [];
   controls: StepperControls[] = [];
-  // effectUpdate Subject takes an effectUpdate
-  // effect id
-  // stepper id
   // value is the parameters to be set on the effect (ToneAudioNode)
   constructor(pulses: typeof Pulses) {
     this.pulses = pulses;
   }
 
   async initialize() {
-    await this.registerDefaults();
+    await this.initSteppersFromState();
     this.setupStepperResizeEvents();
     new SoundPanel({
       steppers: this.steppers,
     });
   }
 
-  private async registerDefaults() {
-    const registrationPromises = DEFAULT_STEPPERS.map((elt, i) => {
-      this.register({
-        ...elt,
-        id: i,
-        sampleName: SAMPLES_DIRS[i].name,
-        color: COLORS[i],
-      });
-    });
-    return Promise.all(registrationPromises);
+  private async initSteppersFromState() {
+    return Promise.all(State.getInitialStepperOptions().map(this.register));
   }
 
-  private async register(options: StepperOptions) {
+  private register = async (options: StepperOptions) => {
     const steps = options.stepsPerBeat * options.beats;
     if (steps < 1 || steps > 100) return;
 
@@ -72,7 +61,7 @@ class Sequencer {
     this.steppers.push(stepper);
     this.pulses?.register(stepper);
     this.controls.push(stepperControls);
-  }
+  };
 
   private setupStepperResizeEvents() {
     this.getBeatsInputs().forEach((e) => {

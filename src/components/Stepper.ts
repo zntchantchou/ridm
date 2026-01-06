@@ -4,21 +4,23 @@ import Pulses from "../modules/Pulses";
 import type Track from "../modules/Track";
 import Controls from "./Controls";
 import type StepperControls from "./StepperControls";
+import type { StepperIdType } from "../state/state.types";
 
 const steppersDiv = document.getElementById("steppers");
 export type StepperColorType = { name: string; cssColor: string };
 export interface StepperOptions {
   beats: number;
   stepsPerBeat: number;
-  id: number;
+  id: StepperIdType;
   sampleName: string;
   color: StepperColorType;
   controls?: StepperControls;
   track?: Track;
+  selectedSteps?: boolean[];
 }
 
 class Stepper {
-  id?: number;
+  id?: StepperIdType;
   beats = 4;
   stepsPerBeat = 4;
   lastStep = -1;
@@ -26,7 +28,7 @@ class Stepper {
   stepElements: HTMLDivElement[] = [];
   element: HTMLDivElement | null = null;
   pulseSubscription: Subscription | null = null;
-  selectedSteps: boolean[] = Array(this.beats * this.stepsPerBeat).fill(false);
+  selectedSteps: boolean[] = Array(this.steps * this.stepsPerBeat).fill(false);
   controls: StepperControls | null = null;
   justUpdated = false;
   sampleName: string;
@@ -41,14 +43,16 @@ class Stepper {
     controls,
     color,
     track,
+    selectedSteps,
   }: StepperOptions) {
     this.beats = beats;
     this.stepsPerBeat = stepsPerBeat;
     this.id = id;
     this.sampleName = sampleName;
-    if (controls) this.controls = controls;
     this.color = color;
     this.track = track;
+    if (selectedSteps) this.selectedSteps = selectedSteps;
+    if (controls) this.controls = controls;
     this.render();
   }
 
@@ -121,6 +125,8 @@ class Stepper {
     if (stepsPerBeat) this.stepsPerBeat = stepsPerBeat;
     if (beats) this.beats = beats;
     this.updateSelectedSteps(this.beats * this.stepsPerBeat);
+    // this needs to be async because it takes time
+    // the ui should only be updated once Pulse update is complete
     Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
     console.log("PULSES POST UPDATE", Pulses);

@@ -60,45 +60,6 @@ class Audio {
 
 export default new Audio();
 
-export const SAMPLES_DIRS = [
-  {
-    name: "bd",
-    path: "bd.wav",
-  },
-  {
-    name: "sd",
-    path: "sd.wav",
-  },
-  {
-    name: "hh",
-    path: "hh.wav",
-  },
-  {
-    name: "ht",
-    path: "ht.wav",
-  },
-  {
-    name: "oh",
-    path: "oh.wav",
-  },
-  {
-    name: "lt",
-    path: "lt.wav",
-  },
-  {
-    name: "mt",
-    path: "mt.wav",
-  },
-  {
-    name: "cp",
-    path: "cp.wav",
-  },
-  {
-    name: "rs",
-    path: "rs.wav",
-  },
-];
-
 type DefaultSampleType = {
   name: string;
   path: string;

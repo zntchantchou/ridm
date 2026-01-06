@@ -80,6 +80,10 @@ class State {
   getStepperEffects(stepperId: StepperIdType) {
     return this.effects.get(stepperId);
   }
+
+  getStepperOptions(stepperId: StepperIdType) {
+    return this.steppers.get(stepperId);
+  }
 }
 
 export default new State();

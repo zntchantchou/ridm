@@ -1,7 +1,8 @@
-import { fromEvent, Observable, Subscription, throttleTime } from "rxjs";
+import { fromEvent, Observable, Subscription, tap, throttleTime } from "rxjs";
 import State from "../../state/state";
 import type { EffectNameType, IEffectValue } from "../../types";
 import type { StepperIdType } from "../../state/state.types";
+import type { StepperOptions } from "../Stepper";
 
 export type KnobOptions = {
   label: string;
@@ -51,8 +52,8 @@ class Knob {
   currentY = 0;
   lastRotation = 0;
   maxRotation = 140;
-  velocity = 1.5;
-  fillColor = "blue";
+  velocity = 2;
+  fillColor: string;
 
   constructor({
     label,
@@ -107,6 +108,7 @@ class Knob {
     this.ringElt.classList.add("ring");
     this.ringFillElt = document.createElement("div");
     this.ringFillElt.classList.add("ring-fill");
+
     const spaceElt = document.createElement("div");
     spaceElt.classList.add("space");
     this.knobElt = document.createElement("div");
@@ -128,6 +130,7 @@ class Knob {
     this.rootElt.appendChild(this.valueContainer);
     this!.valueElt.textContent = this.getValue();
     this.parentElt?.appendChild(this.rootElt);
+    this.setRingColor(0);
     this.updatePosition();
     this.initialized = true;
   }
@@ -139,8 +142,15 @@ class Knob {
     );
     // should we really track dragging movement across the whole document
     this.dragObs = fromEvent(document, "pointermove");
-    State.currentStepperId.subscribe(this.handleSelectedStepperChange);
+    State.currentStepperId // unsubscribe on destroy
+      .pipe(tap(this.setRingColor))
+      .subscribe(this.handleSelectedStepperChange);
   }
+
+  private setRingColor = (id: StepperIdType) => {
+    const color = State.getStepperOptions(id) as StepperOptions;
+    this.fillColor = color.color.cssColor;
+  };
 
   private handleSelectedStepperChange = (currentStepId: StepperIdType) => {
     const effect = State.getEffect({

@@ -3,7 +3,7 @@ import Audio from "./Audio.ts";
 import { filter, type Subscription } from "rxjs";
 import Controls from "../components/Controls";
 import type { EffectNameType, EffectUpdate, TrackEffect } from "../types.ts";
-import State from "../state/State.ts";
+import State from "../state/state.ts";
 
 const samplesDirPath = "../../samples/defaults/";
 
@@ -23,7 +23,7 @@ class Track {
   effects?: TrackEffect[];
   effectUpdateSubscription?: Subscription;
   effectsInitialized = false;
-  channel?: Tone.Channel; // handle volume, pan, mute, solo
+  channel?: Tone.Channel; // handles volume, pan, mute, solo
   updateMethodsMap: Map<EffectNameType, (update: EffectUpdate) => void> =
     new Map();
 
@@ -57,9 +57,6 @@ class Track {
       (effect) => effect.node
     ) as Tone.ToneAudioNode[];
     effectNodes.push(this.channel as Tone.ToneAudioNode);
-    // EITHER We can add a volume node like so:
-    // effectNodes.push(new Tone.Volume(10));
-    // OR We could add a second channel for the whole app
     this.source?.chain(...effectNodes, Tone.getDestination());
   }
 
@@ -110,7 +107,6 @@ class Track {
   };
 
   private handleReverbUpdate = (value: EffectUpdate) => {
-    // console.log("TRACK handle reverb update ", value);
     const effect = this.effects?.find((e) => e.name === "reverb");
     if (!effect) return;
     const options = value.value as Tone.ReverbOptions;
@@ -118,7 +114,6 @@ class Track {
   };
 
   private handlePitchUpdate = (value: EffectUpdate) => {
-    // console.log("TRACK handle pitch update ", value);
     const effect = this.effects?.find((e) => e.name === "pitch");
     if (!effect) return;
     const pitchOptions = value.value as Tone.PitchShiftOptions;
@@ -126,8 +121,6 @@ class Track {
     if (!Number.isNaN(pitchOptions.pitch)) {
       options.pitch = Math.round(pitchOptions.pitch as number);
     }
-    console.log("OPTIONS ", pitchOptions);
-    console.log("EFFECT NODE ", effect.node);
     effect?.node.set({ ...options });
   };
 

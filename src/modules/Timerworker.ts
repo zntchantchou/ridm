@@ -4,7 +4,7 @@ import UI from "../components/Ui";
 import Pulses from "./Pulses";
 import Controls from "../components/Controls";
 import * as Tone from "tone";
-// let lastStep = -1;
+
 class TimeWorker {
   pingRatio = 10;
   nextNoteWindowSec = 0.1;
@@ -56,12 +56,10 @@ class TimeWorker {
       return;
     }
     // each Pulse looks for steps that fall within the window
-    // Each time it finds one, it schedules the step by pushing it into the shared StepQueue
+    // Each time it can, it schedules a step by pushing it into the shared StepQueue
     // This allows for the UI highlighting by stepping through regularly in each stepper
-    // Each Pulse still needs to know if it must play a stepper's sound at each step
+    // Steppers listen to the appropiate pulse and are in charge of playing the sound if the current step is active
     for (const pulse of this.pulses.getLeadPulses()) {
-      // console.log("[DISCOVERING]");
-      // WHAT IF we used a transport here to be able to stop it
       pulse.discover(this.audioContext?.currentTime, this.nextNoteWindowSec);
     }
   }

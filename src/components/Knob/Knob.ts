@@ -1,5 +1,5 @@
 import { fromEvent, Observable, Subscription, throttleTime } from "rxjs";
-import State from "../../state/State";
+import State from "../../state/state";
 import type { EffectNameType, IEffectValue } from "../../types";
 import type { StepperIdType } from "../../state/state.types";
 
@@ -159,8 +159,6 @@ class Knob {
   private handleClick = (e: PointerEvent) => {
     document.addEventListener("pointermove", this.handleMove);
     document.addEventListener("pointerup", this.handleRelease);
-    console.log("DRAG SUBSCRIPTION ", this.dragSubscription);
-    console.log("DRAG OBS ", this.dragObs);
     this.dragSubscription = this.dragObs
       ?.pipe(throttleTime(100))
       .subscribe(() => this.triggerUpdate()); // this actually updates the setting that this knob controls, hence throttling

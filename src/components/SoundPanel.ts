@@ -2,7 +2,7 @@ import type Stepper from "./Stepper";
 import type { EffectNameType, EffectValue } from "../types";
 import PanelSection from "./PanelSection/PanelSection";
 import type { PitchShiftOptions } from "tone";
-import State from "../state/State";
+import State from "../state/state";
 import type { StepperIdType } from "../state/state.types";
 
 const rootElt = document.getElementById("top-panel");

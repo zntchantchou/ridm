@@ -1,12 +1,12 @@
 export function generateRandomSteps({
-  steps,
+  stepsPerBeat,
   beats,
 }: {
-  steps: number;
+  stepsPerBeat: number;
   beats: number;
 }): boolean[] {
-  const totalSteps = steps * beats;
+  const totalSteps = stepsPerBeat * beats;
   return Array(totalSteps)
     .fill(null)
-    .map(() => Math.random() < 0.5);
+    .map(() => Math.random() < 0.3);
 }

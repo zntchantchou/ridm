@@ -1,4 +1,4 @@
-import State from "../state/State";
+import State from "../state/state";
 
 type StepperControlsOptions = {
   stepperId: number;

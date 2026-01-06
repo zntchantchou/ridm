@@ -1,13 +1,12 @@
-import Stepper, {
-  type StepperColorType,
-  type StepperOptions,
-} from "../components/Stepper";
+import Stepper, { type StepperOptions } from "../components/Stepper";
 import StepperControls from "../components/StepperControls";
 import SoundPanel from "../components/SoundPanel";
 import Pulses from "./Pulses";
 import Track from "./Track";
-import State from "../state/State";
+import State from "../state/state";
+import { fromEvent, Subscription, throttleTime } from "rxjs";
 
+const DEBOUNCE_TIME_MS = 200;
 /** Coordinates steppers and their pulses. Philosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
 
@@ -15,6 +14,9 @@ class Sequencer {
   pulses: typeof Pulses | null = null;
   steppers: Stepper[] = [];
   controls: StepperControls[] = [];
+  stepperBeatsUpdateSubscriptions?: Subscription[] = [];
+  stepperStepsUpdateSubscriptions?: Subscription[] = [];
+
   // value is the parameters to be set on the effect (ToneAudioNode)
   constructor(pulses: typeof Pulses) {
     this.pulses = pulses;
@@ -64,12 +66,19 @@ class Sequencer {
   };
 
   private setupStepperResizeEvents() {
-    this.getBeatsInputs().forEach((e) => {
-      e.addEventListener("change", this.handleBeatsUpdate);
+    this.stepperBeatsUpdateSubscriptions = this.getBeatsInputs().map((e) => {
+      return fromEvent(e, "change")
+        .pipe(throttleTime(DEBOUNCE_TIME_MS))
+        .subscribe(this.handleBeatsUpdate);
     });
-    this.getStepsPerBeatInputs().forEach((e) => {
-      e.addEventListener("change", this.handleStepsPerBeatUpdate);
-    });
+
+    this.stepperStepsUpdateSubscriptions = this.getStepsPerBeatInputs().map(
+      (e) => {
+        return fromEvent(e, "change")
+          .pipe(throttleTime(DEBOUNCE_TIME_MS))
+          .subscribe(this.handleStepsPerBeatUpdate);
+      }
+    );
   }
 
   private handleStepperUpdate = (e: Event) => {
@@ -111,41 +120,3 @@ class Sequencer {
 }
 
 export default Sequencer;
-
-const DEFAULT_STEPPER = { beats: 4, stepsPerBeat: 4 };
-const COLORS: StepperColorType[] = [
-  {
-    name: "blue",
-    cssColor: "#00d0ff",
-  },
-  {
-    name: "purple",
-    cssColor: "#9c37fb",
-  },
-  {
-    name: "yellow",
-    cssColor: "#eeff04",
-  },
-  {
-    name: "green",
-    cssColor: "#2eff04",
-  },
-  {
-    name: "pink",
-    cssColor: "#ff0ae6",
-  },
-  {
-    name: "orange",
-    cssColor: "#ff9204",
-  },
-  {
-    name: "palePink",
-    cssColor: "#feaaff",
-  },
-
-  {
-    name: "red",
-    cssColor: "#ff2929",
-  },
-];
-const DEFAULT_STEPPERS: StepperOptions[] = Array(8).fill(DEFAULT_STEPPER);

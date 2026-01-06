@@ -1,4 +1,5 @@
 import type { StepperColorType } from "../components/Stepper";
+import { generateRandomSteps } from "./state.utils";
 
 export const COLORS: StepperColorType[] = [
   {
@@ -74,3 +75,9 @@ export const SAMPLES_DIRS = [
     path: "rs.wav",
   },
 ];
+
+export const DEFAULT_STEPPER_OPTIONS = {
+  beats: 4,
+  stepsPerBeat: 4,
+  selectedSteps: generateRandomSteps({ stepsPerBeat: 4, beats: 4 }),
+};

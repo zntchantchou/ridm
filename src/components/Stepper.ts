@@ -108,8 +108,10 @@ class Stepper {
 
   updateBeats(beats: number) {
     const oldSteps = this.steps;
+    // this is a source of freeze 1
     this.updateSelectedSteps(this.stepsPerBeat * beats);
     this.beats = beats;
+    // this is a source of freeze 2
     Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
   }

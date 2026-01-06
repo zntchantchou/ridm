@@ -58,11 +58,16 @@ class State {
     const steppers = new Map<StepperIdType, StepperOptions>();
 
     for (let i = 0; i < 8; i++) {
+      const beats = Math.floor(Math.random() * 8) + 2;
+      const stepsPerBeat = Math.floor(Math.random() * 8) + 1;
       effects.set(i as StepperIdType, INITITAL_EFFECTS);
       steppers.set(i as StepperIdType, {
-        beats: Math.floor(Math.random() * 8) + 1,
-        stepsPerBeat: Math.floor(Math.random() * 8) + 1,
-        selectedSteps: generateRandomSteps({ steps: 4, beats: 4 }),
+        beats,
+        stepsPerBeat,
+        selectedSteps: generateRandomSteps({
+          stepsPerBeat: stepsPerBeat,
+          beats,
+        }),
         color: COLORS[i],
         sampleName: SAMPLES_DIRS[i].name,
         id: i as StepperIdType,

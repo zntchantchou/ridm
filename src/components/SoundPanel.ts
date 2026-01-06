@@ -3,6 +3,7 @@ import type { EffectNameType, EffectValue } from "../types";
 import PanelSection from "./PanelSection/PanelSection";
 import type { PitchShiftOptions } from "tone";
 import State from "../state/State";
+import type { StepperIdType } from "../state/state.types";
 
 const rootElt = document.getElementById("top-panel");
 const stepperElements = document.getElementsByClassName("stepper");
@@ -75,8 +76,9 @@ class SoundPanel {
       title: "delay",
       settings: [
         {
+          effectName: "delay",
           label: "wet",
-          name: "wet",
+          settingName: "wet",
           inputType: "knob",
           min: 0,
           max: 1,
@@ -84,8 +86,9 @@ class SoundPanel {
           onChange: this.handleDelayChange,
         },
         {
+          effectName: "delay",
           label: "feedback",
-          name: "feedback",
+          settingName: "feedback",
           inputType: "knob",
           min: 0,
           max: 1,
@@ -93,8 +96,9 @@ class SoundPanel {
           onChange: this.handleDelayChange,
         },
         {
+          effectName: "delay",
           label: "time",
-          name: "delayTime",
+          settingName: "delayTime",
           inputType: "knob",
           min: 0,
           max: 1,
@@ -108,8 +112,9 @@ class SoundPanel {
       title: "reverb",
       settings: [
         {
+          effectName: "reverb",
           label: "wet",
-          name: "wet",
+          settingName: "wet",
           inputType: "knob",
           min: 0,
           max: 1,
@@ -117,17 +122,19 @@ class SoundPanel {
           onChange: this.handleReverbChange,
         },
         {
+          effectName: "reverb",
           label: "decay",
-          name: "decay",
+          settingName: "decay",
           inputType: "knob",
           min: 0.01,
           max: 10,
-          value: 0.01,
+          value: 1,
           onChange: this.handleReverbChange,
         },
         {
+          effectName: "reverb",
           label: "predelay",
-          name: "preDelay",
+          settingName: "preDelay",
           inputType: "knob",
           min: 0,
           max: 6,
@@ -142,8 +149,9 @@ class SoundPanel {
       title: "pitch",
       settings: [
         {
+          effectName: "pitch",
           label: "interval",
-          name: "pitch",
+          settingName: "pitch",
           inputType: "knob",
           min: -8,
           max: 8,
@@ -151,17 +159,19 @@ class SoundPanel {
           onChange: this.handlePitchChange,
         },
         {
+          effectName: "pitch",
           label: "windowSize",
-          name: "windowSize",
+          settingName: "windowSize",
           inputType: "knob",
           min: 0,
-          max: 4,
+          max: 1,
           value: 0,
           onChange: this.handlePitchChange,
         },
         {
+          effectName: "pitch",
           label: "wet",
-          name: "wet",
+          settingName: "wet",
           inputType: "knob",
           min: 0,
           max: 1,
@@ -208,8 +218,6 @@ class SoundPanel {
   };
 
   private handleDelayChange = (value: string, name: string) => {
-    // const target = e.target as HTMLInputElement;
-    console.log("HANDLE DELAY CHANGE");
     const rangeValue = parseFloat(value);
     const updateValue: { feedback?: number; wet?: number; delayTime?: number } =
       {};
@@ -233,13 +241,12 @@ class SoundPanel {
   };
 
   private handleReverbChange = (value: string, name: string) => {
-    // const target = e.target as HTMLInputElement;
-    console.log("HANDLE REVERB CHANGE");
     const rangeValue = parseFloat(value);
     const updateValue: { preDelay?: number; wet?: number; decay?: number } = {};
     switch (name) {
       case "decay":
-        updateValue.decay = rangeValue;
+        if (rangeValue > 0.001) updateValue.decay = rangeValue;
+        else return;
         break;
       case "wet":
         updateValue.wet = rangeValue;
@@ -257,8 +264,6 @@ class SoundPanel {
   };
 
   private handlePitchChange = (value: string, name: string) => {
-    // const target = e.target as HTMLInputElement;
-    console.log("HANDLE PITCH CHANGE");
     const rangeValue = parseFloat(value);
     const updateValue: { pitch?: number; wet?: number; windowSize?: number } =
       {};
@@ -269,10 +274,11 @@ class SoundPanel {
       case "wet":
         updateValue.wet = rangeValue;
         break;
-      case "preDelay":
+      case "windowSize":
         updateValue.windowSize = rangeValue;
         break;
     }
+
     State.effectUpdateSubject.next({
       name: "pitch",
       stepperId: this.selectedStepper,
@@ -300,9 +306,9 @@ class SoundPanel {
       // TODO: Find a better way to get the event on the correct element
       stepperId = target.parentElement?.dataset.stepperId;
     }
-    if (typeof stepperId === "string") {
-      this.selectedStepper = stepperId;
-    }
+    if (!stepperId) throw Error("Could not find stepperId");
+    this.selectedStepper = stepperId;
+    State.currentStepperId.next(parseInt(stepperId) as StepperIdType);
     const currentStepper = this.getSelectedStepper();
     if (rootElt && currentStepper!.color) {
       rootElt.style.backgroundColor = currentStepper!.color?.cssColor;

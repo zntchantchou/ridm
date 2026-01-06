@@ -1,8 +1,10 @@
+import type { EffectNameType } from "../../types";
 import Knob from "../Knob/Knob";
 
 type PanelSetting = {
+  effectName: EffectNameType;
   label: string;
-  name: string;
+  settingName: string;
   inputType: "knob";
   min: number;
   max: number;
@@ -15,7 +17,7 @@ type PanelSetting = {
 type PanelSectionOptions = {
   parentElt: HTMLDivElement;
   title: string;
-  settings: PanelSetting[];
+  settings: PanelSetting[]; // eventually generate from state
 };
 
 class PanelSection {
@@ -54,9 +56,11 @@ class PanelSection {
     value = 0,
     min = 0,
     max = 1,
-    name,
+    settingName,
+    effectName,
   }: PanelSetting) {
     new Knob({
+      effectName,
       label: label,
       id: `${this.title}-${label}`,
       value,
@@ -65,7 +69,7 @@ class PanelSection {
       fillColor: "beige",
       onChange,
       size: size || 3,
-      name,
+      settingName,
       parentElt: parentElt as HTMLDivElement,
     });
   }

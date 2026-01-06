@@ -77,7 +77,7 @@ class Track {
   }
 
   private handleEffectUpdate = (update: EffectUpdate) => {
-    console.log("[handleEffectUpdate] update ", update);
+    // console.log("[handleEffectUpdate] update ", update);
     const updateFn = this.updateMethodsMap.get(update.name);
     if (updateFn) updateFn(update);
   };
@@ -110,7 +110,7 @@ class Track {
   };
 
   private handleReverbUpdate = (value: EffectUpdate) => {
-    console.log("TRACK handle reverb update ", value);
+    // console.log("TRACK handle reverb update ", value);
     const effect = this.effects?.find((e) => e.name === "reverb");
     if (!effect) return;
     const options = value.value as Tone.ReverbOptions;
@@ -118,14 +118,16 @@ class Track {
   };
 
   private handlePitchUpdate = (value: EffectUpdate) => {
-    console.log("TRACK handle pitch update ", value);
+    // console.log("TRACK handle pitch update ", value);
     const effect = this.effects?.find((e) => e.name === "pitch");
     if (!effect) return;
     const pitchOptions = value.value as Tone.PitchShiftOptions;
-    const options = {
-      ...pitchOptions,
-      pitch: Math.round(pitchOptions.pitch as number),
-    };
+    const options = { ...pitchOptions };
+    if (!Number.isNaN(pitchOptions.pitch)) {
+      options.pitch = Math.round(pitchOptions.pitch as number);
+    }
+    console.log("OPTIONS ", pitchOptions);
+    console.log("EFFECT NODE ", effect.node);
     effect?.node.set({ ...options });
   };
 

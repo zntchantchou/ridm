@@ -37,6 +37,12 @@ export type EffectValue = Partial<
   | Tone.ReverbOptions
 >;
 
+export interface IEffectValue
+  extends Tone.ChannelOptions,
+    Tone.FeedbackDelayOptions,
+    Tone.PitchShiftOptions,
+    Tone.ReverbOptions {}
+
 export type EffectUpdate = {
   name: EffectNameType;
   stepperId: string;

@@ -1,14 +1,18 @@
 import { fromEvent, Observable, Subscription, throttleTime } from "rxjs";
+import State from "../../state/State";
+import type { EffectNameType, IEffectValue } from "../../types";
+import type { StepperIdType } from "../../state/state.types";
 
 export type KnobOptions = {
   label: string;
   id: string;
   value: number;
-  onChange: (value: string, name: string) => void;
+  onChange: (value: string, name: keyof IEffectValue) => void;
   min: number;
   max: number;
   fillColor: string;
-  name: string;
+  settingName: keyof IEffectValue;
+  effectName: EffectNameType;
   /** size in rem */
   size: number;
   parentElt: HTMLDivElement;
@@ -16,6 +20,7 @@ export type KnobOptions = {
 
 class Knob {
   label;
+  effectName: EffectNameType;
   id;
   value;
   onChange;
@@ -40,10 +45,9 @@ class Knob {
   size: number;
   dragObs?: Observable<Event>;
   dragSubscription?: Subscription;
-  valueUpdateSubscription?: Subscription;
   // VALUES
   startY = 0;
-  name;
+  settingName?: keyof IEffectValue;
   currentY = 0;
   lastRotation = 0;
   maxRotation = 140;
@@ -60,11 +64,13 @@ class Knob {
     max,
     fillColor,
     parentElt,
-    name,
+    settingName,
+    effectName,
   }: KnobOptions) {
     this.label = label;
     this.value = value;
-    this.name = name;
+    this.effectName = effectName;
+    this.settingName = settingName;
     this.min = min;
     this.max = max;
     this.id = id;
@@ -132,7 +138,22 @@ class Knob {
       this.handleClick
     );
     this.dragObs = fromEvent(document, "pointermove");
+    State.currentStepperId.subscribe(this.handleSelectedStepperChange);
   }
+
+  private handleSelectedStepperChange = (currentStepId: StepperIdType) => {
+    const effect = State.getEffect({
+      trackId: currentStepId,
+      name: this.effectName,
+    });
+    const value = effect?.value as IEffectValue;
+    const settingValue = value[this.settingName as keyof IEffectValue];
+    this.value = settingValue as number;
+    this.initialized = false;
+    this.updatePosition();
+    if (this.valueElt) this.valueElt.textContent = this.getValue();
+    this.initialized = true;
+  };
 
   private handleClick = (e: PointerEvent) => {
     document.addEventListener("pointermove", this.handleMove);
@@ -144,7 +165,7 @@ class Knob {
   };
 
   private triggerUpdate = () => {
-    this.onChange(this.getValue(), this.name);
+    if (this.settingName) this.onChange(this.getValue(), this.settingName);
   };
 
   private updatePosition() {
@@ -173,7 +194,6 @@ class Knob {
       `conic-gradient(${this.fillColor} ${startingAngle}deg, rgba(255,255,255,0.0) 0 360deg, ${this.fillColor} 0deg)`;
     if (this.min < 0) {
       if (this.currentY > 0) {
-        // debugger;
         this.ringFillElt!.style.background = getBg(this.currentY);
         return;
       }
@@ -193,7 +213,7 @@ class Knob {
   }
 
   private handleRelease = () => {
-    console.log("HANDLE RELEASE ");
+    // console.log("HANDLE RELEASE ");
     this.lastRotation = this.currentY;
     if (this.valueElt) this.valueElt.textContent = this.getValue();
     this.dragSubscription?.unsubscribe();
@@ -210,7 +230,8 @@ class Knob {
     if (this.currentY < 0) {
       return valueDown.toFixed(2);
     }
-    return valueUp.toFixed(2);
+    if (this.currentY > 0) return valueUp.toFixed(2);
+    return "0";
   }
 }
 

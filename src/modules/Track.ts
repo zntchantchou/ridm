@@ -53,11 +53,15 @@ class Track {
 
   private loadEffects() {
     if (!this.effectsInitialized) this.initializeEffects();
-    const effectNodes = this.effects?.map(
+    const trackNodes = this.effects?.map(
       (effect) => effect.node
     ) as Tone.ToneAudioNode[];
-    effectNodes.push(this.channel as Tone.ToneAudioNode);
-    this.source?.chain(...effectNodes, Tone.getDestination());
+    trackNodes.push(this.channel as Tone.ToneAudioNode);
+    this.source?.chain(
+      ...trackNodes,
+      ...Audio.getMasterNodes(),
+      Tone.getDestination()
+    );
   }
 
   private initializeEffects() {
@@ -83,6 +87,7 @@ class Track {
   private handleSoloUpdate = (value: EffectUpdate) => {
     const v = value.value as Tone.ChannelOptions;
     this?.channel?.set({ solo: v.solo });
+    console.log("SETTING SOLO ", this.channel);
   };
 
   private handleMuteUpdate = (value: EffectUpdate) => {

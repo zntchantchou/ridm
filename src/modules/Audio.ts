@@ -9,7 +9,8 @@ import { INITIAL_EFFECTS } from "../state/state.constants";
 
 class Audio {
   ctx: Tone.Context | null = null;
-  mainVolume: GainNode | null = null;
+  volume: Tone.Volume | null = null;
+  panning: Tone.Panner | null = null;
   defaultSamples: DefaultSampleType[] = [];
   soundSettings: ToneSoundSettings[] = [];
 
@@ -18,6 +19,10 @@ class Audio {
       throw Error("Must initialize audioContext with shared audiocontext ");
     this.ctx = toneContext;
     Tone.setContext(toneContext);
+    if (this.ctx) {
+      this.volume = new Tone.Volume({ volume: 0 });
+      this.panning = new Tone.Panner({ pan: 0 });
+    }
   }
 
   public async start() {
@@ -25,10 +30,19 @@ class Audio {
     await Tone.start();
   }
 
-  public setVolume(value: number) {
-    console.log("[setVolume] value: ", value);
-    if (!this.mainVolume) throw "Missing GainNode! at setVolume";
-    this.mainVolume.gain.value = value;
+  public setMasterVolume(value: number) {
+    this.volume?.set({ volume: value });
+  }
+
+  public setMasterPanning(value: number) {
+    this.panning?.set({ pan: value });
+  }
+
+  public getMasterNodes(): Tone.ToneAudioNode[] {
+    return [
+      this.panning as Tone.ToneAudioNode,
+      this.volume as Tone.ToneAudioNode,
+    ];
   }
 
   public createEffect(

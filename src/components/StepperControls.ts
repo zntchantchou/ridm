@@ -92,24 +92,20 @@ class StepperControls {
 
   private handleSolo = (e: Event) => {
     const soloTarget = e.target as HTMLInputElement;
-    console.log("HANDLE SOLO ", soloTarget.checked);
     State.effectUpdateSubject.next({
       name: "solo",
       stepperId: this.stepperId.toString(),
-      value: { mute: soloTarget.checked },
+      value: { solo: soloTarget.checked },
     });
-    console.log("STEPPER CTRL ", this);
   };
 
   private handleMute = (e: Event) => {
     const muteTarget = e.target as HTMLInputElement;
-    console.log("HANDLE MUTE ", muteTarget.checked);
     State.effectUpdateSubject.next({
       name: "mute",
       stepperId: this.stepperId.toString(),
       value: { mute: muteTarget.checked },
     });
-    console.log("STEPPER CTRL ", this);
   };
 }
 

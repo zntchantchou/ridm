@@ -26,7 +26,6 @@ class State {
     this.effects = effects;
     this.steppers = steppers;
     this.effectUpdateSubject.subscribe(this.updateEffect);
-    console.log("State initialized", this);
   }
   // EFFECTS
   getInitialState() {

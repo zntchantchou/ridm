@@ -49,7 +49,7 @@ class Controls {
     this.volume = parseFloat(updatedValue);
     console.log("[Controls] UPDATE Volume: ", this.volume);
     if (volumeDisplayElt) volumeDisplayElt.textContent = updatedValue;
-    Audio.setVolume(this.volume);
+    Audio.setMasterVolume(this.volume);
   }
   // use anonymous function expression so "this" can be referenced in the eventListener
   public togglePlay = async () => {

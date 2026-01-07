@@ -128,7 +128,7 @@ class SoundPanel {
           inputType: "knob",
           min: 0.01,
           max: 10,
-          value: 1,
+          value: 3,
           onChange: this.handleReverbChange,
         },
         {
@@ -175,7 +175,7 @@ class SoundPanel {
           inputType: "knob",
           min: 0,
           max: 1,
-          value: 0,
+          value: 0.5,
           onChange: this.handlePitchChange,
         },
       ],

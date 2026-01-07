@@ -91,6 +91,11 @@ class Knob {
     } else {
       this.minRotation = -this.maxRotation;
     }
+    if (this.min >= 0) {
+      this.lastRotation = Math.round(
+        (this.value / this.max) * this.maxRotation
+      );
+    }
     this.render();
     this.initializeEvents();
   }
@@ -175,6 +180,7 @@ class Knob {
   };
 
   private handleClick = (e: PointerEvent) => {
+    console.log("HANDLE CLICK ", this.lastRotation);
     document.addEventListener("pointermove", this.handleMove);
     document.addEventListener("pointerup", this.handleRelease);
     this.dragSubscription = this.dragObs
@@ -202,10 +208,8 @@ class Knob {
     this.currentY = this.lastRotation + delta * this.velocity; // This is the actual value
     if (this.currentY > this.maxRotation) {
       this.currentY = this.maxRotation; // return instead ?
-      console.log("ABOVE ", this.currentY);
     } else if (this.currentY <= this.minRotation) {
       this.currentY = this.minRotation;
-      console.log("LESS THAN MIN ", this.currentY);
     }
     this.updatePosition();
   };

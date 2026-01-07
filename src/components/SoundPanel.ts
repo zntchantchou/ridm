@@ -185,7 +185,9 @@ class SoundPanel {
 
   private initializeEvents() {
     for (const elt of [...stepperControlElements, ...stepperElements]) {
-      elt.addEventListener("click", this.handleStepperSelection);
+      elt.addEventListener("click", () =>
+        this.handleStepperSelection(elt as HTMLDivElement)
+      );
     }
 
     const volumeRangeElt = document.getElementById("stepper-volume-range");
@@ -294,19 +296,13 @@ class SoundPanel {
     return selected;
   }
 
-  private handleStepperSelection = (e: Event) => {
-    const target = e?.target as HTMLDivElement;
-    let stepperId = target.dataset.stepperId;
+  private handleStepperSelection = (element: HTMLDivElement) => {
+    const stepperId = element.dataset.stepperId as string;
     const previousStepper = this.getSelectedStepper();
     const previousStepperControlsElt = previousStepper!.controls
       ?.element as HTMLDivElement;
     previousStepperControlsElt.dataset["selected"] = "off";
     previousStepperControlsElt.style.borderColor = "transparent";
-    if (stepperId === undefined) {
-      // TODO: Find a better way to get the event on the correct element
-      stepperId = target.parentElement?.dataset.stepperId;
-    }
-    if (!stepperId) throw Error("Could not find stepperId");
     this.selectedStepper = stepperId;
     State.currentStepperId.next(parseInt(stepperId) as StepperIdType);
     const currentStepper = this.getSelectedStepper();
@@ -314,7 +310,6 @@ class SoundPanel {
       rootElt.style.backgroundColor = currentStepper!.color?.cssColor;
     }
     this.render();
-    // e.preventDefault();
   };
 
   private generatePanningGroup() {

@@ -4,7 +4,6 @@ import { filter, type Subscription } from "rxjs";
 import Controls from "../components/Controls";
 import type { EffectNameType, EffectUpdate, TrackEffect } from "../types.ts";
 import State from "../state/state.ts";
-import type { Effect, StepperIdType } from "../state/state.types.ts";
 
 const samplesDirPath = "../../samples/defaults/";
 
@@ -120,7 +119,7 @@ class Track {
     if (!effect || !effect.node) return;
     const pitchOptions = value.value as Tone.PitchShiftOptions;
     const options = { ...pitchOptions };
-    if (!Number.isNaN(pitchOptions.pitch)) {
+    if (typeof pitchOptions.pitch === "number") {
       options.pitch = Math.round(pitchOptions.pitch as number);
     }
     effect?.node.set({ ...options });

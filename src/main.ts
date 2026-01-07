@@ -5,7 +5,6 @@ import Audio from "./modules/Audio";
 import Pulses from "./modules/Pulses";
 import UI from "./components/Ui";
 import * as Tone from "tone";
-import State from "./state/state";
 
 window.addEventListener("load", init);
 const playBtn = document.getElementById("play");

@@ -163,9 +163,9 @@ class SoundPanel {
           label: "windowSize",
           settingName: "windowSize",
           inputType: "knob",
-          min: 0,
+          min: 0.11,
           max: 1,
-          value: 0,
+          value: 0.11,
           onChange: this.handlePitchChange,
         },
         {

@@ -52,6 +52,7 @@ class Knob {
   currentY = 0;
   lastRotation = 0;
   maxRotation = 140;
+  minRotation: number;
   velocity = 2;
   fillColor: string;
 
@@ -82,6 +83,13 @@ class Knob {
     this.parentElt = parentElt;
     if (this.min >= 0) {
       this.maxRotation = this.maxRotation * 2;
+      const rawMinRotation =
+        this.min < 0 ? -this.maxRotation : -this.maxRotation / 2;
+      const belowMinValues = this.min / this.max;
+      const minAngle = this.maxRotation * belowMinValues;
+      this.minRotation = rawMinRotation + minAngle;
+    } else {
+      this.minRotation = -this.maxRotation;
     }
     this.render();
     this.initializeEvents();
@@ -194,8 +202,10 @@ class Knob {
     this.currentY = this.lastRotation + delta * this.velocity; // This is the actual value
     if (this.currentY > this.maxRotation) {
       this.currentY = this.maxRotation; // return instead ?
-    } else if (this.currentY < -this.maxRotation) {
-      this.currentY = this.min < 0 ? -this.maxRotation : -this.maxRotation / 2;
+      console.log("ABOVE ", this.currentY);
+    } else if (this.currentY <= this.minRotation) {
+      this.currentY = this.minRotation;
+      console.log("LESS THAN MIN ", this.currentY);
     }
     this.updatePosition();
   };
@@ -240,9 +250,13 @@ class Knob {
     const valueUp = Math.abs((this.currentY / this.maxRotation) * this.max);
     const valueDown = -1 * (this.currentY / this.maxRotation) * this.min;
     if (this.currentY < 0) {
+      if (valueDown < this.min) return this.min.toFixed(2);
       return valueDown.toFixed(2);
     }
-    if (this.currentY > 0) return valueUp.toFixed(2);
+    if (this.currentY > 0) {
+      if (valueUp < this.min) return this.min.toFixed(2);
+      return valueUp.toFixed(2);
+    }
     return "0";
   }
 }

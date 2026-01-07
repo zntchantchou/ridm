@@ -1,10 +1,10 @@
-import type { EffectNameType } from "../../types";
+import type { EffectNameType, IEffectValue } from "../../types";
 import Knob from "../Knob/Knob";
 
 type PanelSetting = {
   effectName: EffectNameType;
   label: string;
-  settingName: string;
+  settingName: keyof IEffectValue;
   inputType: "knob";
   min: number;
   max: number;

@@ -43,6 +43,7 @@ class Sequencer {
       beats: options.beats,
       stepsPerBeats: options.stepsPerBeat,
       name: options.sampleName,
+      color: options.color.cssColor,
     });
 
     const stepperTrack = new Track({

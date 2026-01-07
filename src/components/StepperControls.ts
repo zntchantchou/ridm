@@ -1,10 +1,12 @@
 import State from "../state/state";
+import Toggle from "./Toggle/Toggle";
 
 type StepperControlsOptions = {
   stepperId: number;
   stepsPerBeats: number;
   beats: number;
   name: string;
+  color: string;
 };
 
 const controlsPanelElt = document.getElementById("steppers-controls");
@@ -21,19 +23,20 @@ class StepperControls {
   name: string;
   soloCheckBox?: HTMLInputElement;
   muteCheckBox?: HTMLInputElement;
-
+  color?: string;
   constructor({
     stepsPerBeats,
     beats,
     stepperId,
     name,
+    color,
   }: StepperControlsOptions) {
     this.stepperId = stepperId;
     this.stepsPerBeats = stepsPerBeats;
     this.beats = beats;
     this.name = name;
+    this.color = color;
     this.render();
-    this.initializeEvents();
   }
 
   private render() {
@@ -73,38 +76,49 @@ class StepperControls {
     const nameElt = document.createElement("span");
     nameElt.classList.add("stepperControlName");
     nameElt.textContent = this.name;
-    this.element.appendChild(nameElt);
-    this.element.appendChild(soloLabel);
-    this.element.appendChild(this.soloCheckBox);
-    this.element.appendChild(muteLabel);
-    this.element.appendChild(this.muteCheckBox);
-    this.element.appendChild(beatsLabel);
-    this.element.appendChild(beatsInput);
-    this.element.appendChild(stepsPerBeatLabel);
-    this.element.appendChild(stepsPerBeatInput);
+    const muteToggle = new Toggle({
+      text: "M",
+      onClick: this.handleMute,
+      color: this.color || "#000000",
+    }).render();
+    const soloToggle = new Toggle({
+      text: "S",
+      onClick: this.handleSolo,
+      color: this.color || "#000000",
+    }).render();
+    const soloMuteContainer = document.createElement("div");
+    soloMuteContainer.classList.add("solo-mute-container");
+    const resizeContainer = document.createElement("div");
+    resizeContainer.classList.add("stepper-resize-container");
+    const infoContainer = document.createElement("div");
+    infoContainer.classList.add("stepper-info-container");
+    soloMuteContainer.appendChild(muteToggle);
+    soloMuteContainer.appendChild(soloToggle);
+    resizeContainer.appendChild(beatsLabel);
+    resizeContainer.appendChild(beatsInput);
+    resizeContainer.appendChild(stepsPerBeatLabel);
+    resizeContainer.appendChild(stepsPerBeatInput);
+
+    infoContainer.appendChild(nameElt);
+    this.element.appendChild(infoContainer);
+    this.element.appendChild(soloMuteContainer);
+    this.element.appendChild(resizeContainer);
     controlsPanelElt?.appendChild(this.element);
   }
 
-  private initializeEvents() {
-    this.soloCheckBox?.addEventListener("change", this.handleSolo);
-    this.muteCheckBox?.addEventListener("change", this.handleMute);
-  }
-
-  private handleSolo = (e: Event) => {
-    const soloTarget = e.target as HTMLInputElement;
+  private handleSolo = (v: boolean) => {
     State.effectUpdateSubject.next({
       name: "solo",
       stepperId: this.stepperId.toString(),
-      value: { solo: soloTarget.checked },
+      value: { solo: v },
     });
   };
 
-  private handleMute = (e: Event) => {
-    const muteTarget = e.target as HTMLInputElement;
+  private handleMute = (v: boolean) => {
     State.effectUpdateSubject.next({
       name: "mute",
       stepperId: this.stepperId.toString(),
-      value: { mute: muteTarget.checked },
+      value: { mute: v },
     });
   };
 }

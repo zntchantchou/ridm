@@ -1,0 +1,47 @@
+#steppers-controls {
+  height: 100%;
+  width: 30%;
+  min-width: 400px;
+  display: flex;
+  flex: 1;
+  cursor: pointer;
+  /* min-height: 40vh; */
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stepper-controls {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: calc(94% / 8);
+  background-color: rgba(255, 255, 255, 0.121);
+  box-sizing: border-box;
+  color: white;
+}
+
+.stepper-controls span {
+  box-sizing: border-box;
+}
+
+.solo-mute-container,
+.stepper-info-container,
+.stepper-resize-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 100%;
+}
+
+.stepper-info-container {
+  flex: 1;
+}
+
+.solo-mute-container {
+  flex: 2;
+}
+
+.stepper-resize-container {
+  font-size: 0.9rem;
+  flex: 6;
+}

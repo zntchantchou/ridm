@@ -2,7 +2,9 @@
 @import url("./src/style/panel.css");
 @import url("./src/style/knob.css");
 @import url("./src/style/steppers.css");
+@import url("./src/style/stepper-controls.css");
 @import url("./src/style/panel-section.css");
+@import url("./src/style/toggle.css");
 
 body {
   height: 100vh;
@@ -95,30 +97,6 @@ body {
   height: 50%;
 }
 
-#steppers-controls {
-  height: 100%;
-  width: 30%;
-  min-width: 400px;
-  display: flex;
-  flex: 1;
-  cursor: pointer;
-  /* min-height: 40vh; */
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.stepper-controls {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: calc(94% / 8);
-  background-color: rgba(255, 255, 255, 0.121);
-}
-
-.stepper-controls span {
-  color: white;
-  box-sizing: border-box;
-}
 :root {
   --ring-width: 14%;
   --ring-space: 20%;

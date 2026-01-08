@@ -1,11 +1,4 @@
-import {
-  debounceTime,
-  filter,
-  fromEvent,
-  interval,
-  Subscription,
-  throttle,
-} from "rxjs";
+import { debounceTime, filter, interval, Subscription, throttle } from "rxjs";
 import Pulse from "../modules/Pulse";
 import Pulses from "../modules/Pulses";
 import type Track from "../modules/Track";
@@ -138,27 +131,17 @@ class Stepper {
     beats?: number;
     stepsPerBeat?: number;
   }) => {
-    console.log("UPDATE STEPS SPB", stepsPerBeat);
-    console.log("UPDATE STEPS BEATS ", beats);
     const oldSteps = this.steps;
     if (stepsPerBeat) this.stepsPerBeat = stepsPerBeat;
     if (beats) this.beats = beats;
-    const time = Date.now();
-    console.log("[BENCH] BEFORE updateselectedSteps", time);
     this.updateSelectedSteps(this.beats * this.stepsPerBeat);
-    const time2 = Date.now();
     // this needs to be async because it takes time
     // the ui should only be updated once Pulse update is complete
     Pulses.update(this, oldSteps, this.steps);
-    console.log("[BENCH] Pulses Update  ", Date.now() - time2);
-    const time3 = Date.now();
     this.updateUi();
-    console.log("[BENCH] Pulses UpdateUi:", Date.now() - time3);
-    console.log("PULSES POST UPDATE", Pulses);
   };
 
   updateStepsPerBeat(spb: number) {
-    console.log("PULSES POST UPDATE", Pulses);
     const oldSteps = this.steps;
     this.updateSelectedSteps(this.beats * spb);
     this.stepsPerBeat = spb;
@@ -238,13 +221,6 @@ class Stepper {
   get steps() {
     return this.stepsPerBeat * this.beats;
   }
-
-  // private handleBeatsUpdate = (value: number) => {
-  //   this.updateSteps({ beats: value });
-  // };
-  // private handleStepsPerBeatUpdate = (value: number) => {
-  //   this.updateSteps({ stepsPerBeat: value });
-  // };
 }
 
 export default Stepper;

@@ -46,41 +46,34 @@ class UI {
     ) as HTMLDivElement[];
   }
 
+  private selectPulseSteps(totalSteps: number) {
+    return document.querySelectorAll(`.step[data-steps="${totalSteps}"]`);
+  }
   private updateUI(step: Step) {
     let currentStepElts: HTMLDivElement[] = [];
-    let lastStepElements: HTMLDivElement[] = [];
     if (!this.pulses?.getLeadPulses().length) {
       console.error("NO PULSES");
       return;
     }
     // highlight steps from parent pulses
     currentStepElts = this.selectSteps(step.stepNumber, step.totalSteps);
-    lastStepElements = this.selectSteps(
-      step.stepNumber === 0 ? step.totalSteps - 1 : step.stepNumber - 1, // unstyle last element if step is 0
-      step.totalSteps
-    );
-
-    // highlight steps from children pulses (subdivisions)
-
+    this.selectPulseSteps(step.totalSteps).forEach((s) => {
+      (s as HTMLDivElement).dataset.ticking = "off";
+    });
     // only one loop is necessary
-    for (const pulse of this.pulses.getLeadPulses()) {
-      pulse.getSubs()?.forEach((sub) => {
-        const currentStep = sub.getCurrentStep(step);
-        const prevStep = currentStep == 0 ? sub.steps - 1 : currentStep - 1;
-        const prevSteps = this.selectSteps(prevStep, sub.steps);
-        const currSteps = this.selectSteps(currentStep, sub.steps);
-        lastStepElements.push(...prevSteps);
-        currentStepElts.push(...currSteps);
-      });
-    }
+    // for (const pulse of this.pulses.getLeadPulses()) {
+    //   pulse.getSubs()?.forEach((sub) => {
+    //     this.selectPulseSteps(sub.steps).forEach((s) => {
+    //       (s as HTMLDivElement).dataset.ticking = "off";
+    //     });
+    //     const currentStep = sub.getCurrentStep(step);
+    //     const currSteps = this.selectSteps(currentStep, sub.steps);
+    //     currentStepElts.push(...currSteps);
+    //   });
+    // }
 
-    if (lastStepElements.length && currentStepElts) {
-      currentStepElts.forEach((elt, i) => {
-        elt.dataset.ticking = "on";
-        if (lastStepElements[i]) {
-          lastStepElements[i].dataset.ticking = "off"; // unhighlight the last ticking step if there was one
-        }
-      });
+    if (currentStepElts) {
+      currentStepElts.forEach((elt) => (elt.dataset.ticking = "on"));
     }
   }
 }

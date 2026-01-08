@@ -12,4 +12,9 @@ export type Effect = {
 
 export type EffectState = Map<StepperIdType, Effect[]>;
 
+export type StepperResizeUpdate = {
+  stepperId: StepperIdType;
+  stepsPerBeat?: number;
+  beats?: number;
+};
 export type SteppersState = Map<StepperIdType, StepperOptions>;

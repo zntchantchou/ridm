@@ -4,6 +4,7 @@
 @import url("./src/style/steppers.css");
 @import url("./src/style/stepper-controls.css");
 @import url("./src/style/panel-section.css");
+@import url("./src/style/counter.css");
 @import url("./src/style/toggle.css");
 
 :root {
@@ -23,7 +24,7 @@ body {
 
 #app {
   height: 100%;
-  background-color: #32383f;
+  background-color: #044a9b;
   width: 100%;
   display: flex;
   justify-content: center;

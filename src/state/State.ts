@@ -3,6 +3,7 @@ import type {
   Effect,
   EffectState,
   StepperIdType,
+  StepperResizeUpdate,
   SteppersState,
 } from "./state.types";
 import type { EffectNameType, EffectUpdate } from "../types";
@@ -25,6 +26,7 @@ class State {
 
   currentStepperId = new Subject<StepperIdType>();
   effectUpdateSubject = new Subject<EffectUpdate>();
+  stepperResizeSubject = new Subject<StepperResizeUpdate>();
 
   constructor() {
     const { effects, steppers } = this.getInitialState();

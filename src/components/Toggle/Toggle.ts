@@ -25,6 +25,7 @@ class Toggle {
     this.buttonElt = document.createElement("button");
     this.labelElt = document.createElement("span");
     this.buttonElt.addEventListener("click", this.toggle);
+    this.render();
   }
 
   private toggleStyle() {
@@ -45,7 +46,7 @@ class Toggle {
     this.onClick?.(this.checked);
   };
 
-  render(): HTMLDivElement {
+  private render(): HTMLDivElement {
     this.rootElt.className = "toggle";
     this.buttonElt.className = "toggle-btn";
     this.labelElt.className = "toggle-label";
@@ -60,7 +61,7 @@ class Toggle {
     return this.rootElt;
   }
 
-  getElement(): HTMLDivElement {
+  getElement() {
     return this.rootElt;
   }
 }

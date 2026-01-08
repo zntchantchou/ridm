@@ -1,11 +1,20 @@
-import { filter, interval, Subscription, throttle } from "rxjs";
+import {
+  debounceTime,
+  filter,
+  fromEvent,
+  interval,
+  Subscription,
+  throttle,
+} from "rxjs";
 import Pulse from "../modules/Pulse";
 import Pulses from "../modules/Pulses";
 import type Track from "../modules/Track";
 import Controls from "./Controls";
 import type StepperControls from "./StepperControls";
 import type { StepperIdType } from "../state/state.types";
+import State from "../state/state";
 
+const DEBOUNCE_TIME_MS = 200;
 const steppersDiv = document.getElementById("steppers");
 export type StepperColorType = { name: string; cssColor: string };
 export interface StepperOptions {
@@ -53,11 +62,20 @@ class Stepper {
     this.track = track;
     if (selectedSteps) this.selectedSteps = selectedSteps;
     if (controls) this.controls = controls;
+    this.listenToResize();
     this.render();
   }
 
+  private listenToResize() {
+    State.stepperResizeSubject
+      .pipe(debounceTime(DEBOUNCE_TIME_MS))
+      .pipe(filter(({ stepperId }) => stepperId === this.id))
+      .subscribe(({ beats, stepsPerBeat }) =>
+        this.updateSteps({ beats, stepsPerBeat })
+      );
+  }
+
   listenToPulse(pulse: Pulse) {
-    // console.log("LISTENTOPULSE ", pulse);
     this.pulseSubscription?.unsubscribe();
     this.pulseSubscription = pulse.currentStepSubject
       .pipe(
@@ -68,9 +86,6 @@ class Stepper {
       .pipe(throttle(() => interval(Controls.tpc / this.steps)))
       .subscribe({
         next: ({ time }) => this?.track?.playSample(time),
-        complete: () => {
-          console.log("[STEPPER] PULSE HAS COMPLETED");
-        },
       });
   }
 
@@ -116,13 +131,15 @@ class Stepper {
     this.updateUi();
   }
 
-  updateSteps({
+  updateSteps = ({
     beats,
     stepsPerBeat,
   }: {
     beats?: number;
     stepsPerBeat?: number;
-  }) {
+  }) => {
+    console.log("UPDATE STEPS SPB", stepsPerBeat);
+    console.log("UPDATE STEPS BEATS ", beats);
     const oldSteps = this.steps;
     if (stepsPerBeat) this.stepsPerBeat = stepsPerBeat;
     if (beats) this.beats = beats;
@@ -132,7 +149,7 @@ class Stepper {
     Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
     console.log("PULSES POST UPDATE", Pulses);
-  }
+  };
 
   updateStepsPerBeat(spb: number) {
     console.log("PULSES POST UPDATE", Pulses);
@@ -217,6 +234,13 @@ class Stepper {
   get steps() {
     return this.stepsPerBeat * this.beats;
   }
+
+  // private handleBeatsUpdate = (value: number) => {
+  //   this.updateSteps({ beats: value });
+  // };
+  // private handleStepsPerBeatUpdate = (value: number) => {
+  //   this.updateSteps({ stepsPerBeat: value });
+  // };
 }
 
 export default Stepper;

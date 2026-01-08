@@ -1,0 +1,30 @@
+.counter {
+  display: flex;
+  background-color: rgb(37, 37, 37);
+}
+
+.counter-item {
+  min-width: 0.8rem;
+  flex: 1;
+  color: white;
+  padding: 0.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: content-box;
+}
+
+.counter-btn:active {
+  animation: bounce 0.3s ease-in-out;
+}
+
+.counter-btn:hover {
+  color: rgb(55, 55, 55);
+  background-color: rgb(178, 178, 178);
+}
+
+.counter-value {
+  border-left: 1px solid rgb(81, 81, 81);
+  border-right: 1px solid rgb(81, 81, 81);
+  font-weight: bolder;
+}

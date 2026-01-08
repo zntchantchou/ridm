@@ -4,9 +4,8 @@ import SoundPanel from "../components/SoundPanel";
 import Pulses from "./Pulses";
 import Track from "./Track";
 import State from "../state/state";
-import { debounceTime, fromEvent, Subscription } from "rxjs";
+import { Subscription } from "rxjs";
 
-const DEBOUNCE_TIME_MS = 200;
 /** Coordinates steppers and their pulses. Phißlosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
 
@@ -24,7 +23,6 @@ class Sequencer {
 
   async initialize() {
     await this.initSteppersFromState();
-    this.setupStepperResizeEvents();
     new SoundPanel({
       steppers: this.steppers,
     });
@@ -66,57 +64,8 @@ class Sequencer {
     this.controls.push(stepperControls);
   };
 
-  private setupStepperResizeEvents() {
-    this.stepperBeatsUpdateSubscriptions = this.getBeatsInputs().map((e) => {
-      return fromEvent(e, "change")
-        .pipe(debounceTime(DEBOUNCE_TIME_MS))
-        .subscribe(this.handleBeatsUpdate);
-    });
-
-    this.stepperStepsUpdateSubscriptions = this.getStepsPerBeatInputs().map(
-      (e) => {
-        return fromEvent(e, "change")
-          .pipe(debounceTime(DEBOUNCE_TIME_MS))
-          .subscribe(this.handleStepsPerBeatUpdate);
-      }
-    );
-  }
-
-  private handleStepperUpdate = (e: Event) => {
-    const target = e.target as HTMLInputElement;
-    const value = parseInt(target.value);
-    const stepper = this.getStepper(
-      parseInt(target.dataset.stepperId as string)
-    );
-    return { value, stepper };
-  };
-
-  private handleBeatsUpdate = (e: Event) => {
-    const { value, stepper } = this.handleStepperUpdate(e);
-    if (!stepper) return;
-    stepper.updateSteps({ beats: value });
-  };
-
-  private handleStepsPerBeatUpdate = (e: Event) => {
-    const { value, stepper } = this.handleStepperUpdate(e);
-    if (!stepper) return;
-    stepper.updateSteps({ stepsPerBeat: value });
-  };
-
   getStepper(id: number) {
     return this.steppers.find((s) => s.id === id);
-  }
-
-  private getBeatsInputs() {
-    return Array.from(
-      document.querySelectorAll(`input[name=beats]`)
-    ) as HTMLInputElement[];
-  }
-
-  private getStepsPerBeatInputs() {
-    return Array.from(
-      document.querySelectorAll(`input[name=steps-per-beat]`)
-    ) as HTMLInputElement[];
   }
 }
 

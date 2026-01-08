@@ -1,8 +1,10 @@
 import State from "../state/state";
+import type { StepperIdType } from "../state/state.types";
+import Counter from "./Counter/Counter";
 import Toggle from "./Toggle/Toggle";
 
 type StepperControlsOptions = {
-  stepperId: number;
+  stepperId: StepperIdType;
   stepsPerBeats: number;
   beats: number;
   name: string;
@@ -13,7 +15,7 @@ const controlsPanelElt = document.getElementById("steppers-controls");
 
 class StepperControls {
   element: HTMLDivElement | null = null;
-  stepperId: number;
+  stepperId: StepperIdType;
   stepsPerBeats: number = 0;
   beats: number = 0;
   minSteps = 1;
@@ -23,7 +25,7 @@ class StepperControls {
   name: string;
   soloCheckBox?: HTMLInputElement;
   muteCheckBox?: HTMLInputElement;
-  color?: string;
+  color: string = "#000000";
   constructor({
     stepsPerBeats,
     beats,
@@ -77,28 +79,20 @@ class StepperControls {
     const nameElt = document.createElement("span");
     nameElt.classList.add("stepperControlName");
     nameElt.textContent = this.name;
-    const muteToggle = new Toggle({
-      text: "M",
-      onClick: this.handleMute,
-      color: this.color || "#000000",
-    }).render();
-    const soloToggle = new Toggle({
-      text: "S",
-      onClick: this.handleSolo,
-      color: this.color || "#000000",
-    }).render();
+
     const soloMuteContainer = document.createElement("div");
     soloMuteContainer.classList.add("solo-mute-container");
     const resizeContainer = document.createElement("div");
     resizeContainer.classList.add("stepper-resize-container");
     const infoContainer = document.createElement("div");
     infoContainer.classList.add("stepper-info-container");
-    soloMuteContainer.appendChild(muteToggle);
-    soloMuteContainer.appendChild(soloToggle);
+    soloMuteContainer.appendChild(this.createMuteToggleElt());
+    soloMuteContainer.appendChild(this.createSoloToggleElt());
     resizeContainer.appendChild(beatsLabel);
-    resizeContainer.appendChild(beatsInput);
+    resizeContainer.appendChild(this.createBeatsCounterElt());
+
     resizeContainer.appendChild(stepsPerBeatLabel);
-    resizeContainer.appendChild(stepsPerBeatInput);
+    resizeContainer.appendChild(this.createStepsCounterElt());
 
     infoContainer.appendChild(nameElt);
     this.element.appendChild(infoContainer);
@@ -122,6 +116,48 @@ class StepperControls {
       value: { mute: v },
     });
   };
+
+  private createMuteToggleElt() {
+    return new Toggle({
+      text: "M",
+      onClick: this.handleMute,
+      color: this.color,
+    }).getElement();
+  }
+
+  private createSoloToggleElt() {
+    return new Toggle({
+      text: "S",
+      onClick: this.handleSolo,
+      color: this.color,
+    }).getElement();
+  }
+
+  private createStepsCounterElt() {
+    return new Counter({
+      onChange: (value) =>
+        State.stepperResizeSubject.next({
+          stepsPerBeat: value,
+          stepperId: this.stepperId,
+        }),
+      min: 2,
+      max: 10,
+      initialValue: this.stepsPerBeats,
+    }).getElement();
+  }
+
+  private createBeatsCounterElt() {
+    return new Counter({
+      onChange: (value) =>
+        State.stepperResizeSubject.next({
+          beats: value,
+          stepperId: this.stepperId,
+        }),
+      min: 2,
+      initialValue: this.beats,
+      max: 10,
+    }).getElement();
+  }
 }
 
 export default StepperControls;

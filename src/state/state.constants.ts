@@ -16,12 +16,12 @@ export const COLORS: StepperColorType[] = [
     cssColor: "#eeff04",
   },
   {
-    name: "green",
-    cssColor: "#2eff04",
-  },
-  {
     name: "pink",
     cssColor: "#ff0ae6",
+  },
+  {
+    name: "green",
+    cssColor: "#2eff04",
   },
   {
     name: "orange",
@@ -52,12 +52,12 @@ export const SAMPLES_DIRS = [
     path: "hh.wav",
   },
   {
-    name: "ht",
-    path: "ht.wav",
-  },
-  {
     name: "oh",
     path: "oh.wav",
+  },
+  {
+    name: "ht",
+    path: "ht.wav",
   },
   {
     name: "lt",

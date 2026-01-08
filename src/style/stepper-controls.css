@@ -18,6 +18,12 @@
   background-color: rgba(255, 255, 255, 0.121);
   box-sizing: border-box;
   color: white;
+  border-left: 0.5rem solid transparent;
+  border-radius: 4px;
+}
+
+.stepper-controls[data-selected="off"] {
+  border-color: rgb(80, 80, 80);
 }
 
 .stepper-controls span {

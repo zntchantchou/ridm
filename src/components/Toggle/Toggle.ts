@@ -5,6 +5,8 @@ type ToggleOptions = {
   color: string;
 };
 
+const CHECKED_CLASS = "toggle-checked";
+
 class Toggle {
   text: string;
   checked: boolean = false;
@@ -26,19 +28,19 @@ class Toggle {
   }
 
   private toggleStyle() {
-    this.checked = !this.checked;
     if (this.checked) {
       this.rootElt.style.borderColor = this.color;
       this.labelElt.style.color = this.color;
-      this.rootElt.classList.add("toggle-checked");
+      this.rootElt.classList.add(CHECKED_CLASS);
     } else {
-      this.rootElt.classList.remove("toggle-checked");
+      this.rootElt.classList.remove(CHECKED_CLASS);
       this.labelElt.style.color = "";
       this.rootElt.style.borderColor = "";
     }
   }
 
   private toggle = () => {
+    this.checked = !this.checked;
     this.toggleStyle();
     this.onClick?.(this.checked);
   };
@@ -51,7 +53,7 @@ class Toggle {
     this.rootElt.style.borderColor = this.color;
     if (this.checked) {
       this.labelElt.style.color = this.color;
-      this.rootElt.classList.add("toggle-checked");
+      this.rootElt.classList.add(CHECKED_CLASS);
     }
     this.rootElt.appendChild(this.buttonElt);
     this.buttonElt.appendChild(this.labelElt);

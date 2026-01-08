@@ -43,7 +43,6 @@ class SoundPanel {
     this!.panningValue!.textContent = channel?.pan.toString() as string;
     this!.volumeRange!.value = channel?.volume.toString() as string;
     this!.volumeValue!.textContent = channel?.volume.toFixed(1) as string;
-    // this.knobs
   }
 
   private setBackground() {
@@ -55,9 +54,8 @@ class SoundPanel {
     const currentStepperControlsElt = currentStepper?.controls
       ?.element as HTMLDivElement;
     currentStepperControlsElt.dataset["selected"] = "on";
-    currentStepperControlsElt.style.borderLeft = `solid .3rem ${
-      currentStepper!.color?.cssColor
-    }`;
+    currentStepperControlsElt.style.borderColor = currentStepper!.color
+      ?.cssColor as string;
   }
 
   private initialize() {
@@ -302,7 +300,7 @@ class SoundPanel {
     const previousStepperControlsElt = previousStepper!.controls
       ?.element as HTMLDivElement;
     previousStepperControlsElt.dataset["selected"] = "off";
-    previousStepperControlsElt.style.borderColor = "transparent";
+    previousStepperControlsElt.style.borderColor = "rgb(80, 80, 80)";
     this.selectedStepper = stepperId;
     State.currentStepperId.next(parseInt(stepperId) as StepperIdType);
     const currentStepper = this.getSelectedStepper();

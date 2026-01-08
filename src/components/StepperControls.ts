@@ -43,6 +43,7 @@ class StepperControls {
     this.element = document.createElement("div");
     this.element.classList.add("stepper-controls");
     this.element.dataset["stepperId"] = this.stepperId.toString();
+    this.element.dataset["selected"] = "off";
     const muteLabel = document.createElement("span");
     const soloLabel = document.createElement("span");
     this.soloCheckBox = document.createElement("input");

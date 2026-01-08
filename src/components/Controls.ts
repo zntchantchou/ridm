@@ -1,8 +1,5 @@
 import Audio from "../modules/Audio";
 
-const temporRangeElt = document.getElementById(
-  "tempo-range"
-) as HTMLInputElement;
 const tpcRangeElt = document.getElementById("tpc-range") as HTMLInputElement;
 const tpcDislayElt = document.getElementById("tpc") as HTMLDivElement;
 const playPauseBtn = document.getElementById("play") as HTMLDivElement;
@@ -13,8 +10,7 @@ const volumeRangeElt = document.getElementById(
 const volumeDisplayElt = document.getElementById("volume") as HTMLInputElement;
 
 class Controls {
-  tempo = 40;
-  tpc = 4; // 60 / TPS = tempo
+  tpc = 4;
   volume = 1;
   isPlaying: boolean = false;
   selectedStepper: number = 0;
@@ -40,10 +36,6 @@ class Controls {
     if (tpcDislayElt) tpcDislayElt.textContent = updatedValue;
   }
 
-  public getTempo(): number {
-    return parseInt(temporRangeElt.value);
-  }
-
   private updateVolume(e: Event) {
     const updatedValue = (e?.target as HTMLInputElement).value;
     this.volume = parseFloat(updatedValue);
@@ -51,7 +43,7 @@ class Controls {
     if (volumeDisplayElt) volumeDisplayElt.textContent = updatedValue;
     Audio.setMasterVolume(this.volume);
   }
-  // use anonymous function expression so "this" can be referenced in the eventListener
+
   public togglePlay = async () => {
     if (!this.isPlaying) {
       this.isPlaying = true;

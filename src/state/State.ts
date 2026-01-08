@@ -7,7 +7,12 @@ import type {
 } from "./state.types";
 import type { EffectNameType, EffectUpdate } from "../types";
 import type { StepperOptions } from "../components/Stepper";
-import { COLORS, INITIAL_EFFECTS, SAMPLES_DIRS } from "./state.constants";
+import {
+  COLORS,
+  DEFAULT_STEPPER_OPTIONS,
+  INITIAL_EFFECTS,
+  SAMPLES_DIRS,
+} from "./state.constants";
 import { generateRandomSteps } from "./state.utils";
 
 // because effects affect sound even at 0 especially pitchShift
@@ -32,8 +37,10 @@ class State {
     const effects = new Map<StepperIdType, Effect[]>();
     const steppers = new Map<StepperIdType, StepperOptions>();
     for (let i = 0; i < 8; i++) {
-      const beats = Math.floor(Math.random() * 4) + 2;
-      const stepsPerBeat = Math.floor(Math.random() * 4) + 1; // deep copy
+      // const beats = Math.floor(Math.random() * 4) + 2;
+      // const stepsPerBeat = Math.floor(Math.random() * 4) + 1; // deep copy
+      const beats = DEFAULT_STEPPER_OPTIONS.beats;
+      const stepsPerBeat = DEFAULT_STEPPER_OPTIONS.stepsPerBeat;
       effects.set(i as StepperIdType, INITIAL_EFFECTS);
       steppers.set(i as StepperIdType, {
         beats,

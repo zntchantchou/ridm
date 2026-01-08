@@ -23,6 +23,10 @@ button {
   outline: none;
 }
 
+.toggle:active {
+  animation: bounce 0.3s ease-in-out;
+}
+
 .toggle-checked {
   opacity: 1;
   border-width: 0.15rem;

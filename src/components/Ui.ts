@@ -59,13 +59,18 @@ class UI {
       step.stepNumber === 0 ? step.totalSteps - 1 : step.stepNumber - 1, // unstyle last element if step is 0
       step.totalSteps
     );
+
     // highlight steps from children pulses (subdivisions)
+
+    // only one loop is necessary
     for (const pulse of this.pulses.getLeadPulses()) {
       pulse.getSubs()?.forEach((sub) => {
-        const prevStep = this.selectSteps(sub.getPrevStep(step), sub.steps);
-        const currStep = this.selectSteps(sub.getCurrentStep(step), sub.steps);
-        lastStepElements.push(...prevStep);
-        currentStepElts.push(...currStep);
+        const currentStep = sub.getCurrentStep(step);
+        const prevStep = currentStep == 0 ? sub.steps - 1 : currentStep - 1;
+        const prevSteps = this.selectSteps(prevStep, sub.steps);
+        const currSteps = this.selectSteps(currentStep, sub.steps);
+        lastStepElements.push(...prevSteps);
+        currentStepElts.push(...currSteps);
       });
     }
 

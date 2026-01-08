@@ -1,6 +1,7 @@
 .counter {
   display: flex;
-  background-color: rgb(37, 37, 37);
+
+  /* border-radius: 2rem; */
 }
 
 .counter-item {
@@ -12,15 +13,30 @@
   justify-content: center;
   align-items: center;
   box-sizing: content-box;
+  font-size: 0.9rem;
+  overflow: hidden;
+  background-color: rgb(28, 28, 28);
 }
 
-.counter-btn:active {
+.counter-btn {
+  font-size: 1.2rem;
+}
+
+.counter-btn:hover:active {
+  background-color: rgb(133, 133, 133);
   animation: bounce 0.3s ease-in-out;
 }
 
 .counter-btn:hover {
-  color: rgb(55, 55, 55);
-  background-color: rgb(178, 178, 178);
+  color: rgb(38, 38, 38);
+  background-color: rgb(255, 255, 255);
+}
+.counter-plus {
+  border-radius: 0 2rem 2rem 0;
+}
+
+.counter-minus {
+  border-radius: 2rem 0 0 2rem;
 }
 
 .counter-value {

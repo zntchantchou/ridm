@@ -19,7 +19,7 @@ class Pulse {
     time: number;
   }>;
   private nextNoteTime: number = 0;
-  private currentStep: number = 0;
+  currentStep: number = 0;
   constructor(steps: number, lead: boolean = true) {
     if (steps < 1) {
       throw new Error(`Pulse steps must be >= 1, got ${steps}`);

@@ -3,7 +3,7 @@ import Audio from "./Audio.ts";
 import { filter, type Subscription } from "rxjs";
 import Controls from "../components/Controls";
 import type { EffectNameType, EffectUpdate, TrackEffect } from "../types.ts";
-import State from "../state/state.ts";
+import State from "../state/State.ts";
 
 const samplesDirPath = "../../samples/defaults/";
 

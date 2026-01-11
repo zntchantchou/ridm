@@ -1,7 +1,9 @@
 import Pulses from "../modules/Pulses";
 import StepQueue, { type Step } from "../modules/StepQueue";
 import * as Tone from "tone";
+import State from "../state/State";
 
+const steppersLoaderElt = document.getElementById("steppers-loading");
 class UI {
   audioContext: null | Tone.Context;
   lastStep: Step | null = null;
@@ -11,6 +13,9 @@ class UI {
   constructor(AC: Tone.Context, pulses: typeof Pulses) {
     this.audioContext = AC;
     this.pulses = pulses;
+    State.steppersLoadingSubject.subscribe((isLoading) => {
+      steppersLoaderElt!.style.display = isLoading ? "flex" : "none";
+    });
   }
   /** start the animation */
   start() {
@@ -46,9 +51,12 @@ class UI {
     ) as HTMLDivElement[];
   }
 
-  private selectPulseSteps(totalSteps: number) {
-    return document.querySelectorAll(`.step[data-steps="${totalSteps}"]`);
+  private selectTickingSteps(totalSteps: number) {
+    return document.querySelectorAll(
+      `.step[data-steps="${totalSteps}"][data-ticking="on"]`
+    );
   }
+
   private updateUI(step: Step) {
     let currentStepElts: HTMLDivElement[] = [];
     if (!this.pulses?.getLeadPulses().length) {
@@ -57,21 +65,20 @@ class UI {
     }
     // highlight steps from parent pulses
     currentStepElts = this.selectSteps(step.stepNumber, step.totalSteps);
-    this.selectPulseSteps(step.totalSteps).forEach((s) => {
+    this.selectTickingSteps(step.totalSteps).forEach((s) => {
       (s as HTMLDivElement).dataset.ticking = "off";
     });
     // only one loop is necessary
-    // for (const pulse of this.pulses.getLeadPulses()) {
-    //   pulse.getSubs()?.forEach((sub) => {
-    //     this.selectPulseSteps(sub.steps).forEach((s) => {
-    //       (s as HTMLDivElement).dataset.ticking = "off";
-    //     });
-    //     const currentStep = sub.getCurrentStep(step);
-    //     const currSteps = this.selectSteps(currentStep, sub.steps);
-    //     currentStepElts.push(...currSteps);
-    //   });
-    // }
-
+    for (const pulse of this.pulses.getLeadPulses()) {
+      pulse.getSubs()?.forEach((sub) => {
+        this.selectTickingSteps(sub.steps).forEach((s) => {
+          (s as HTMLDivElement).dataset.ticking = "off";
+        });
+        const currentStep = sub.getCurrentStep(step);
+        const currSteps = this.selectSteps(currentStep, sub.steps);
+        currentStepElts.push(...currSteps);
+      });
+    }
     if (currentStepElts) {
       currentStepElts.forEach((elt) => (elt.dataset.ticking = "on"));
     }

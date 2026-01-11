@@ -1,4 +1,4 @@
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import type {
   Effect,
   EffectState,
@@ -23,7 +23,7 @@ class State {
   // should be private
   private effects: EffectState;
   private steppers: SteppersState;
-
+  steppersLoadingSubject = new BehaviorSubject<boolean>(false);
   currentStepperId = new Subject<StepperIdType>();
   effectUpdateSubject = new Subject<EffectUpdate>();
   stepperResizeSubject = new Subject<StepperResizeUpdate>();
@@ -39,8 +39,8 @@ class State {
     const effects = new Map<StepperIdType, Effect[]>();
     const steppers = new Map<StepperIdType, StepperOptions>();
     for (let i = 0; i < 8; i++) {
-      // const beats = Math.floor(Math.random() * 4) + 2;
-      // const stepsPerBeat = Math.floor(Math.random() * 4) + 1; // deep copy
+      // const beats = Math.floor(Math.random() * 4) + 5;
+      // const stepsPerBeat = Math.floor(Math.random() * 4) + 4; // deep copy
       const beats = DEFAULT_STEPPER_OPTIONS.beats;
       const stepsPerBeat = DEFAULT_STEPPER_OPTIONS.stepsPerBeat;
       effects.set(i as StepperIdType, INITIAL_EFFECTS);

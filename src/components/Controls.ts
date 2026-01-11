@@ -10,16 +10,13 @@ const volumeRangeElt = document.getElementById(
 const volumeDisplayElt = document.getElementById("volume") as HTMLInputElement;
 
 class Controls {
-  tpc = 4;
+  tpc = 2;
   volume = 1;
   isPlaying: boolean = false;
   selectedStepper: number = 0;
 
   init() {
-    playPauseBtn?.addEventListener(
-      "click",
-      async () => await this.togglePlay()
-    );
+    playPauseBtn?.addEventListener("click", () => this.togglePlay());
     volumeRangeElt?.addEventListener("click", (e) => this.updateVolume(e));
     tpcRangeElt?.addEventListener("change", (e) => this.updateTpc(e));
     volumeRangeElt.value = this.volume.toString();
@@ -44,20 +41,28 @@ class Controls {
     Audio.setMasterVolume(this.volume);
   }
 
-  public togglePlay = async () => {
-    if (!this.isPlaying) {
-      this.isPlaying = true;
-
-      playPauseImg.src = "/pause-round.svg";
-      if (Audio.ctx?.state !== "running") return Audio.ctx?.resume();
-      return;
-    }
-    playPauseImg.src = "/play-round.svg";
+  public pause() {
     this.isPlaying = false;
+    playPauseImg.src = "/play-round.svg";
     // We have to use rawContext because we are relying on our own note scheduling implementation (based on AudioContext.currentTime).
     // Tone.Context does not allow an access to suspend, which is handled via the Transport component.
     // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
-    return Audio.ctx?.rawContext?.suspend(Audio.ctx.now() as number);
+    Audio.ctx?.rawContext?.suspend(Audio.ctx.now() as number);
+  }
+
+  public play() {
+    this.isPlaying = true;
+    playPauseImg.src = "/pause-round.svg";
+    // if (Audio.ctx?.state !== "running")
+    Audio.ctx?.resume();
+  }
+
+  public togglePlay = () => {
+    if (!this.isPlaying) {
+      this.play();
+    } else {
+      this.pause();
+    }
   };
 }
 

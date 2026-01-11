@@ -1,14 +1,16 @@
-import { debounceTime, filter, interval, Subscription, throttle } from "rxjs";
+import { debounceTime, filter, Subscription } from "rxjs";
 import Pulse from "../modules/Pulse";
 import Pulses from "../modules/Pulses";
 import type Track from "../modules/Track";
 import Controls from "./Controls";
 import type StepperControls from "./StepperControls";
 import type { StepperIdType } from "../state/state.types";
-import State from "../state/state";
+import State from "../state/State";
 
 const DEBOUNCE_TIME_MS = 200;
 const steppersDiv = document.getElementById("steppers");
+const steppersLoaderElt = document.getElementById("steppers-loading");
+
 export type StepperColorType = { name: string; cssColor: string };
 export interface StepperOptions {
   beats: number;
@@ -72,11 +74,11 @@ class Stepper {
     this.pulseSubscription?.unsubscribe();
     this.pulseSubscription = pulse.currentStepSubject
       .pipe(
-        filter(({ stepNumber, totalSteps }) =>
-          this.isSelectedStep({ totalSteps, stepNumber })
+        filter(
+          ({ stepNumber, totalSteps }) =>
+            this.isSelectedStep({ totalSteps, stepNumber }) // Only trigger if note is selected
         )
-      ) // Only trigger if note is selected
-      .pipe(throttle(() => interval(Controls.tpc / this.steps)))
+      )
       .subscribe({
         next: ({ time }) => this?.track?.playSample(time),
       });
@@ -99,6 +101,7 @@ class Stepper {
   }
 
   private updateSelectedSteps(targetSize: number) {
+    console.log("[updateSelectedSteps]: ", this.id);
     const selectedSteps = this.getSelectedBeatAsNumber();
     const ratio = targetSize / this.steps;
     const updatedSteps = [];
@@ -114,42 +117,36 @@ class Stepper {
     this.selectedSteps = this.convertNumbersToSteps(targetSize, updatedSteps);
   }
 
-  updateBeats(beats: number) {
-    const oldSteps = this.steps;
-    // this is a source of freeze 1
-    this.updateSelectedSteps(this.stepsPerBeat * beats);
-    this.beats = beats;
-    // this is a source of freeze 2
-    Pulses.update(this, oldSteps, this.steps);
-    this.updateUi();
-  }
-
-  updateSteps = ({
+  updateSteps = async ({
     beats,
     stepsPerBeat,
   }: {
     beats?: number;
     stepsPerBeat?: number;
   }) => {
+    let paused = false;
+    if (Controls.isPlaying) {
+      Controls.pause();
+      paused = true;
+      // Give browser a chance to repaint and show the loader
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      steppersLoaderElt!.style.display = "flex";
+    }
     const oldSteps = this.steps;
     if (stepsPerBeat) this.stepsPerBeat = stepsPerBeat;
     if (beats) this.beats = beats;
     this.updateSelectedSteps(this.beats * this.stepsPerBeat);
-    // this needs to be async because it takes time
-    // the ui should only be updated once Pulse update is complete
+
+    // Heavy synchronous operation - but now loader is visible
     Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
+    console.log("PLAY");
+    steppersLoaderElt!.style.display = "none";
+    if (paused) Controls.play();
   };
 
-  updateStepsPerBeat(spb: number) {
-    const oldSteps = this.steps;
-    this.updateSelectedSteps(this.beats * spb);
-    this.stepsPerBeat = spb;
-    Pulses.update(this, oldSteps, this.steps);
-    this.updateUi();
-  }
-
   convertNumbersToSteps(targetSize: number, numbers: number[]) {
+    console.log("[ConvertNumToSteps]: ", this.id);
     if (!numbers.length) return [];
     const steps: boolean[] = Array(targetSize)
       .fill(false)
@@ -166,6 +163,7 @@ class Stepper {
   }
 
   updateUi() {
+    console.log("[updateUi]: stepperID ", this.id);
     if (!this.element?.hasChildNodes()) return;
     this.createStepElements();
     while (this.element.lastElementChild) {
@@ -175,6 +173,7 @@ class Stepper {
   }
 
   private render() {
+    console.log("[RENDER] stepperID :", this.id);
     this.createStepElements();
     const stepper = document.createElement("div");
     stepper.classList.add("stepper");

@@ -5,6 +5,7 @@
 @import url("./src/style/stepper-controls.css");
 @import url("./src/style/panel-section.css");
 @import url("./src/style/counter.css");
+@import url("./src/style/loader.css");
 @import url("./src/style/toggle.css");
 
 :root {
@@ -51,6 +52,17 @@ body {
   height: 90vh;
   width: calc(1.4 * 80vh);
   border-radius: 10px;
+}
+
+#steppers-loading {
+  background-color: rgba(214, 214, 214, 0.215);
+  position: absolute;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #controls {

@@ -324,6 +324,7 @@ class SoundPanel {
     this.panningRange.id = "panning-range";
     this.panningValue.textContent = this.panningRange.value;
     this.panningValue.id = "panning-value";
+    this.panningRange.classList.add("panel-range-input");
     panningGroup.classList.add("effect-group");
     panningGroup.appendChild(panningTitle);
     panningGroup.appendChild(this.panningRange);
@@ -337,6 +338,7 @@ class SoundPanel {
     const volumeTitle = document.createElement("span");
     this.volumeRange = document.createElement("input");
     this.volumeValue = document.createElement("span");
+    this.volumeRange.classList.add("panel-range-input");
     this.volumeValue.id = "volume-value";
     this.volumeRange.type = "range";
     this.volumeRange.min = "-40";

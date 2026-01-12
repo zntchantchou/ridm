@@ -1,4 +1,4 @@
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject, Subject, tap } from "rxjs";
 import type {
   Effect,
   EffectState,
@@ -46,20 +46,19 @@ class State {
     this.effects = effects;
     this.steppers = steppers;
     this.settings = settings;
-    this.effectUpdateSubject.subscribe(this.updateEffect);
-    this.stepperSelectedStepsSubject.subscribe(this.updateSelectedSteps);
-    this.tpcUpdateSubject.subscribe(this.updateTpc);
-    this.volumeUpdateSubject.subscribe(this.updateVolume);
     this.storage.initialize({
       effects,
       steppers,
       settings,
       subjects: [
-        this.tpcUpdateSubject,
-        this.volumeUpdateSubject,
-        this.effectUpdateSubject,
-        this.stepperSelectedStepsSubject,
-        this.stepperResizeSubject,
+        this.currentStepperId.pipe(tap((v) => this.updateSelectedStepperId(v))),
+        this.effectUpdateSubject.pipe(tap((v) => this.updateEffect(v))),
+        this.stepperSelectedStepsSubject.pipe(
+          tap((v) => this.updateSelectedSteps(v))
+        ),
+        this.tpcUpdateSubject.pipe(tap((v) => this.updateTpc(v))),
+        this.stepperResizeSubject.pipe(tap((u) => this.updateStepperSize(u))),
+        this.volumeUpdateSubject.pipe(tap((v) => this.updateVolume(v))),
       ] as Subject<StateUpdates>[],
     });
   }
@@ -134,6 +133,24 @@ class State {
   updateVolume = (volume: number) => {
     this.settings.volume = volume;
   };
+
+  updateStepperSize = (update: StepperResizeUpdate) => {
+    const { stepperId, beats, stepsPerBeat } = update;
+    const existingStepper = this.steppers.get(stepperId);
+    if (!existingStepper) return;
+    const updatedStepper = { ...existingStepper };
+    if (beats !== undefined) updatedStepper.beats = beats;
+    if (stepsPerBeat !== undefined) updatedStepper.stepsPerBeat = stepsPerBeat;
+    this.steppers.set(stepperId, updatedStepper);
+  };
+
+  private updateSelectedStepperId(id: StepperIdType) {
+    this.settings.selectedStepperId = id;
+  }
+
+  getSelectedStepperId() {
+    return this.settings.selectedStepperId;
+  }
 
   getEffect({
     trackId,

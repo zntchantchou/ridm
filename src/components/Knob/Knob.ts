@@ -1,5 +1,5 @@
 import { fromEvent, Observable, Subscription, tap, throttleTime } from "rxjs";
-import State from "../../state/state";
+import State from "../../state/State";
 import type { EffectNameType, IEffectValue } from "../../types";
 import type { StepperIdType } from "../../state/state.types";
 import type { StepperOptions } from "../Stepper";
@@ -46,6 +46,7 @@ class Knob {
   size: number;
   dragObs: Observable<Event> | null = null;
   dragSubscription?: Subscription;
+  selectedStepperId: StepperIdType = State.getSelectedStepperId();
   // VALUES
   startY = 0;
   settingName?: keyof IEffectValue;
@@ -143,7 +144,8 @@ class Knob {
     this.rootElt.appendChild(this.valueContainer);
     this!.valueElt.textContent = this.getValue();
     this.parentElt?.appendChild(this.rootElt);
-    this.setRingColor(0);
+    this.setRingColor(this.selectedStepperId);
+
     this.updatePosition();
     this.initialized = true;
   }
@@ -166,6 +168,7 @@ class Knob {
   };
 
   private handleSelectedStepperChange = (currentStepId: StepperIdType) => {
+    this.selectedStepperId = currentStepId;
     const effect = State.getEffect({
       trackId: currentStepId,
       name: this.effectName,

@@ -1,5 +1,5 @@
 import type { StepperColorType } from "../components/Stepper";
-import type { Effect } from "./state.types";
+import type { Effect, Settings } from "./state.types";
 import { generateRandomSteps } from "./state.utils";
 
 export const COLORS: StepperColorType[] = [
@@ -108,7 +108,8 @@ export const INITIAL_EFFECTS: Effect[] = [
   },
 ];
 
-export const INITIAL_SETTINGS = {
+export const INITIAL_SETTINGS: Settings = {
   tpc: 4,
   volume: -10,
+  selectedStepperId: 0,
 };

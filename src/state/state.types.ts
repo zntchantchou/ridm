@@ -26,6 +26,7 @@ export type StepperSelectedStepsUpdate = {
 export type Settings = {
   tpc: number;
   volume: number;
+  selectedStepperId: StepperIdType;
 };
 
 export type SteppersState = Map<StepperIdType, StepperOptions>;

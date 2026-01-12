@@ -4,6 +4,7 @@ import { filter, type Subscription } from "rxjs";
 import Controls from "../components/Controls";
 import type { EffectNameType, EffectUpdate, TrackEffect } from "../types.ts";
 import State from "../state/State.ts";
+import type { StepperIdType } from "../state/state.types.ts";
 
 const samplesDirPath = "../../samples/defaults/";
 
@@ -68,8 +69,20 @@ class Track {
     if (!this.channel) {
       this.channel = new Tone.Channel();
     }
-    const effects = Audio.defaultEffects;
-    if (effects) this.effects = effects;
+    const effects = State.getStepperEffects(
+      parseInt(this.stepperId) as StepperIdType
+    );
+    if (effects) {
+      this.effects = effects?.map((effect) => {
+        const node = Audio.createEffect(effect.name, effect.value);
+        return {
+          name: effect.name,
+          node,
+        };
+      });
+    } else {
+      this.effects = Audio.defaultEffects;
+    }
     this.effectsInitialized = true;
   }
 

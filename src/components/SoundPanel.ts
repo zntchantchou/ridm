@@ -1,8 +1,12 @@
 import type Stepper from "./Stepper";
 import type { EffectNameType, EffectValue } from "../types";
 import PanelSection from "./PanelSection/PanelSection";
-import type { PitchShiftOptions } from "tone";
-import State from "../state/state";
+import type {
+  PitchShiftOptions,
+  FeedbackDelayOptions,
+  ReverbOptions,
+} from "tone";
+import State from "../state/State";
 import type { StepperIdType } from "../state/state.types";
 
 const rootElt = document.getElementById("top-panel");
@@ -11,7 +15,7 @@ const stepperControlElements =
   document.getElementsByClassName("stepper-controls");
 
 class SoundPanel {
-  selectedStepper = "0";
+  selectedStepper = State.getSelectedStepperId().toString();
   steppers: Stepper[] = [];
   element?: HTMLDivElement;
   panningRange?: HTMLInputElement;
@@ -80,7 +84,12 @@ class SoundPanel {
           inputType: "knob",
           min: 0,
           max: 1,
-          value: 0,
+          value: (
+            State.getEffect({
+              trackId: parseInt(this.selectedStepper) as StepperIdType,
+              name: "delay",
+            })?.value as FeedbackDelayOptions
+          ).wet,
           onChange: this.handleDelayChange,
         },
         {
@@ -90,7 +99,12 @@ class SoundPanel {
           inputType: "knob",
           min: 0,
           max: 1,
-          value: 0,
+          value: (
+            State.getEffect({
+              trackId: parseInt(this.selectedStepper) as StepperIdType,
+              name: "delay",
+            })?.value as FeedbackDelayOptions
+          ).feedback,
           onChange: this.handleDelayChange,
         },
         {
@@ -100,7 +114,12 @@ class SoundPanel {
           inputType: "knob",
           min: 0,
           max: 1,
-          value: 0,
+          value: (
+            State.getEffect({
+              trackId: parseInt(this.selectedStepper) as StepperIdType,
+              name: "delay",
+            })?.value as FeedbackDelayOptions
+          ).delayTime.valueOf() as number,
           onChange: this.handleDelayChange,
         },
       ],
@@ -116,7 +135,12 @@ class SoundPanel {
           inputType: "knob",
           min: 0,
           max: 1,
-          value: 0,
+          value: (
+            State.getEffect({
+              trackId: parseInt(this.selectedStepper) as StepperIdType,
+              name: "reverb",
+            })?.value as ReverbOptions
+          ).wet,
           onChange: this.handleReverbChange,
         },
         {
@@ -126,7 +150,12 @@ class SoundPanel {
           inputType: "knob",
           min: 0.01,
           max: 10,
-          value: 0,
+          value: (
+            State.getEffect({
+              trackId: parseInt(this.selectedStepper) as StepperIdType,
+              name: "reverb",
+            })?.value as ReverbOptions
+          ).decay,
           onChange: this.handleReverbChange,
         },
         {
@@ -136,7 +165,12 @@ class SoundPanel {
           inputType: "knob",
           min: 0,
           max: 6,
-          value: 0,
+          value: (
+            State.getEffect({
+              trackId: parseInt(this.selectedStepper) as StepperIdType,
+              name: "reverb",
+            })?.value as ReverbOptions
+          ).preDelay,
           onChange: this.handleReverbChange,
         },
       ],
@@ -148,12 +182,32 @@ class SoundPanel {
       settings: [
         {
           effectName: "pitch",
+          label: "wet",
+          settingName: "wet",
+          inputType: "knob",
+          min: 0,
+          max: 1,
+          value: (
+            State.getEffect({
+              trackId: parseInt(this.selectedStepper) as StepperIdType,
+              name: "pitch",
+            })?.value as PitchShiftOptions
+          ).wet,
+          onChange: this.handlePitchChange,
+        },
+        {
+          effectName: "pitch",
           label: "interval",
           settingName: "pitch",
           inputType: "knob",
           min: -8,
           max: 8,
-          value: (this.getEffectValues("pitch") as PitchShiftOptions).pitch,
+          value: (
+            State.getEffect({
+              trackId: parseInt(this.selectedStepper) as StepperIdType,
+              name: "pitch",
+            })?.value as PitchShiftOptions
+          ).pitch,
           onChange: this.handlePitchChange,
         },
         {
@@ -163,17 +217,12 @@ class SoundPanel {
           inputType: "knob",
           min: 0.1,
           max: 1,
-          value: 0.1,
-          onChange: this.handlePitchChange,
-        },
-        {
-          effectName: "pitch",
-          label: "wet",
-          settingName: "wet",
-          inputType: "knob",
-          min: 0,
-          max: 1,
-          value: 0,
+          value: (
+            State.getEffect({
+              trackId: parseInt(this.selectedStepper) as StepperIdType,
+              name: "pitch",
+            })?.value as PitchShiftOptions
+          ).windowSize,
           onChange: this.handlePitchChange,
         },
       ],

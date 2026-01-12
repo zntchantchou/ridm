@@ -19,8 +19,8 @@ const timeWorker = new Timerworker({
 let initialized = false;
 
 async function init() {
-  Controls.init();
   await Audio.init(toneContext);
+  Controls.init();
   const sequencer = new Sequencer(Pulses);
   await sequencer.initialize();
 }

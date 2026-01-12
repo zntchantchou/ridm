@@ -41,12 +41,25 @@ class SoundPanel {
     const stepper = this.getSelectedStepper() as Stepper;
     sampleNameElt!.textContent = stepper.sampleName;
     this.setBackground();
+    const volume = State.getEffect({
+      trackId: parseInt(this.selectedStepper) as StepperIdType,
+      name: "volume",
+    });
+    const panning = State.getEffect({
+      trackId: parseInt(this.selectedStepper) as StepperIdType,
+      name: "panning",
+    });
+    const volumeValue = volume?.value as { volume: number };
+    const panningValue = panning?.value as { pan: number };
     // VOLUME
-    const channel = stepper.track?.channel?.get();
-    this!.panningRange!.value = channel?.pan.toString() as string;
-    this!.panningValue!.textContent = channel?.pan.toString() as string;
-    this!.volumeRange!.value = channel?.volume.toString() as string;
-    this!.volumeValue!.textContent = channel?.volume.toFixed(1) as string;
+    if (volumeValue) {
+      this!.volumeRange!.value = volumeValue?.volume.toString() as string;
+      this!.volumeValue!.textContent = volumeValue?.volume.toString() as string;
+    }
+    if (panningValue) {
+      this!.panningRange!.value = panningValue?.pan.toString() as string;
+      this!.panningValue!.textContent = panningValue?.pan.toString() as string;
+    }
   }
 
   private setBackground() {
@@ -74,6 +87,25 @@ class SoundPanel {
     sampleDetailsSection.appendChild(this.generateVolumeGroup());
     sampleDetailsSection.appendChild(this.generatePanningGroup());
     this.element?.appendChild(sampleDetailsSection);
+    const volume = State.getEffect({
+      trackId: parseInt(this.selectedStepper) as StepperIdType,
+      name: "volume",
+    });
+    const panning = State.getEffect({
+      trackId: parseInt(this.selectedStepper) as StepperIdType,
+      name: "panning",
+    });
+    const volumeValue = volume?.value as { volume: number };
+    const panningValue = panning?.value as { pan: number };
+    // VOLUME
+    if (volumeValue) {
+      this!.volumeRange!.value = volumeValue?.volume.toString() as string;
+      this!.volumeValue!.textContent = volumeValue?.volume.toString() as string;
+    }
+    if (panningValue) {
+      this!.panningRange!.value = panningValue?.pan.toString() as string;
+      this!.panningValue!.textContent = panningValue?.pan.toString() as string;
+    }
     new PanelSection({
       title: "delay",
       settings: [

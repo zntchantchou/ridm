@@ -1,5 +1,6 @@
 import Audio from "../modules/Audio";
 import State from "../state/State";
+import { INITIAL_SETTINGS } from "../state/state.constants";
 
 const tpcRangeElt = document.getElementById("tpc-range") as HTMLInputElement;
 const tpcDislayElt = document.getElementById("tpc") as HTMLDivElement;
@@ -11,8 +12,8 @@ const volumeRangeElt = document.getElementById(
 const volumeDisplayElt = document.getElementById("volume") as HTMLInputElement;
 
 class Controls {
-  tpc = 2;
-  volume = 1;
+  tpc = State.getSettings().tpc || INITIAL_SETTINGS.tpc;
+  volume = State.getSettings().volume || INITIAL_SETTINGS.volume;
   isPlaying: boolean = false;
   selectedStepper: number = 0;
 
@@ -25,6 +26,7 @@ class Controls {
     tpcRangeElt.value = this.tpc.toString();
     tpcDislayElt.textContent = this.tpc.toString();
     playPauseImg.src = "/play-round.svg";
+    Audio.setMasterVolume(this.volume);
   }
 
   private updateTpc(e: Event) {

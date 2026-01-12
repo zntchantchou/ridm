@@ -101,6 +101,12 @@ export const INITIAL_EFFECTS: Effect[] = [
     },
   },
   {
+    name: "panning",
+    value: {
+      pan: 0,
+    },
+  },
+  {
     name: "volume",
     value: {
       volume: 0,

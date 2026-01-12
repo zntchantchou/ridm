@@ -57,7 +57,8 @@ class Track {
     const trackNodes = this.effects?.map(
       (effect) => effect.node
     ) as Tone.ToneAudioNode[];
-    trackNodes.push(this.channel as Tone.ToneAudioNode);
+    // Channel is added first so that the panning is done by our own Tone.Panner which is added after it
+    trackNodes.unshift(this.channel as Tone.ToneAudioNode);
     this.source?.chain(
       ...trackNodes,
       ...Audio.getMasterNodes(),
@@ -66,12 +67,12 @@ class Track {
   }
 
   private initializeEffects() {
-    if (!this.channel) {
-      this.channel = new Tone.Channel();
-    }
     const effects = State.getStepperEffects(
       parseInt(this.stepperId) as StepperIdType
     );
+    if (!this.channel) {
+      this.channel = new Tone.Channel({});
+    }
     if (effects) {
       this.effects = effects?.map((effect) => {
         const node = Audio.createEffect(effect.name, effect.value);
@@ -92,7 +93,6 @@ class Track {
   }
 
   private handleEffectUpdate = (update: EffectUpdate) => {
-    // console.log("[handleEffectUpdate] update ", update);
     const updateFn = this.updateMethodsMap.get(update.name);
     if (updateFn) updateFn(update);
   };
@@ -100,7 +100,6 @@ class Track {
   private handleSoloUpdate = (value: EffectUpdate) => {
     const v = value.value as Tone.ChannelOptions;
     this?.channel?.set({ solo: v.solo });
-    console.log("SETTING SOLO ", this.channel);
   };
 
   private handleMuteUpdate = (value: EffectUpdate) => {
@@ -109,13 +108,17 @@ class Track {
   };
 
   private handlePanningUpdate = (value: EffectUpdate) => {
-    const v = value.value as Tone.ChannelOptions;
-    this?.channel?.set({ pan: v.pan });
+    const effect = this.effects?.find((e) => e.name === "panning");
+    if (!effect || !effect.node) return;
+    const options = value.value as Tone.ChannelOptions;
+    effect?.node.set({ ...options });
   };
 
   private handleVolumeUpdate = (value: EffectUpdate) => {
-    const v = value.value as Tone.ChannelOptions;
-    this?.channel?.set({ volume: v.volume });
+    const effect = this.effects?.find((e) => e.name === "volume");
+    if (!effect || !effect.node) return;
+    const options = value.value as Tone.ChannelOptions;
+    effect?.node.set({ ...options });
   };
 
   private handleDelayUpdate = (value: EffectUpdate) => {

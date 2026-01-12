@@ -10,7 +10,6 @@ import { INITIAL_EFFECTS } from "../state/state.constants";
 class Audio {
   ctx: Tone.Context | null = null;
   volume: Tone.Volume | null = null;
-  panning: Tone.Panner | null = null;
   defaultSamples: DefaultSampleType[] = [];
   soundSettings: ToneSoundSettings[] = [];
 
@@ -21,7 +20,6 @@ class Audio {
     Tone.setContext(toneContext);
     if (this.ctx) {
       this.volume = new Tone.Volume({ volume: 0 });
-      this.panning = new Tone.Panner({ pan: 0 });
     }
   }
 
@@ -34,15 +32,8 @@ class Audio {
     this.volume?.set({ volume: value });
   }
 
-  public setMasterPanning(value: number) {
-    this.panning?.set({ pan: value });
-  }
-
   public getMasterNodes(): Tone.ToneAudioNode[] {
-    return [
-      this.panning as Tone.ToneAudioNode,
-      this.volume as Tone.ToneAudioNode,
-    ];
+    return [this.volume as Tone.ToneAudioNode];
   }
 
   public createEffect(
@@ -58,6 +49,8 @@ class Audio {
         return new Tone.FeedbackDelay(value);
       case "volume":
         return new Tone.Volume(value);
+      case "panning":
+        return new Tone.Panner(value);
       default:
         throw new Error(`Effect ${name} not recognized`);
     }

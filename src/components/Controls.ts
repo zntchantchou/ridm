@@ -1,4 +1,5 @@
 import Audio from "../modules/Audio";
+import State from "../state/State";
 
 const tpcRangeElt = document.getElementById("tpc-range") as HTMLInputElement;
 const tpcDislayElt = document.getElementById("tpc") as HTMLDivElement;
@@ -28,9 +29,10 @@ class Controls {
 
   private updateTpc(e: Event) {
     const updatedValue = (e?.target as HTMLInputElement).value;
-    this.tpc = parseInt(updatedValue);
+    this.tpc = parseFloat(updatedValue);
     console.log("[Controls] UPDATE TPC: ", this.tpc);
     if (tpcDislayElt) tpcDislayElt.textContent = updatedValue;
+    State.tpcUpdateSubject.next(this.tpc);
   }
 
   private updateVolume(e: Event) {
@@ -39,6 +41,7 @@ class Controls {
     console.log("[Controls] UPDATE Volume: ", this.volume);
     if (volumeDisplayElt) volumeDisplayElt.textContent = updatedValue;
     Audio.setMasterVolume(this.volume);
+    State.volumeUpdateSubject.next(this.volume);
   }
 
   public pause() {

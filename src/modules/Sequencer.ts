@@ -3,7 +3,7 @@ import StepperControls from "../components/StepperControls";
 import SoundPanel from "../components/SoundPanel";
 import Pulses from "./Pulses";
 import Track from "./Track";
-import State from "../state/state";
+import State from "../state/State";
 import { Subscription } from "rxjs";
 
 /** Coordinates steppers and their pulses. Phißlosophy: Keep as little pulses as possible running in the application

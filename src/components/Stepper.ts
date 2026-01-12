@@ -101,7 +101,6 @@ class Stepper {
   }
 
   private updateSelectedSteps(targetSize: number) {
-    console.log("[updateSelectedSteps]: ", this.id);
     const selectedSteps = this.getSelectedBeatAsNumber();
     const ratio = targetSize / this.steps;
     const updatedSteps = [];
@@ -199,6 +198,14 @@ class Stepper {
     this.selectedSteps[stepNumber] = !currentValue;
     const step = this.stepElements[stepNumber];
     step.dataset.selected = currentValue ? "off" : "on"; // turn on or off
+
+    // Notify State of the change
+    if (this.id !== undefined) {
+      State.stepperSelectedStepsSubject.next({
+        stepperId: this.id,
+        selectedSteps: this.selectedSteps,
+      });
+    }
   }
 
   private createStepElements() {

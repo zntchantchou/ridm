@@ -8,5 +8,5 @@ export function generateRandomSteps({
   const totalSteps = stepsPerBeat * beats;
   return Array(totalSteps)
     .fill(null)
-    .map(() => Math.random() < 0.7);
+    .map(() => Math.random() < 0);
 }

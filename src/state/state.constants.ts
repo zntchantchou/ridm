@@ -78,8 +78,8 @@ export const SAMPLES_DIRS = [
 ];
 
 export const DEFAULT_STEPPER_OPTIONS = {
-  beats: 8,
-  stepsPerBeat: 8,
+  beats: 4,
+  stepsPerBeat: 4,
   selectedSteps: generateRandomSteps({ stepsPerBeat: 4, beats: 4 }),
 };
 
@@ -107,3 +107,8 @@ export const INITIAL_EFFECTS: Effect[] = [
     },
   },
 ];
+
+export const INITIAL_SETTINGS = {
+  tpc: 4,
+  volume: -10,
+};

@@ -15,7 +15,6 @@ class Controls {
   tpc = State.getSettings().tpc || INITIAL_SETTINGS.tpc;
   volume = State.getSettings().volume || INITIAL_SETTINGS.volume;
   isPlaying: boolean = false;
-  selectedStepper: number = 0;
 
   init() {
     playPauseBtn?.addEventListener("click", () => this.togglePlay());

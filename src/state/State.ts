@@ -26,17 +26,19 @@ import type { PersistedState } from "./storage.types";
 // they should be in a disconnected state, loaded only when activated and used
 
 class State {
-  // should be private
   private effects: EffectState;
   private steppers: SteppersState;
   private settings: Settings;
-  steppersLoadingSubject = new BehaviorSubject<boolean>(false);
-  currentStepperId = new Subject<StepperIdType>();
+  // audio updates
   effectUpdateSubject = new Subject<EffectUpdate>();
-  stepperResizeSubject = new Subject<StepperResizeUpdate>();
-  stepperSelectedStepsSubject = new Subject<StepperSelectedStepsUpdate>();
   tpcUpdateSubject = new Subject<number>();
   volumeUpdateSubject = new Subject<number>();
+  // stepper updates
+  steppersLoadingSubject = new BehaviorSubject<boolean>(false);
+  currentStepperId = new Subject<StepperIdType>();
+  stepperResizeSubject = new Subject<StepperResizeUpdate>();
+  stepperSelectedStepsSubject = new Subject<StepperSelectedStepsUpdate>();
+
   storage: Storage = new Storage();
 
   constructor() {

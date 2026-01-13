@@ -5,34 +5,61 @@ import Audio from "./modules/Audio";
 import Pulses from "./modules/Pulses";
 import UI from "./components/Ui";
 import * as Tone from "tone";
-import "./state/State"; // Initialize storage singleton
-// import "./state/Storage"; // Initialize storage singleton
+import "./state/State";
 
-window.addEventListener("load", init);
 const playBtn = document.getElementById("play");
-const toneContext = new Tone.Context();
-const ui = new UI(toneContext, Pulses);
-const timeWorker = new Timerworker({
-  pulses: Pulses,
-  audioContext: toneContext,
-});
-let initialized = false;
+const restartBtn = document.getElementById("restart");
 
-async function init() {
-  await Audio.init(toneContext);
-  Controls.init();
-  const sequencer = new Sequencer(Pulses);
-  await sequencer.initialize();
-}
+class Application {
+  initialized = false;
+  timeWorker: Timerworker;
+  ui: UI;
+  audioContext = new Tone.Context();
 
-// handle start / pause
-playBtn?.addEventListener("click", async () => await handleStart());
-
-async function handleStart() {
-  if (!initialized) {
-    await Audio.start();
-    timeWorker.start(ui);
-    initialized = true;
+  constructor() {
+    window.addEventListener("load", this.init);
+    playBtn?.addEventListener("click", async () => await this.handleStart());
+    // restartBtn?.addEventListener("click", async () => await this.restart());
+    this.ui = new UI(this.audioContext, Pulses);
+    this.timeWorker = new Timerworker({
+      pulses: Pulses,
+      audioContext: this.audioContext,
+    });
   }
-  if (!Controls.isPlaying) toneContext.resume();
+
+  init = async () => {
+    await Audio.init(this.audioContext);
+    Controls.init();
+    const sequencer = new Sequencer(Pulses);
+    await sequencer.initialize();
+  };
+
+  handleStart = async () => {
+    if (!this.initialized) {
+      await Audio.start();
+      this.timeWorker.start(this.ui);
+      this.initialized = true;
+    }
+    if (!Controls.isPlaying) this.audioContext.resume();
+  };
+
+  // restart = async () => {
+  //   console.log("RESTART ");
+  //   Controls.pause();
+  //   this.initialized = false;
+  //   this.timeWorker.stop();
+  //   Pulses.restart();
+  //   this.audioContext = new Tone.Context();
+  //   this.ui = new UI(this.audioContext, Pulses);
+  //   this.timeWorker.start(this.ui);
+  //   // Audio.restart(this.audioContext);
+  //   // this.timeWorker = new Timerworker({
+  //   //   pulses: Pulses,
+  //   //   audioContext: this.audioContext,
+  //   // });
+  //   // await this.handleStart();
+  //   Controls.play();
+  // };
 }
+
+new Application();

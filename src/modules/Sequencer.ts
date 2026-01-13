@@ -32,6 +32,18 @@ class Sequencer {
     return Promise.all(State.getInitialStepperOptions().map(this.register));
   }
 
+  restart() {
+    // recreate a track with the current audio Context for each stepper
+    State.getInitialStepperOptions().forEach(async (options, i) => {
+      const track = new Track({
+        name: options.sampleName,
+        stepperId: options.id.toString(),
+      });
+      track.init();
+      this.steppers[i].track = track;
+    });
+  }
+
   private register = async (options: StepperOptions) => {
     const steps = options.stepsPerBeat * options.beats;
     if (steps < 1 || steps > 100) return;

@@ -1,4 +1,4 @@
-import State from "../state/state";
+import State from "../state/State";
 import type { StepperIdType } from "../state/state.types";
 import Counter from "./Counter/Counter";
 import Toggle from "./Toggle/Toggle";

@@ -17,6 +17,7 @@ class TimeWorker {
   animationFrameId?: number = undefined;
   pulses: typeof Pulses | null = null;
   ui: UI | null = null;
+  intervalInitialized = false;
 
   constructor({
     pulses,
@@ -27,24 +28,33 @@ class TimeWorker {
   }) {
     this.audioContext = audioContext;
     if (pulses) this.pulses = pulses;
+    this.worker = new Worker(new URL("../worker/worker.ts", import.meta.url));
+    this.worker.onmessage = (e) => this.handleMessage(e);
   }
-  start(ui: UI) {
+
+  start(ui: UI, ctx?: Tone.Context) {
     if (this.isPlaying) {
       this.stop();
       return;
+    }
+    if (ctx) {
+      this.audioContext = ctx;
     }
     console.log("[Start]");
     this.ui = ui;
     this.ui?.start();
     Tone.start();
     this.isPlaying = true;
-    this.worker = new Worker(new URL("../worker/worker.ts", import.meta.url));
-    this.worker.onmessage = (e) => this.handleMessage(e);
-    this.worker.postMessage({ event: "start" });
-    this.worker.postMessage({
+    this.worker?.postMessage({ event: "start" });
+    if (!this.intervalInitialized) this.setInterval();
+  }
+
+  private setInterval() {
+    this.worker?.postMessage({
       event: "interval",
       interval: this.tickIntervalMS,
     });
+    this.intervalInitialized = true;
   }
 
   private handleMessage(e: MessageEvent) {
@@ -64,11 +74,17 @@ class TimeWorker {
     }
   }
 
-  private stop() {
+  public stop() {
     console.log("This.stop ");
     this.isPlaying = false;
     this.ui?.stop();
     this.worker?.postMessage({ event: "stop" });
+  }
+
+  // this is in order to try to implement restart without having to wait for messaging between the worker and this code
+  pause() {
+    this.isPlaying = false;
+    this.ui?.stop();
   }
 }
 

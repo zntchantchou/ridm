@@ -1,6 +1,7 @@
 import Audio from "../modules/Audio";
 import State from "../state/State";
 import { INITIAL_SETTINGS } from "../state/state.constants";
+import * as Tone from "tone";
 
 const tpcRangeElt = document.getElementById("tpc-range") as HTMLInputElement;
 const tpcDislayElt = document.getElementById("tpc") as HTMLDivElement;
@@ -51,14 +52,27 @@ class Controls {
     // We have to use rawContext because we are relying on our own note scheduling implementation (based on AudioContext.currentTime).
     // Tone.Context does not allow an access to suspend, which is handled via the Transport component.
     // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
+    console.log("PAUUUUSE", this.isPlaying);
     Audio.ctx?.rawContext?.suspend(Audio.ctx.now() as number);
+  }
+  public pauseContext(ctx: Tone.Context) {
+    this.isPlaying = false;
+    playPauseImg.src = "/play-round.svg";
+    // We have to use rawContext because we are relying on our own note scheduling implementation (based on AudioContext.currentTime).
+    // Tone.Context does not allow an access to suspend, which is handled via the Transport component.
+    // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
+    console.log("PAUUUUSE", this.isPlaying);
+    if (Audio?.ctx?.state !== "closed") {
+      Audio.ctx?.rawContext?.suspend(Audio.ctx.now() as number);
+      ctx.rawContext.suspend(ctx.now() as number);
+    }
   }
 
   public play() {
     this.isPlaying = true;
     playPauseImg.src = "/pause-round.svg";
-    // if (Audio.ctx?.state !== "running")
-    Audio.ctx?.resume();
+    if (Audio?.ctx?.state !== "closed") Audio.ctx?.resume();
+    State.steppersLoadingSubject.next(false);
   }
 
   public togglePlay = () => {

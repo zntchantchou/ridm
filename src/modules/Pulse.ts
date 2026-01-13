@@ -32,6 +32,11 @@ class Pulse {
     this.currentStepSubject = new Subject();
   }
 
+  restart() {
+    this.currentStep = 0;
+    this.nextNoteTime = 0;
+  }
+
   next() {
     if (this.currentStep < this.steps - 1) {
       this.currentStep++;

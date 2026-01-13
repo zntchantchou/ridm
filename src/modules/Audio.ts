@@ -23,11 +23,6 @@ class Audio {
     }
   }
 
-  public async start() {
-    console.log("AUDIO START");
-    await Tone.start();
-  }
-
   public setMasterVolume(value: number) {
     this.volume?.set({ volume: value });
   }

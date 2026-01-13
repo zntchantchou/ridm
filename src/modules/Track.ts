@@ -34,7 +34,7 @@ class Track {
     if (samplePath) this.samplePath = samplePath;
   }
 
-  async init() {
+  init() {
     Tone.setContext(Audio.ctx as Tone.Context);
     this.loadSample();
     this.loadEffects();

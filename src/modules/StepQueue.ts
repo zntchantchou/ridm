@@ -26,6 +26,9 @@ class StepQueue {
   size() {
     return this.steps.length;
   }
+  clear() {
+    this.steps = [];
+  }
 }
 
 export default new StepQueue();

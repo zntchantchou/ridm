@@ -337,6 +337,11 @@ class Pulses {
     }
   }
 
+  restart() {
+    for (const p of this.getLeadPulses()) {
+      p.restart();
+    }
+  }
   // /**
   //  * Returns a debug string representation of the Pulses system.
   //  */

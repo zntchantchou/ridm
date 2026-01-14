@@ -60,6 +60,7 @@ class Stepper {
     if (selectedSteps) this.selectedSteps = selectedSteps;
     if (controls) this.controls = controls;
     this.listenToResize();
+    this.listenToClear();
     this.render();
   }
 
@@ -91,6 +92,17 @@ class Stepper {
           this?.track?.playSample(time);
           this.lastTime = time;
         },
+      });
+  }
+
+  private listenToClear() {
+    State.stepperSelectedStepsSubject
+      .pipe(filter(({ stepperId }) => stepperId === this.id))
+      .subscribe(({ selectedSteps }) => {
+        if (!selectedSteps.includes(true) && this.hasSelectedSteps()) {
+          this.selectedSteps = selectedSteps;
+          this.updateUi();
+        }
       });
   }
 
@@ -155,7 +167,6 @@ class Stepper {
   };
 
   convertNumbersToSteps(targetSize: number, numbers: number[]) {
-    console.log("[ConvertNumToSteps]: ", this.id);
     if (!numbers.length) return [];
     const steps: boolean[] = Array(targetSize)
       .fill(false)
@@ -172,6 +183,7 @@ class Stepper {
   }
 
   updateUi() {
+    console.log("UPDATE UI ");
     if (!this.element?.hasChildNodes()) return;
     this.createStepElements();
     while (this.element.lastElementChild) {
@@ -200,6 +212,10 @@ class Stepper {
     // OTher guardrails here? runtime type check?
     this.toggleStep(parseInt(step));
   };
+
+  hasSelectedSteps() {
+    return this.selectedSteps.includes(true);
+  }
 
   private toggleStep(stepNumber: number) {
     const currentValue = this.selectedSteps[stepNumber];
@@ -230,6 +246,10 @@ class Stepper {
         if (i % this.stepsPerBeat === 0) element.classList.add("beat");
         return element;
       });
+  }
+
+  clear() {
+    this.selectedSteps = Array(this.steps).fill(false);
   }
 
   get steps() {

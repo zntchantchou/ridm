@@ -3,7 +3,7 @@
   width: 30%;
   min-width: 400px;
   display: flex;
-  flex: 1;
+  flex: 2;
   cursor: pointer;
   flex-direction: column;
   justify-content: space-between;
@@ -31,7 +31,8 @@
 
 .solo-mute-container,
 .stepper-info-container,
-.stepper-resize-container {
+.stepper-resize-container,
+.delete-container {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -49,4 +50,45 @@
 
 .stepper-resize-container {
   flex: 8;
+}
+
+.delete-container {
+  flex: 1;
+}
+
+.clear-btn {
+  --rotation: 45deg;
+  background-color: rgb(28, 28, 28);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  font-size: 1.4rem;
+  justify-content: center;
+  align-items: center;
+  height: 2rem;
+  width: 2rem;
+  cursor: pointer;
+  transform: rotate(var(--rotation));
+}
+
+.clear-btn:active {
+  transform: rotate(var(--rotation));
+  animation: bounce 0.3s ease-in-out;
+}
+
+.clear-btn:hover:active {
+  transform: rotate(var(--rotation));
+  background-color: rgb(133, 133, 133);
+  animation: bounce 0.3s ease-in-out;
+}
+
+.clear-btn:hover {
+  transform: rotate(var(--rotation));
+  color: rgb(38, 38, 38);
+  background-color: rgb(255, 255, 255);
+}
+
+.clear-btn img {
+  width: 100%;
+  height: 100%;
 }

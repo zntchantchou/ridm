@@ -25,6 +25,7 @@ class Application {
     playBtn?.addEventListener("click", this.handlePlayPause);
     pauseCtxBtn?.addEventListener("click", () => Controls.pause());
     restartBtn?.addEventListener("click", async () => await this.restart());
+    window.addEventListener("keydown", this.handleSpacePress);
     this.ui = new UI(Audio.getContext() as Tone.Context, Pulses);
     this.timeWorker = new Timerworker({
       pulses: Pulses,
@@ -69,6 +70,13 @@ class Application {
       return;
     }
     Controls.pause();
+  };
+
+  handleSpacePress = (e: KeyboardEvent) => {
+    if (e.code === "Space") {
+      e.preventDefault();
+      this.handlePlayPause();
+    }
   };
 }
 

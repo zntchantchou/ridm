@@ -10,6 +10,7 @@
   </head>
   <body>
     <div id="app">
+      <div id="app-loader" class="loader"></div>
       <div id="sequencer">
         <div id="controls">
           <div class="control-group">
@@ -17,12 +18,12 @@
               <img id="play-img" srcset="" />
             </div>
           </div>
-          <div class="control-group">
+          <div class="control-group" id="tpc-group">
             <span>Time per cycle (seconds) </span>
             <input step="0.1" id="tpc-range" type="range" min="1" max="8" />
             <div id="tpc"></div>
           </div>
-          <div class="control-group">
+          <div class="control-group" id="volume-group">
             <span>Volume </span>
             <input
               step="0.1"
@@ -41,7 +42,6 @@
             <div id="steppers-controls"></div>
             <div id="steppers">
               <div id="steppers-loading"><div class="loader"></div></div>
-              <!-- <div id="steppers-loading"><div class="loader"></div></div> -->
             </div>
           </div>
         </div>

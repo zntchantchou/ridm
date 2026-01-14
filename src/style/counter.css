@@ -5,7 +5,7 @@
 }
 
 .counter-item {
-  min-width: 0.8rem;
+  min-width: 1rem;
   flex: 1;
   color: white;
   padding: 0.4rem;

@@ -9,8 +9,14 @@
 @import url("./src/style/toggle.css");
 
 :root {
-  --controls-height: 4rem;
+  --controls-height: 10%;
   --main-content-height: calc(100% - (var(--controls-height)));
+  --sequencer-primary-color: rgb(21, 21, 21);
+  --app-background-color: #1764bc;
+}
+
+#app-loader {
+  display: flex;
 }
 
 body {
@@ -25,7 +31,7 @@ body {
 
 #app {
   height: 100%;
-  background-color: #044a9b;
+  background-color: var(--app-background-color);
   width: 100%;
   display: flex;
   justify-content: center;
@@ -45,12 +51,17 @@ body {
 }
 
 #sequencer {
+  border: solid 0.2rem var(--sequencer-primary-color);
+  visibility: hidden;
+  display: none;
+  justify-items: center;
+  align-items: center;
   padding-top: 0.5rem;
   background-color: rgb(21, 21, 21);
   /* width: 90vw; */
   min-height: 600px;
   height: 90vh;
-  width: calc(1.4 * 80vh);
+  width: calc(1.4 * 90vh);
   border-radius: 10px;
 }
 
@@ -69,20 +80,32 @@ body {
   font-size: 1rem;
   color: white;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   padding-bottom: 0.4rem;
-  /* border-bottom: white solid 0.2rem; */
   width: 100%;
   height: var(--controls-height);
+}
+
+#volume,
+#tpc {
+  width: 3rem;
+}
+
+#volume-group,
+#tpc-group {
+  width: 40%;
+}
+
+#volume-group input,
+#tpc-group input {
+  width: 100%;
 }
 
 .control-group {
   display: flex;
   height: 5rem;
-  width: fit-content;
   align-items: center;
-  margin-right: 4rem;
 }
 
 .control-group input {

@@ -98,6 +98,14 @@ class StepperControls {
     this.element.appendChild(infoContainer);
     this.element.appendChild(soloMuteContainer);
     this.element.appendChild(resizeContainer);
+    const deleteContainer = document.createElement("div");
+    deleteContainer.classList.add("delete-container");
+    const clearBtn = document.createElement("div");
+    clearBtn.classList.add("clear-btn");
+    clearBtn.textContent = "+";
+    clearBtn.addEventListener("click", () => this.handleClear());
+    deleteContainer.appendChild(clearBtn);
+    this.element.appendChild(deleteContainer);
     controlsPanelElt?.appendChild(this.element);
   }
 
@@ -115,6 +123,14 @@ class StepperControls {
       stepperId: this.stepperId.toString(),
       value: { mute: v },
     });
+  };
+
+  private handleClear = () => {
+    State.stepperSelectedStepsSubject.next({
+      stepperId: this.stepperId,
+      selectedSteps: Array(this.stepsPerBeats * this.beats).fill(false),
+    });
+    // TODO: Implement clear functionality
   };
 
   private createMuteToggleElt() {

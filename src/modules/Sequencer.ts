@@ -6,6 +6,8 @@ import Track from "./Track";
 import State from "../state/State";
 import { Subscription } from "rxjs";
 
+const appLoaderElt = document.getElementById("app-loader");
+const sequencer = document.getElementById("sequencer");
 /** Coordinates steppers and their pulses. Phißlosophy: Keep as little pulses as possible running in the application
  based on the steppers needs */
 
@@ -26,6 +28,9 @@ class Sequencer {
     new SoundPanel({
       steppers: this.steppers,
     });
+    appLoaderElt!.style.display = "none";
+    sequencer!.style.visibility = "visible";
+    sequencer!.style.display = "block";
   }
 
   private async initSteppersFromState() {

@@ -6,6 +6,7 @@ import Controls from "./Controls";
 import type StepperControls from "./StepperControls";
 import type { StepperIdType } from "../state/state.types";
 import State from "../state/State";
+import Audio from "../modules/Audio";
 
 const DEBOUNCE_TIME_MS = 200;
 const steppersDiv = document.getElementById("steppers");
@@ -38,6 +39,7 @@ class Stepper {
   sampleName: string;
   color: StepperColorType | null = null;
   track?: Track;
+  lastTime?: number;
 
   constructor({
     beats,
@@ -79,8 +81,16 @@ class Stepper {
             this.isSelectedStep({ totalSteps, stepNumber }) // Only trigger if note is selected
         )
       )
+      .pipe(
+        filter(
+          ({ time }) => Audio.lastTime == undefined || time > Audio.lastTime
+        )
+      )
       .subscribe({
-        next: ({ time }) => this?.track?.playSample(time),
+        next: ({ time }) => {
+          this?.track?.playSample(time);
+          this.lastTime = time;
+        },
       });
   }
 
@@ -162,7 +172,6 @@ class Stepper {
   }
 
   updateUi() {
-    console.log("[updateUi]: stepperID ", this.id);
     if (!this.element?.hasChildNodes()) return;
     this.createStepElements();
     while (this.element.lastElementChild) {
@@ -172,7 +181,6 @@ class Stepper {
   }
 
   private render() {
-    console.log("[RENDER] stepperID :", this.id);
     this.createStepElements();
     const stepper = document.createElement("div");
     stepper.classList.add("stepper");

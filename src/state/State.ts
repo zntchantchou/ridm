@@ -129,7 +129,7 @@ class State {
   };
 
   updateTpc = (tpc: number) => {
-    this.steppersLoadingSubject.next(true);
+    // this.steppersLoadingSubject.next(true);
     this.settings.tpc = tpc;
   };
 

@@ -12,12 +12,11 @@ class Audio {
   volume: Tone.Volume | null = null;
   defaultSamples: DefaultSampleType[] = [];
   soundSettings: ToneSoundSettings[] = [];
+  lastTime?: number;
 
-  public async init(toneContext: Tone.Context) {
-    if (!toneContext)
-      throw Error("Must initialize audioContext with shared audiocontext ");
-    this.ctx = toneContext;
-    Tone.setContext(toneContext);
+  public async init() {
+    this.ctx = new Tone.Context();
+    Tone.setContext(this.ctx);
     if (this.ctx) {
       this.volume = new Tone.Volume({ volume: 0 });
     }
@@ -25,6 +24,10 @@ class Audio {
 
   public setMasterVolume(value: number) {
     this.volume?.set({ volume: value });
+  }
+
+  public setLastPlayTime(time: number) {
+    this.lastTime = time;
   }
 
   public getMasterNodes(): Tone.ToneAudioNode[] {
@@ -49,6 +52,10 @@ class Audio {
       default:
         throw new Error(`Effect ${name} not recognized`);
     }
+  }
+
+  public getContext() {
+    return this.ctx;
   }
 
   public get defaultEffects(): TrackEffect[] {

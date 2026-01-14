@@ -88,8 +88,13 @@ class Track {
   }
 
   public playSample(time: number = 0) {
-    if (Controls.isPlaying)
+    if (
+      Controls.isPlaying &&
+      this.source?.buffer &&
+      this.source.buffer.loaded
+    ) {
       this.source?.start(time, 0, this.source.buffer.duration);
+    }
   }
 
   private handleEffectUpdate = (update: EffectUpdate) => {

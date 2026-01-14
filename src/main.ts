@@ -17,28 +17,25 @@ class Application {
   initialized = false;
   timeWorker: Timerworker;
   ui: UI;
-  audioContext = new Tone.Context();
+  // audioContext = new Tone.Context();
   sequencer?: Sequencer;
 
   constructor() {
+    Audio.init();
     window.addEventListener("load", this.init);
-    playBtn?.addEventListener("click", async () => await this.handleStart());
+    playBtn?.addEventListener("click", this.handleStart);
     pauseCtxBtn?.addEventListener("click", () =>
-      Controls.pauseContext(this.audioContext)
+      Controls.pauseContext(Audio.getContext() as Tone.Context)
     );
     restartBtn?.addEventListener("click", async () => await this.restart());
-    this.ui = new UI(this.audioContext, Pulses);
+    this.ui = new UI(Audio.getContext() as Tone.Context, Pulses);
     this.timeWorker = new Timerworker({
       pulses: Pulses,
-      audioContext: this.audioContext,
+      audioContext: Audio.getContext() as Tone.Context,
     });
   }
 
   init = async () => {
-    // sets audioContext
-    await Audio.init(this.audioContext);
-    // sets volume from state
-    // creates listeners for volume and tpc
     Controls.init();
     this.sequencer = new Sequencer(Pulses);
     await this.sequencer.initialize();
@@ -47,36 +44,39 @@ class Application {
 
   // necessary because live updates to fast tempo cause the pulses to become out of sync...
   restart = async () => {
-    // empty step queue (otherwise ui freezes)
-    await this.audioContext.close();
+    const triggerPlay = Controls.isPlaying;
+    // await Audio.getContext()?.close();
     StepQueue.clear();
     Pulses.restart();
-    Controls.pause();
+    Controls.pauseContext(Audio.getContext() as Tone.Context);
     this.timeWorker.pause(); // also stops ui
-    this.audioContext = new Tone.Context();
-    await Audio.init(this.audioContext);
+    await Audio.init(); // creates a new audio context
+    const ctx = Audio.getContext() as Tone.Context;
     Controls.init();
-
-    this.ui = new UI(this.audioContext, Pulses);
-    this.timeWorker.start(this.ui, this.audioContext);
+    this.ui = new UI(ctx, Pulses);
+    this.timeWorker.start(this.ui, ctx);
     this.sequencer?.restart();
     this.initialized = false;
-    if (!this.initialized) {
-      Controls.play();
+    if (!this.initialized && triggerPlay) {
+      console.log("RESTART LAST IF: ", triggerPlay, this.initialized);
+      Controls.play(ctx);
       this.initialized = true;
     }
-    if (!Controls.isPlaying && this.audioContext.state !== "closed") {
-      this.audioContext.resume();
-    }
-    State.steppersLoadingSubject.next(false);
   };
 
-  handleStart = async () => {
+  handleStart = () => {
     if (!this.initialized) {
       this.timeWorker.start(this.ui);
       this.initialized = true;
     }
-    if (!Controls.isPlaying) this.audioContext.resume();
+    if (!Controls.isPlaying) {
+      const ctx = Audio?.getContext();
+      console.log("RESUME");
+      if (ctx?.state && ctx?.state !== "closed") {
+        console.log("STATE of context ", ctx.state);
+        Audio.getContext()?.resume();
+      }
+    }
   };
 }
 

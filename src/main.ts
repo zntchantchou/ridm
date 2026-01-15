@@ -22,7 +22,7 @@ class Application {
   constructor() {
     Audio.init();
     window.addEventListener("load", this.init);
-    playBtn?.addEventListener("click", this.handlePlayPause);
+    playBtn?.addEventListener("click", async () => this.handlePlayPause());
     pauseCtxBtn?.addEventListener("click", () => Controls.pause());
     restartBtn?.addEventListener("click", async () => await this.restart());
     window.addEventListener("keydown", this.handleSpacePress);
@@ -58,18 +58,24 @@ class Application {
       Controls.play();
       this.initialized = true;
     }
+    Audio.setMasterVolume(Audio.lastVolume as number);
   };
 
-  handlePlayPause = () => {
+  handlePlayPause = async () => {
+    // Avoid cracking noise
+    Audio.lastVolume = Audio.getCurrentVolume()?.value as number;
+    Audio.setMasterVolume(Audio.minVolume);
     if (!Controls.isPlaying) {
       if (!this.initialized) {
         this.timeWorker.start(this.ui);
         this.initialized = true;
       }
-      Controls.play();
+      await Controls.play();
+      Audio.setMasterVolume(Audio.lastVolume as number);
       return;
     }
-    Controls.pause();
+    Audio.setMasterVolume(Audio.lastVolume as number);
+    await Controls.pause();
   };
 
   handleSpacePress = (e: KeyboardEvent) => {

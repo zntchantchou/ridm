@@ -31,10 +31,14 @@ class Controls {
   }
 
   private updateTpc(e: Event) {
+    Audio.lastVolume = Audio.getCurrentVolume()?.value as number;
+    Audio.setMasterVolume(Audio.minVolume); // avoid cracking noise
+    State.steppersLoadingSubject.next(true);
     const updatedValue = (e?.target as HTMLInputElement).value;
     this.tpc = parseFloat(updatedValue);
     if (tpcDislayElt) tpcDislayElt.textContent = updatedValue;
     State.tpcUpdateSubject.next(this.tpc);
+    State.steppersLoadingSubject.next(false);
   }
 
   private updateVolume(e: Event) {
@@ -45,25 +49,28 @@ class Controls {
     State.volumeUpdateSubject.next(this.volume);
   }
 
-  public pause() {
+  public async pause() {
     this.isPlaying = false;
     playPauseImg.src = "/play-round.svg";
     if (Audio.getContext()?.state !== "closed") {
       // We have to use rawContext because we are relying on our own note scheduling implementation (based on AudioContext.currentTime).
       // Tone.Context does not allow an access to suspend, which is handled via the Transport component.
       // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
-      Audio.getContext()?.rawContext?.suspend(
+      await Audio.getContext()?.rawContext?.suspend(
         Audio.getContext()?.now() as number
       );
     }
   }
 
-  public play() {
+  public async play() {
+    // get the current Volume
+
     this.isPlaying = true;
     playPauseImg.src = "/pause-round.svg";
     const ctx = Audio.getContext() as Tone.Context;
     if (ctx.state !== "closed") {
-      ctx.resume();
+      await ctx.resume();
+      // Audio.setMasterVolume(currentVolume as number);
     }
   }
 }

@@ -57,33 +57,45 @@
 }
 
 .clear-btn {
-  --rotation: 45deg;
   background-color: rgb(28, 28, 28);
-  border-radius: 50%;
+  border-radius: 4px;
   cursor: pointer;
   display: flex;
-  font-size: 1.4rem;
+  font-size: 0.6rem;
   justify-content: center;
   align-items: center;
   height: 2rem;
   width: 2rem;
   cursor: pointer;
-  transform: rotate(var(--rotation));
 }
 
+.clear-img {
+  color: green;
+  max-height: 50%;
+}
+
+.clear-img svg {
+  fill: green;
+  stroke: green;
+}
+
+.clear-svg {
+  stroke: blue;
+  fill: blue;
+}
 .clear-btn:active {
-  transform: rotate(var(--rotation));
   animation: bounce 0.3s ease-in-out;
 }
 
 .clear-btn:hover:active {
-  transform: rotate(var(--rotation));
   background-color: rgb(133, 133, 133);
   animation: bounce 0.3s ease-in-out;
 }
 
+.clear-btn span {
+  text-align: center;
+}
 .clear-btn:hover {
-  transform: rotate(var(--rotation));
   color: rgb(38, 38, 38);
   background-color: rgb(255, 255, 255);
 }

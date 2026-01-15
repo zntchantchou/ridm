@@ -13,13 +13,18 @@ class Audio {
   defaultSamples: DefaultSampleType[] = [];
   soundSettings: ToneSoundSettings[] = [];
   lastTime?: number;
-
+  minVolume = -55;
+  lastVolume = 0;
   public async init() {
     this.ctx = new Tone.Context();
     Tone.setContext(this.ctx);
     if (this.ctx) {
       this.volume = new Tone.Volume({ volume: 0 });
     }
+  }
+
+  public getCurrentVolume() {
+    return this.volume?.volume;
   }
 
   public setMasterVolume(value: number) {

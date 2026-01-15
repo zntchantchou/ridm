@@ -101,8 +101,8 @@ class StepperControls {
     const deleteContainer = document.createElement("div");
     deleteContainer.classList.add("delete-container");
     const clearBtn = document.createElement("div");
+    clearBtn.textContent = "clear";
     clearBtn.classList.add("clear-btn");
-    clearBtn.textContent = "+";
     clearBtn.addEventListener("click", () => this.handleClear());
     deleteContainer.appendChild(clearBtn);
     this.element.appendChild(deleteContainer);

@@ -15,10 +15,6 @@
   --app-background-color: #1764bc;
 }
 
-#app-loader {
-  display: flex;
-}
-
 body {
   height: 100vh;
   position: absolute;

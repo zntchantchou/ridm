@@ -41,25 +41,23 @@ class SoundPanel {
     const stepper = this.getSelectedStepper() as Stepper;
     sampleNameElt!.textContent = stepper.sampleName;
     this.setBackground();
-    const volume = State.getEffect({
-      trackId: parseInt(this.selectedStepper) as StepperIdType,
-      name: "volume",
-    });
-    const panning = State.getEffect({
-      trackId: parseInt(this.selectedStepper) as StepperIdType,
-      name: "panning",
-    });
-    const volumeValue = volume?.value as { volume: number };
-    const panningValue = panning?.value as { pan: number };
-    // VOLUME
-    if (volumeValue) {
-      this!.volumeRange!.value = volumeValue?.volume.toString() as string;
-      this!.volumeValue!.textContent = volumeValue?.volume.toString() as string;
-    }
-    if (panningValue) {
-      this!.panningRange!.value = panningValue?.pan.toString() as string;
-      this!.panningValue!.textContent = panningValue?.pan.toString() as string;
-    }
+    // const volume = State.getEffect({
+    //   trackId: parseInt(this.selectedStepper) as StepperIdType,
+    //   name: "volume",
+    // });
+    // const panning = State.getEffect({
+    //   trackId: parseInt(this.selectedStepper) as StepperIdType,
+    //   name: "panning",
+    // });
+    // const volumeValue = volume?.value as { volume: number };
+    // const panningValue = panning?.value as { pan: number };
+    // // VOLUME
+    // if (volumeValue) {
+    //   this!.volumeValue!.textContent = volumeValue?.volume.toString() as string;
+    // }
+    // if (panningValue) {
+    //   this!.panningValue!.textContent = panningValue?.pan.toString() as string;
+    // }
   }
 
   private setBackground() {
@@ -385,7 +383,9 @@ class SoundPanel {
       max: 1,
       step: 0.01,
       fillColor: this.getColor(),
+      id: "panning-range",
       matchStepperColor: true,
+      labelElt: this.panningValue,
       onChange: this.handlePanningChange,
       getValueFn: (id: StepperIdType) => {
         const effect = State.getEffect({ trackId: id, name: "panning" })
@@ -413,6 +413,7 @@ class SoundPanel {
     this.volumeValue = document.createElement("span");
     this.volumeRange = new Fader({
       variant: "positive",
+      id: "volume-range",
       initialValue: volumeValue?.volume,
       min: -40,
       max: 40,
@@ -420,11 +421,10 @@ class SoundPanel {
       matchStepperColor: true,
       fillColor: this.getColor(),
       onChange: this.handleVolumeChange,
+      labelElt: this.volumeValue,
       getValueFn: (id: StepperIdType) => {
         const effect = State.getEffect({ trackId: id, name: "volume" });
         const value = effect?.value as { volume: number };
-        console.log("effect ", effect);
-        console.log("value ", value);
         return value.volume.toString();
       },
     }).render();

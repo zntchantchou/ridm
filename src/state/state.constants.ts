@@ -60,12 +60,12 @@ export const SAMPLES_DIRS = [
     path: "ht.wav",
   },
   {
-    name: "lt",
-    path: "lt.wav",
+    name: "bo",
+    path: "bo.wav",
   },
   {
-    name: "mt",
-    path: "mt.wav",
+    name: "sh",
+    path: "sh.wav",
   },
   {
     name: "cp",

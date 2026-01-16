@@ -11,12 +11,14 @@ type FaderOptions = {
   fillColor?: string;
   variant?: "positive" | "absolute";
   matchStepperColor?: boolean;
+  labelElt?: Element;
   /* The fader will get the currently selected stepper's options and retrieve the value using this function **/
   getValueFn?: (options: StepperIdType) => string;
 };
 
 class Fader {
   matchStepperColor: boolean = false;
+  labelElt?: HTMLDivElement;
   element: HTMLInputElement;
   value: number;
   min: number;
@@ -67,8 +69,13 @@ class Fader {
         // state should implement those selectors instead of passing them down from parent
         const value = this?.getValueFn(id as StepperIdType);
         this.value = parseFloat(value);
+        this.element.value = value;
+        if (this.labelElt) this.labelElt.textContent = value;
+        console.log("VALEUR ", this.value);
       }
+      console.log("id ", this.id);
       this.fillColor = State.getStepperOptions(id)?.color.cssColor;
+      console.log("fillColor ", this.fillColor);
       this.updateFillColor();
     });
   }
@@ -91,10 +98,10 @@ class Fader {
     let gradient;
     const inactiveColor = "rgba(220, 220, 220, 1)";
     if (this.variant === "positive") {
+      console.log("POSITIVE ");
       gradient = `linear-gradient(to right, ${this.fillColor} ${this.valueToPct(
         this.value
       )}%, ${inactiveColor} ${this.valueToPct(this.value)}%)`;
-      this.element.style.background = gradient;
     } else {
       if (this.value < 0) {
         const ratio = this.value / this.min;
@@ -107,8 +114,9 @@ class Fader {
         const end = start + ratio * start;
         gradient = `linear-gradient(to right, ${inactiveColor} ${start}%, ${this.fillColor}  ${start}%, ${this.fillColor} ${end}%, ${inactiveColor} ${end}%)`;
       }
-      if (gradient) this.element.style.background = gradient;
+      if (this.value === 0) gradient = inactiveColor;
     }
+    if (gradient) this.element.style.background = gradient;
   }
 
   render() {

@@ -21,6 +21,7 @@ import {
 import { generateRandomSteps } from "./state.utils";
 import Storage from "./Storage";
 import type { PersistedState } from "./storage.types";
+import Controls from "../components/Controls";
 
 // because effects affect sound even at 0 especially pitchShift
 // they should be in a disconnected state, loaded only when activated and used
@@ -130,6 +131,7 @@ class State {
 
   updateTpc = (tpc: number) => {
     this.settings.tpc = tpc;
+    Controls.tpc = tpc;
   };
 
   updateVolume = (volume: number) => {

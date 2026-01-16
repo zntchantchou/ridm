@@ -62,8 +62,9 @@ class Controls {
     Audio.setMasterVolume(Audio.minVolume); // avoid cracking noise
     const updatedValue = (e?.target as HTMLInputElement).value;
     this.tpc = parseFloat(updatedValue);
+    State.tpcUpdateSubject.next(parseFloat(updatedValue));
+
     if (tpcDislayElt) tpcDislayElt.textContent = updatedValue;
-    State.tpcUpdateSubject.next(this.tpc);
     State.steppersLoadingSubject.next(false);
   }
 

@@ -49,7 +49,6 @@ class Track {
   private loadSample() {
     const fullPath = `${samplesDirPath}/${this.name}.wav`;
     const player = new Tone.Player(fullPath);
-    player.playbackRate = 0.8;
     this.source = player;
   }
 

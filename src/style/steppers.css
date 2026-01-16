@@ -79,12 +79,12 @@
 :root {
   --ring-width: 14%;
   --ring-space: 20%;
-  --color-0: #00d0ff;
-  --color-1: #9c37fb;
-  --color-2: #eeff04;
-  --color-3: #ff0ae6;
-  --color-4: #2eff04;
-  --color-5: #ff9204;
-  --color-6: #feaaff;
-  --color-7: #ff2929;
+  --color-0: #00ffff; /* Cyan */
+  --color-1: #ff0066; /* Hot Pink */
+  --color-2: #ffff00; /* Yellow */
+  --color-3: #00ff00; /* Lime */
+  --color-4: #ff6600; /* Orange */
+  --color-5: #0099ff; /* Sky Blue */
+  --color-6: #ff00ff; /* Magenta */
+  --color-7: #99ff00;
 }

@@ -1,4 +1,5 @@
 #sound-panel {
+  --panel-section-padding: 0.8rem 1rem;
   box-sizing: border-box;
   padding: 0.3rem;
   height: 100%;
@@ -15,7 +16,7 @@
 .sample-details {
   box-sizing: border-box; /* CSS variable */
   width: 30%;
-  padding: 0.3rem 2.5%; /* CSS variable */
+  padding: var(--panel-section-padding); /* CSS variable */
   color: white;
   background-color: rgb(24, 23, 23); /* CSS variable */
   height: 100%;

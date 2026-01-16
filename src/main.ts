@@ -58,7 +58,6 @@ class Application {
       Controls.play();
       this.initialized = true;
     }
-    Audio.setMasterVolume(Audio.lastVolume as number);
   };
 
   handlePlayPause = async () => {

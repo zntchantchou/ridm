@@ -4,39 +4,74 @@ import { generateRandomSteps } from "./state.utils";
 
 export const COLORS: StepperColorType[] = [
   {
-    name: "blue",
-    cssColor: "#00d0ff",
+    name: "cyan",
+    cssColor: "#00ffff",
   },
   {
-    name: "purple",
-    cssColor: "#9c37fb",
+    name: "hotPink",
+    cssColor: "#ff0066",
   },
   {
     name: "yellow",
-    cssColor: "#eeff04",
+    cssColor: "#ffff00",
   },
   {
-    name: "pink",
-    cssColor: "#ff0ae6",
-  },
-  {
-    name: "green",
-    cssColor: "#2eff04",
+    name: "lime",
+    cssColor: "#00ff00",
   },
   {
     name: "orange",
-    cssColor: "#ff9204",
+    cssColor: "#ff6600",
   },
   {
-    name: "palePink",
-    cssColor: "#feaaff",
+    name: "skyBlue",
+    cssColor: "#0099ff",
   },
-
   {
-    name: "red",
-    cssColor: "#ff2929",
+    name: "magenta",
+    cssColor: "#ff00ff",
+  },
+  {
+    name: "chartreuse",
+    cssColor: "#99ff00",
   },
 ];
+
+// [
+//   {
+//     name: "blue",
+//     cssColor: "#00d0ff",
+//   },
+//   {
+//     name: "purple",
+//     cssColor: "#9c37fb",
+//   },
+//   {
+//     name: "yellow",
+//     cssColor: "#eeff04",
+//   },
+//   {
+//     name: "pink",
+//     cssColor: "#ff0ae6",
+//   },
+//   {
+//     name: "green",
+//     cssColor: "#2eff04",
+//   },
+//   {
+//     name: "orange",
+//     cssColor: "#ff9204",
+//   },
+//   {
+//     name: "palePink",
+//     cssColor: "#feaaff",
+//   },
+
+//   {
+//     name: "red",
+//     cssColor: "#ff2929",
+//   },
+// ];
 
 export const SAMPLES_DIRS = [
   {

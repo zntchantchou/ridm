@@ -18,7 +18,7 @@ type FaderOptions = {
 
 class Fader {
   matchStepperColor: boolean = false;
-  labelElt?: HTMLDivElement;
+  labelElt?: Element;
   element: HTMLInputElement;
   value: number;
   min: number;
@@ -39,6 +39,7 @@ class Fader {
     matchStepperColor,
     getValueFn,
     id,
+    labelElt,
   }: FaderOptions) {
     this.value = initialValue;
     this.max = max;
@@ -54,6 +55,7 @@ class Fader {
     this.element.step = step.toString();
     this.element.value = this.value.toString();
     this.element.addEventListener("change", this.handleChange);
+    if (labelElt) this.labelElt = labelElt;
     if (variant) this.variant = variant;
     else this.variant = this.min < 0 ? "absolute" : "positive";
     if (fillColor) {
@@ -91,6 +93,7 @@ class Fader {
     this.onChange(e);
     const target = e.target as HTMLInputElement;
     this.value = parseFloat(target.value);
+    if (this.labelElt) this.labelElt.textContent = target.value;
     this.updateFillColor();
   };
 
@@ -120,6 +123,8 @@ class Fader {
   }
 
   render() {
+    if (this.labelElt) this.labelElt.textContent = this.value.toString();
+    console.log("LABEL ELEMENT FADER: ", this.labelElt);
     return this.element;
   }
 }

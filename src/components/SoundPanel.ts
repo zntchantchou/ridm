@@ -411,6 +411,7 @@ class SoundPanel {
     const volumeGroup = document.createElement("div");
     const volumeTitle = document.createElement("span");
     this.volumeValue = document.createElement("span");
+    this.volumeValue.id = "volume-value";
     this.volumeRange = new Fader({
       variant: "positive",
       id: "volume-range",

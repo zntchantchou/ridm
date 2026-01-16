@@ -183,7 +183,6 @@ class Knob {
   };
 
   private handleClick = (e: PointerEvent) => {
-    console.log("HANDLE CLICK ", this.lastRotation);
     document.addEventListener("pointermove", this.handleMove);
     document.addEventListener("pointerup", this.handleRelease);
     this.dragSubscription = this.dragObs
@@ -241,7 +240,6 @@ class Knob {
   }
 
   private handleRelease = () => {
-    // console.log("HANDLE RELEASE ");
     this.lastRotation = this.currentY;
     if (this.valueElt) this.valueElt.textContent = this.getValue();
     this.dragSubscription?.unsubscribe();

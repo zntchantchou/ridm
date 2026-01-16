@@ -98,7 +98,6 @@ class Pulses {
       console.warn(`[Pulses] No pulse found for stepper with ${steps} steps`);
       return;
     }
-    console.log("[PULSES] DEREGISTER");
     const shouldDelete = pulse.removeStepper(stepper);
     stepper.pulseSubscription?.unsubscribe();
 
@@ -119,7 +118,6 @@ class Pulses {
       this.deregister(oldStepper as Stepper);
 
       // Phase 2: Register to new pulse (stepper.steps should already be updated)
-      console.log("[PULSES REGISTER]", stepper);
       this.register(stepper);
     } catch (error) {
       console.error(

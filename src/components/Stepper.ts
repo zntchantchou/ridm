@@ -145,25 +145,23 @@ class Stepper {
     beats?: number;
     stepsPerBeat?: number;
   }) => {
+    State.steppersLoadingSubject.next(true);
     let paused = false;
     if (Controls.isPlaying) {
       Controls.pause();
       paused = true;
       // Give browser a chance to repaint and show the loader
       await new Promise((resolve) => setTimeout(resolve, 0));
-      steppersLoaderElt!.style.display = "flex";
     }
     const oldSteps = this.steps;
     if (stepsPerBeat) this.stepsPerBeat = stepsPerBeat;
     if (beats) this.beats = beats;
-    this.updateSelectedSteps(this.beats * this.stepsPerBeat);
-
+    this.updateSelectedSteps(this.steps);
     // Heavy synchronous operation - but now loader is visible
     Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
-    console.log("PLAY");
-    steppersLoaderElt!.style.display = "none";
     if (paused) Controls.play();
+    State.steppersLoadingSubject.next(false);
   };
 
   convertNumbersToSteps(targetSize: number, numbers: number[]) {

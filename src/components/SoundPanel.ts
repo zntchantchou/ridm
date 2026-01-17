@@ -1,13 +1,10 @@
 import type Stepper from "./Stepper";
 import PanelSection from "./PanelSection/PanelSection";
-import type {
-  PitchShiftOptions,
-  FeedbackDelayOptions,
-  ReverbOptions,
-} from "tone";
+import type { FeedbackDelayOptions, ReverbOptions } from "tone";
 import State from "../state/State";
 import type { StepperIdType } from "../state/state.types";
 import Fader from "./Fader/Fader";
+import type { PitchOptions } from "../types";
 
 const rootElt = document.getElementById("top-panel");
 const stepperElements = document.getElementsByClassName("stepper");
@@ -36,28 +33,11 @@ class SoundPanel {
     this.render();
   }
 
-  render() {
+  private render() {
     const sampleNameElt = document.getElementById("sample-name");
     const stepper = this.getSelectedStepper() as Stepper;
     sampleNameElt!.textContent = stepper.sampleName;
     this.setBackground();
-    // const volume = State.getEffect({
-    //   trackId: parseInt(this.selectedStepper) as StepperIdType,
-    //   name: "volume",
-    // });
-    // const panning = State.getEffect({
-    //   trackId: parseInt(this.selectedStepper) as StepperIdType,
-    //   name: "panning",
-    // });
-    // const volumeValue = volume?.value as { volume: number };
-    // const panningValue = panning?.value as { pan: number };
-    // // VOLUME
-    // if (volumeValue) {
-    //   this!.volumeValue!.textContent = volumeValue?.volume.toString() as string;
-    // }
-    // if (panningValue) {
-    //   this!.panningValue!.textContent = panningValue?.pan.toString() as string;
-    // }
   }
 
   private setBackground() {
@@ -193,47 +173,17 @@ class SoundPanel {
       settings: [
         {
           effectName: "pitch",
-          label: "wet",
-          settingName: "wet",
-          inputType: "knob",
-          min: 0,
-          max: 1,
-          value: (
-            State.getEffect({
-              trackId: parseInt(this.selectedStepper) as StepperIdType,
-              name: "pitch",
-            })?.value as PitchShiftOptions
-          ).wet,
-          onChange: this.handlePitchChange,
-        },
-        {
-          effectName: "pitch",
-          label: "interval",
+          label: "",
           settingName: "pitch",
           inputType: "knob",
-          min: -8,
-          max: 8,
+          min: -4,
+          max: 4,
           value: (
             State.getEffect({
               trackId: parseInt(this.selectedStepper) as StepperIdType,
               name: "pitch",
-            })?.value as PitchShiftOptions
+            })?.value as PitchOptions
           ).pitch,
-          onChange: this.handlePitchChange,
-        },
-        {
-          effectName: "pitch",
-          label: "windowSize",
-          settingName: "windowSize",
-          inputType: "knob",
-          min: 0.1,
-          max: 1,
-          value: (
-            State.getEffect({
-              trackId: parseInt(this.selectedStepper) as StepperIdType,
-              name: "pitch",
-            })?.value as PitchShiftOptions
-          ).windowSize,
           onChange: this.handlePitchChange,
         },
       ],
@@ -244,7 +194,7 @@ class SoundPanel {
   private initializeEvents() {
     for (const elt of [...stepperControlElements, ...stepperElements]) {
       elt.addEventListener("click", () =>
-        this.handleStepperSelection(elt as HTMLDivElement)
+        this.handleStepperSelection(elt as HTMLDivElement),
       );
     }
   }
@@ -319,20 +269,7 @@ class SoundPanel {
 
   private handlePitchChange = (value: string, name: string) => {
     const rangeValue = parseFloat(value);
-    const updateValue: { pitch?: number; wet?: number; windowSize?: number } =
-      {};
-    switch (name) {
-      case "pitch":
-        updateValue.pitch = rangeValue;
-        break;
-      case "wet":
-        updateValue.wet = rangeValue;
-        break;
-      case "windowSize":
-        updateValue.windowSize = rangeValue;
-        break;
-    }
-
+    const updateValue: PitchOptions = { pitch: rangeValue };
     State.effectUpdateSubject.next({
       name: "pitch",
       stepperId: this.selectedStepper,
@@ -356,7 +293,7 @@ class SoundPanel {
     previousStepperControlsElt.dataset["selected"] = "off";
     previousStepperControlsElt.style.borderColor = "rgb(80, 80, 80)";
     this.selectedStepper = stepperId;
-    State.currentStepperId.next(parseInt(stepperId) as StepperIdType);
+    State.currentStepperIdSubject.next(parseInt(stepperId) as StepperIdType);
     const currentStepper = this.getSelectedStepper();
     if (rootElt && currentStepper!.color) {
       rootElt.style.backgroundColor = currentStepper!.color?.cssColor;

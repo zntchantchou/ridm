@@ -125,7 +125,7 @@ export const INITIAL_EFFECTS: Effect[] = [
   },
   {
     name: "pitch",
-    value: { pitch: 1, windowSize: 0.1, wet: 0 },
+    value: { pitch: 0 },
   },
   {
     name: "delay",

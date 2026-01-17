@@ -30,15 +30,18 @@ export type EffectNameType =
   | "reverb"
   | "solo";
 
+export type PitchOptions = { pitch: number };
+
 export type EffectValue = Partial<
   | Tone.ChannelOptions
   | Tone.FeedbackDelayOptions
-  | Tone.PitchShiftOptions
+  | PitchOptions // custom pitch
   | Tone.ReverbOptions
 >;
 
 export interface IEffectValue
-  extends Tone.ChannelOptions,
+  extends
+    Tone.ChannelOptions,
     Tone.FeedbackDelayOptions,
     Tone.PitchShiftOptions,
     Tone.ReverbOptions {}

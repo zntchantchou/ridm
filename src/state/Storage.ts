@@ -189,7 +189,6 @@ class Storage {
       console.log("[Storage] State persisted to localStorage");
     } catch (error) {
       console.error("[Storage] Failed to save to localStorage:", error);
-      // Could be quota exceeded or other storage errors
     }
   }
 

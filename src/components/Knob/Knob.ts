@@ -94,7 +94,7 @@ class Knob {
     }
     if (this.min >= 0) {
       this.lastRotation = Math.round(
-        (this.value / this.max) * this.maxRotation
+        (this.value / this.max) * this.maxRotation,
       );
     }
     this.render();
@@ -153,11 +153,11 @@ class Knob {
   private initializeEvents() {
     this.knobIndicatorContainerElt?.addEventListener(
       "pointerdown",
-      this.handleClick
+      this.handleClick,
     );
     // should we really track dragging movement across the whole document
     this.dragObs = fromEvent(document, "pointermove");
-    State.currentStepperId // unsubscribe on destroy
+    State.currentStepperIdSubject // unsubscribe on destroy
       .pipe(tap(this.setRingColor))
       .subscribe(this.handleSelectedStepperChange);
   }

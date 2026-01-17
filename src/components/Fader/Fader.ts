@@ -66,18 +66,15 @@ class Fader {
   }
 
   private listenToStepperColor() {
-    State.currentStepperId.subscribe((id) => {
+    State.currentStepperIdSubject.subscribe((id) => {
       if (this.getValueFn) {
         // state should implement those selectors instead of passing them down from parent
         const value = this?.getValueFn(id as StepperIdType);
         this.value = parseFloat(value);
         this.element.value = value;
         if (this.labelElt) this.labelElt.textContent = value;
-        console.log("VALEUR ", this.value);
       }
-      console.log("id ", this.id);
       this.fillColor = State.getStepperOptions(id)?.color.cssColor;
-      console.log("fillColor ", this.fillColor);
       this.updateFillColor();
     });
   }
@@ -101,9 +98,8 @@ class Fader {
     let gradient;
     const inactiveColor = "rgba(220, 220, 220, 1)";
     if (this.variant === "positive") {
-      console.log("POSITIVE ");
       gradient = `linear-gradient(to right, ${this.fillColor} ${this.valueToPct(
-        this.value
+        this.value,
       )}%, ${inactiveColor} ${this.valueToPct(this.value)}%)`;
     } else {
       if (this.value < 0) {
@@ -124,7 +120,6 @@ class Fader {
 
   render() {
     if (this.labelElt) this.labelElt.textContent = this.value.toString();
-    console.log("LABEL ELEMENT FADER: ", this.labelElt);
     return this.element;
   }
 }

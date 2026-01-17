@@ -36,7 +36,7 @@ class State {
   volumeUpdateSubject = new Subject<number>();
   // stepper updates
   steppersLoadingSubject = new BehaviorSubject<boolean>(false);
-  currentStepperId = new Subject<StepperIdType>();
+  currentStepperIdSubject = new Subject<StepperIdType>();
   stepperResizeSubject = new Subject<StepperResizeUpdate>();
   stepperSelectedStepsSubject = new Subject<StepperSelectedStepsUpdate>();
 
@@ -54,7 +54,9 @@ class State {
       steppers,
       settings,
       subjects: [
-        this.currentStepperId.pipe(tap((v) => this.updateSelectedStepperId(v))),
+        this.currentStepperIdSubject.pipe(
+          tap((v) => this.updateSelectedStepperId(v))
+        ),
         this.effectUpdateSubject.pipe(tap((v) => this.updateEffect(v))),
         this.stepperSelectedStepsSubject.pipe(
           tap((v) => this.updateSelectedSteps(v))

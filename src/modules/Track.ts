@@ -2,25 +2,35 @@ import * as Tone from "tone";
 import Audio from "./Audio.ts";
 import { filter, type Subscription } from "rxjs";
 import Controls from "../components/Controls";
-import type { EffectNameType, EffectUpdate, TrackEffect } from "../types.ts";
+import type {
+  EffectNameType,
+  EffectUpdate,
+  PitchOptions,
+  TrackEffect,
+} from "../types.ts";
 import State from "../state/State.ts";
 import type { StepperIdType } from "../state/state.types.ts";
 
 const samplesDirPath = "../../samples/defaults/";
-
+const DEFAULT_SAMPLE_RATE = 1;
+const MIN_SAMPLE_RATE = 0.25;
+const MAX_SAMPLE_RATE = 3;
 export type TrackOptions = {
   name: string;
   stepperId: string;
   source?: Tone.Player;
   effects?: TrackEffect[];
   samplePath?: string;
+  sampleRate?: number;
 };
 
 class Track {
   name: string;
   samplePath?: string;
+  sampleRate: number = 0;
   stepperId: string;
   source?: Tone.Player;
+
   effects: TrackEffect[] = [];
   effectUpdateSubscription?: Subscription;
   effectsInitialized = false;
@@ -28,9 +38,12 @@ class Track {
   updateMethodsMap: Map<EffectNameType, (update: EffectUpdate) => void> =
     new Map();
 
-  constructor({ stepperId, name, samplePath }: TrackOptions) {
+  constructor({ stepperId, name, samplePath, sampleRate }: TrackOptions) {
     this.name = name;
     this.stepperId = stepperId;
+    if (!Number.isNaN(sampleRate) && sampleRate) {
+      this.sampleRate = sampleRate;
+    }
     if (samplePath) this.samplePath = samplePath;
   }
 
@@ -41,34 +54,38 @@ class Track {
     this.initializeUpdateMethods();
     State.effectUpdateSubject
       .pipe(
-        filter((update: EffectUpdate) => update.stepperId === this.stepperId)
+        filter((update: EffectUpdate) => update.stepperId === this.stepperId),
       )
       .subscribe(this.handleEffectUpdate);
   }
 
   private loadSample() {
     const fullPath = `${samplesDirPath}/${this.name}.wav`;
-    const player = new Tone.Player(fullPath);
-    this.source = player;
+    this.source = new Tone.Player(fullPath);
+    const storedPitch = State.getEffect({
+      trackId: parseInt(this.stepperId) as StepperIdType,
+      name: "pitch",
+    })?.value as PitchOptions;
+    this.source.playbackRate = this.calculateSampleRate(storedPitch.pitch);
   }
 
   private loadEffects() {
     if (!this.effectsInitialized) this.initializeEffects();
     const trackNodes = this.effects?.map(
-      (effect) => effect.node
+      (effect) => effect.node,
     ) as Tone.ToneAudioNode[];
     // Channel is added first so that the panning is done by our own Tone.Panner which is added after it
     trackNodes.unshift(this.channel as Tone.ToneAudioNode);
     this.source?.chain(
       ...trackNodes,
       ...Audio.getMasterNodes(),
-      Tone.getDestination()
+      Tone.getDestination(),
     );
   }
 
   private initializeEffects() {
     const effects = State.getStepperEffects(
-      parseInt(this.stepperId) as StepperIdType
+      parseInt(this.stepperId) as StepperIdType,
     );
     if (!this.channel) {
       this.channel = new Tone.Channel({});
@@ -141,15 +158,28 @@ class Track {
   };
 
   private handlePitchUpdate = (value: EffectUpdate) => {
-    const effect = this.effects?.find((e) => e.name === "pitch");
-    if (!effect || !effect.node) return;
-    const pitchOptions = value.value as Tone.PitchShiftOptions;
-    const options = { ...pitchOptions };
-    if (typeof pitchOptions.pitch === "number") {
-      options.pitch = Math.round(pitchOptions.pitch as number);
-    }
-    effect?.node.set({ ...options });
+    const pitchOptions = value.value as PitchOptions;
+    const pitch = pitchOptions.pitch;
+    this!.source!.playbackRate = this.calculateSampleRate(pitch);
   };
+
+  private calculateSampleRate(pitch: number) {
+    let ratio = DEFAULT_SAMPLE_RATE;
+    if (pitch === 0) return ratio;
+    if (pitch < 0) {
+      const amplitude = 1 - MIN_SAMPLE_RATE;
+      const stepValue = amplitude / (1 / MIN_SAMPLE_RATE);
+      ratio = 1 - stepValue * Math.abs(pitch);
+    }
+    if (pitch > 0) {
+      ratio = 1 + pitch * 0.5;
+      ratio =
+        1 +
+        (pitch * (MAX_SAMPLE_RATE - DEFAULT_SAMPLE_RATE)) /
+          (1 / MIN_SAMPLE_RATE);
+    }
+    return ratio;
+  }
 
   private initializeUpdateMethods() {
     this.updateMethodsMap.set("solo", this.handleSoloUpdate);

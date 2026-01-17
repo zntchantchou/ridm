@@ -42,7 +42,7 @@ input[type="range"] {
   --slider-progress-color: rgb(126, 126, 126);
   --slider-thumb-color: rgb(30, 29, 29);
   --slider-thumb-height: 1.4rem;
-  --slider-thumb-width: 1.8rem;
+  --slider-thumb-width: 0.8rem;
   --thumb-border-width: 0.15rem;
   --slider-height: 0.3rem;
   --slider-width: 1.8rem;

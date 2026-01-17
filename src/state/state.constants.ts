@@ -154,3 +154,6 @@ export const INITIAL_SETTINGS: Settings = {
   volume: -10,
   selectedStepperId: 0,
 };
+
+export const MIN_VOLUME_DB = -80;
+export const MAX_VOLUME_DB = 10;

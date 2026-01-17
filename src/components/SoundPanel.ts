@@ -358,8 +358,8 @@ class SoundPanel {
       step: 0.1,
       matchStepperColor: true,
       fillColor: this.getColor(),
-      onChange: this.handleVolumeChange,
       labelElt: this.volumeValue,
+      onChange: this.handleVolumeChange,
       getValueFn: (id: StepperIdType) => {
         const effect = State.getEffect({ trackId: id, name: "volume" });
         const value = effect?.value as { volume: number };

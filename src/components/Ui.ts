@@ -46,14 +46,14 @@ class UI {
   private selectSteps(stepNumber: number, steps: number) {
     return Array.from(
       document.querySelectorAll(
-        `[data-steps="${steps}"][data-step="${stepNumber}"]`
-      )
+        `[data-steps="${steps}"][data-step="${stepNumber}"]`,
+      ),
     ) as HTMLDivElement[];
   }
 
   private selectTickingSteps(totalSteps: number) {
     return document.querySelectorAll(
-      `.step[data-steps="${totalSteps}"][data-ticking="on"]`
+      `.step[data-steps="${totalSteps}"][data-ticking="on"]`,
     );
   }
 

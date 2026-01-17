@@ -1,13 +1,17 @@
 import Audio from "../modules/Audio";
 import State from "../state/State";
-import { INITIAL_SETTINGS } from "../state/state.constants";
+import {
+  INITIAL_SETTINGS,
+  MAX_VOLUME_DB,
+  MIN_VOLUME_DB,
+} from "../state/state.constants";
 import * as Tone from "tone";
 import Fader from "./Fader/Fader";
 
 const tpcDislayElt = document.createElement("div");
 const tpcGroupElt = document.getElementById("tpc-group") as HTMLDivElement;
 const volumeGroupElt = document.getElementById(
-  "volume-group"
+  "volume-group",
 ) as HTMLDivElement;
 const playPauseImg = document.getElementById("play-img") as HTMLImageElement;
 const volumeDisplayElt = document.createElement("div");
@@ -38,8 +42,8 @@ class Controls {
     this.volumeRange = new Fader({
       initialValue: this.volume,
       id: "volume-range",
-      min: -40,
-      max: 40,
+      min: MIN_VOLUME_DB,
+      max: MAX_VOLUME_DB,
       step: 0.1,
       variant: "positive",
       onChange: this.updateVolume,
@@ -50,6 +54,7 @@ class Controls {
     tpcGroupElt.appendChild(tpcDislayElt);
     volumeGroupElt.appendChild(this.volumeRange);
     volumeGroupElt.appendChild(volumeDisplayElt);
+    this.updateVolumeLabel();
   }
 
   init() {
@@ -68,13 +73,29 @@ class Controls {
     State.steppersLoadingSubject.next(false);
   }
 
-  private updateVolume(e: Event) {
+  private updateVolumeLabel = () => {
+    let percentage = 0;
+    const amplitude = MAX_VOLUME_DB - MIN_VOLUME_DB;
+    if (this.volume < 0) {
+      const diff = -1 * (MIN_VOLUME_DB - this.volume);
+      const ratio = diff / amplitude;
+      percentage = ratio * 100;
+    } else {
+      const startRatio = -MIN_VOLUME_DB / amplitude;
+      const ratio = this.volume / amplitude;
+      percentage = (startRatio + ratio) * 100;
+    }
+    volumeDisplayElt.textContent = percentage.toFixed(1);
+  };
+
+  private updateVolume = (e: Event) => {
     const updatedValue = (e?.target as HTMLInputElement).value;
     this.volume = parseFloat(updatedValue);
     if (volumeDisplayElt) volumeDisplayElt.textContent = updatedValue;
     Audio.setMasterVolume(this.volume);
     State.volumeUpdateSubject.next(this.volume);
-  }
+    this.updateVolumeLabel();
+  };
 
   public async pause() {
     this.isPlaying = false;
@@ -84,7 +105,7 @@ class Controls {
       // Tone.Context does not allow an access to suspend, which is handled via the Transport component.
       // this pauses the current time, otherwise notes not played during pause would all be replayed when starting again
       await Audio.getContext()?.rawContext?.suspend(
-        Audio.getContext()?.now() as number
+        Audio.getContext()?.now() as number,
       );
     }
   }

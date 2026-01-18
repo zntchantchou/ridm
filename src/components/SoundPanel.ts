@@ -270,7 +270,7 @@ class SoundPanel {
     this.render();
   };
 
-  private handlePitchChange = (value: string, name: string) => {
+  private handlePitchChange = (value: string) => {
     const rangeValue = parseFloat(value);
     const updateValue: PitchOptions = { pitch: rangeValue };
     State.effectUpdateSubject.next({

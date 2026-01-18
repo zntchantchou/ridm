@@ -43,8 +43,8 @@ export interface IEffectValue
   extends
     Tone.ChannelOptions,
     Tone.FeedbackDelayOptions,
-    Tone.PitchShiftOptions,
-    Tone.ReverbOptions {}
+    Tone.ReverbOptions,
+    PitchOptions {}
 
 export type EffectUpdate = {
   name: EffectNameType;

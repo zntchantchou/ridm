@@ -45,15 +45,15 @@ class Audio {
   ): Tone.ToneAudioNode {
     switch (name) {
       case "reverb":
-        return new Tone.Reverb(value);
+        return new Tone.Reverb(value as Tone.ReverbOptions);
       case "pitch":
         return new Tone.PitchShift(value);
       case "delay":
-        return new Tone.FeedbackDelay(value);
+        return new Tone.FeedbackDelay(value as Tone.FeedbackDelayOptions);
       case "volume":
-        return new Tone.Volume(value);
+        return new Tone.Volume(value as { volume: number });
       case "panning":
-        return new Tone.Panner(value);
+        return new Tone.Panner(value as PannerOptions);
       default:
         throw new Error(`Effect ${name} not recognized`);
     }

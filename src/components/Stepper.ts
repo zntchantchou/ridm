@@ -10,7 +10,6 @@ import Audio from "../modules/Audio";
 
 const DEBOUNCE_TIME_MS = 200;
 const steppersDiv = document.getElementById("steppers");
-const steppersLoaderElt = document.getElementById("steppers-loading");
 
 export type StepperColorType = { name: string; cssColor: string };
 export interface StepperOptions {
@@ -68,8 +67,9 @@ class Stepper {
     State.stepperResizeSubject
       .pipe(debounceTime(DEBOUNCE_TIME_MS))
       .pipe(filter(({ stepperId }) => stepperId === this.id))
+      .pipe(filter(({ stepperId }) => stepperId === this.id))
       .subscribe(({ beats, stepsPerBeat }) =>
-        this.updateSteps({ beats, stepsPerBeat })
+        this.updateSteps({ beats, stepsPerBeat }),
       );
   }
 
@@ -79,13 +79,13 @@ class Stepper {
       .pipe(
         filter(
           ({ stepNumber, totalSteps }) =>
-            this.isSelectedStep({ totalSteps, stepNumber }) // Only trigger if note is selected
-        )
+            this.isSelectedStep({ totalSteps, stepNumber }), // Only trigger if note is selected
+        ),
       )
       .pipe(
         filter(
-          ({ time }) => Audio.lastTime == undefined || time > Audio.lastTime
-        )
+          ({ time }) => Audio.lastTime == undefined || time > Audio.lastTime,
+        ),
       )
       .subscribe({
         next: ({ time }) => {

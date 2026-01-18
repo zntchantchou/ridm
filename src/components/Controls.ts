@@ -34,9 +34,9 @@ class Controls {
       initialValue: this.tpc,
       id: "tpc-range",
       min: 1,
-      max: 8,
+      max: 6,
       variant: "positive",
-      step: 0.1,
+      step: 0.01,
       onChange: this.updateTpc,
     }).render();
     this.volumeRange = new Fader({

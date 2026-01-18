@@ -15,25 +15,26 @@ export const COLORS: StepperColorType[] = [
     name: "yellow",
     cssColor: "#ffff00",
   },
+
   {
-    name: "lime",
-    cssColor: "#00ff00",
-  },
-  {
-    name: "orange",
-    cssColor: "#ff6600",
-  },
-  {
-    name: "skyBlue",
-    cssColor: "#0099ff",
+    name: "chartreuse",
+    cssColor: "#99ff00",
   },
   {
     name: "magenta",
     cssColor: "#ff00ff",
   },
   {
-    name: "chartreuse",
-    cssColor: "#99ff00",
+    name: "orange",
+    cssColor: "#fc8a3dff",
+  },
+  {
+    name: "skyBlue",
+    cssColor: "#0099ff",
+  },
+  {
+    name: "purple",
+    cssColor: "#9a00bc",
   },
 ];
 
@@ -157,3 +158,4 @@ export const INITIAL_SETTINGS: Settings = {
 
 export const MIN_VOLUME_DB = -80;
 export const MAX_VOLUME_DB = 10;
+export const DEFAULT_STEPPER_BORDER_COLOR = "rgb(80, 80, 80)";

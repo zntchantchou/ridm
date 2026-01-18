@@ -8,6 +8,7 @@ import * as Tone from "tone";
 import "./state/State";
 import State from "./state/State";
 import StepQueue from "./modules/StepQueue";
+import { MIN_VOLUME_DB } from "./state/state.constants";
 
 const playBtn = document.getElementById("play");
 const restartBtn = document.getElementById("restart");
@@ -63,7 +64,7 @@ class Application {
   handlePlayPause = async () => {
     // Avoid cracking noise
     Audio.lastVolume = Audio.getCurrentVolume()?.value as number;
-    Audio.setMasterVolume(Audio.minVolume);
+    Audio.setMasterVolume(MIN_VOLUME_DB);
     if (!Controls.isPlaying) {
       if (!this.initialized) {
         this.timeWorker.start(this.ui);

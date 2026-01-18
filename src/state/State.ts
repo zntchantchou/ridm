@@ -55,11 +55,11 @@ class State {
       settings,
       subjects: [
         this.currentStepperIdSubject.pipe(
-          tap((v) => this.updateSelectedStepperId(v))
+          tap((v) => this.updateSelectedStepperId(v)),
         ),
         this.effectUpdateSubject.pipe(tap((v) => this.updateEffect(v))),
         this.stepperSelectedStepsSubject.pipe(
-          tap((v) => this.updateSelectedSteps(v))
+          tap((v) => this.updateSelectedSteps(v)),
         ),
         this.tpcUpdateSubject.pipe(tap((v) => this.updateTpc(v))),
         this.stepperResizeSubject.pipe(tap((u) => this.updateStepperSize(u))),

@@ -1,11 +1,13 @@
 #sound-panel {
+  --container-border-radius: 10px;
+  --section-background-color: rgb(33, 33, 33);
   --panel-section-padding: 0.8rem 1rem;
+  --panel-section-border: rgb(209, 209, 209) solid 0.15rem;
   box-sizing: border-box;
-  padding: 0.3rem;
+  background-color: var(--sequencer-primary-color);
   height: 100%;
   width: 100%;
   display: flex;
-  gap: 0.5rem;
 }
 
 #sample-name {
@@ -14,13 +16,13 @@
 }
 
 .sample-details {
-  box-sizing: border-box; /* CSS variable */
+  background-color: var(--sequencer-primary-color);
+  box-sizing: border-box;
   width: 30%;
-  padding: var(--panel-section-padding); /* CSS variable */
+  padding: var(--panel-section-padding);
   color: white;
-  background-color: rgb(24, 23, 23); /* CSS variable */
   height: 100%;
-  border-radius: 10px; /* CSS variable */
+  border-right: rgb(209, 209, 209) solid 0.15rem;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -44,7 +46,7 @@ input[type="range"] {
   --slider-thumb-height: 1.4rem;
   --slider-thumb-width: 0.8rem;
   --thumb-border-width: 0.15rem;
-  --slider-height: 0.3rem;
+  --slider-height: 0.2rem;
   --slider-width: 1.8rem;
   --slider-border-radius: 50px;
   --track-border-radius: 2px;

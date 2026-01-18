@@ -9,7 +9,7 @@
 @import url("./src/style/toggle.css");
 
 :root {
-  --controls-height: 10%;
+  --controls-height: 6%;
   --main-content-height: calc(100% - (var(--controls-height)));
   --sequencer-primary-color: rgb(21, 21, 21);
   --app-background-color: #1764bc;
@@ -36,8 +36,8 @@ body {
 }
 
 #play {
-  height: 4rem;
-  width: 4rem;
+  height: 3.3rem;
+  width: 3.3rem;
   font-size: 1.2rem;
   padding: 0.4rem;
   display: flex;
@@ -53,7 +53,7 @@ body {
   justify-items: center;
   align-items: center;
   padding-top: 0.5rem;
-  background-color: rgb(21, 21, 21);
+  background-color: var(--sequencer-primary-color);
   /* width: 90vw; */
   min-height: 600px;
   height: 90vh;
@@ -73,7 +73,7 @@ body {
 }
 
 #controls {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: white;
   display: flex;
   justify-content: space-around;
@@ -122,9 +122,14 @@ body {
 }
 
 #top-panel {
+  box-sizing: border-box;
   height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: inherit;
-  border: none;
+  border-right: 2px solid;
+  border-color: black;
 }
 
 #bottom-panel {

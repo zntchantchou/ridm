@@ -5,7 +5,7 @@ import type {
   ToneSoundSettings,
   TrackEffect,
 } from "../types";
-import { INITIAL_EFFECTS } from "../state/state.constants";
+import { INITIAL_EFFECTS, MIN_VOLUME_DB } from "../state/state.constants";
 
 class Audio {
   ctx: Tone.Context | null = null;
@@ -13,7 +13,7 @@ class Audio {
   defaultSamples: DefaultSampleType[] = [];
   soundSettings: ToneSoundSettings[] = [];
   lastTime?: number;
-  minVolume = -55;
+  minVolume = MIN_VOLUME_DB;
   lastVolume = 0;
   public async init() {
     this.ctx = new Tone.Context();
@@ -41,7 +41,7 @@ class Audio {
 
   public createEffect(
     name: EffectNameType,
-    value: EffectValue
+    value: EffectValue,
   ): Tone.ToneAudioNode {
     switch (name) {
       case "reverb":

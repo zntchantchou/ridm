@@ -1,5 +1,4 @@
 #steppers {
-  /* box-sizing: content-box; */
   position: relative;
   flex: 3;
   display: flex;
@@ -82,9 +81,9 @@
   --color-0: #00ffff; /* Cyan */
   --color-1: #ff0066; /* Hot Pink */
   --color-2: #ffff00; /* Yellow */
-  --color-3: #00ff00; /* Lime */
-  --color-4: #ff6600; /* Orange */
-  --color-5: #0099ff; /* Sky Blue */
-  --color-6: #ff00ff; /* Magenta */
-  --color-7: #99ff00;
+  --color-3: #99ff00; /* Lime */
+  --color-4: #f87ef0; /* Magenta */
+  --color-5: #fc8a3dff; /* Orange */
+  --color-6: #0099ff; /* Sky Blue */
+  --color-7: #9a00bc; /* salmon */
 }

@@ -5,6 +5,7 @@ import State from "../state/State";
 import type { StepperIdType } from "../state/state.types";
 import Fader from "./Fader/Fader";
 import type { PitchOptions } from "../types";
+import { DEFAULT_STEPPER_BORDER_COLOR } from "../state/state.constants";
 
 const rootElt = document.getElementById("top-panel");
 const stepperElements = document.getElementsByClassName("stepper");
@@ -22,6 +23,8 @@ class SoundPanel {
   delayTimeRange?: HTMLInputElement;
   panningValue?: HTMLSpanElement;
   volumeValue?: HTMLSpanElement;
+  sampleNameElt?: HTMLSpanElement;
+  sampleDetailsSection?: HTMLDivElement;
 
   constructor({ steppers }: { steppers: Stepper[] }) {
     this.steppers = steppers;
@@ -34,18 +37,17 @@ class SoundPanel {
   }
 
   private render() {
-    const sampleNameElt = document.getElementById("sample-name");
+    this.sampleNameElt = document.getElementById(
+      "sample-name",
+    ) as HTMLSpanElement;
     const stepper = this.getSelectedStepper() as Stepper;
-    sampleNameElt!.textContent = stepper.sampleName;
+    this.sampleNameElt!.textContent = stepper.sampleName;
     this.setBackground();
   }
 
   private setBackground() {
-    const stepper = this.getSelectedStepper() as Stepper;
-    if (rootElt) {
-      rootElt.style.background = `linear-gradient(0deg,rgba(0, 0, 0, 1) 0%, ${stepper.color?.cssColor} 100%)`;
-    }
     const currentStepper = this.getSelectedStepper();
+    this.sampleNameElt!.style.color = currentStepper!.color?.cssColor as string;
     const currentStepperControlsElt = currentStepper?.controls
       ?.element as HTMLDivElement;
     currentStepperControlsElt.dataset["selected"] = "on";
@@ -54,17 +56,17 @@ class SoundPanel {
   }
 
   private initialize() {
-    const sampleDetailsSection = document.createElement("div");
-    sampleDetailsSection.classList.add("sample-details");
+    this.sampleDetailsSection = document.createElement("div");
+    this.sampleDetailsSection.classList.add("sample-details");
     const nameGroup = document.createElement("div");
     const nameValueSpan = document.createElement("span");
     nameValueSpan.id = "sample-name";
 
     nameGroup.appendChild(nameValueSpan);
-    sampleDetailsSection.appendChild(nameGroup);
-    sampleDetailsSection.appendChild(this.generateVolumeGroup());
-    sampleDetailsSection.appendChild(this.generatePanningGroup());
-    this.element?.appendChild(sampleDetailsSection);
+    this.sampleDetailsSection.appendChild(nameGroup);
+    this.sampleDetailsSection.appendChild(this.generateVolumeGroup());
+    this.sampleDetailsSection.appendChild(this.generatePanningGroup());
+    this.element?.appendChild(this.sampleDetailsSection);
     new PanelSection({
       title: "delay",
       settings: [
@@ -291,12 +293,22 @@ class SoundPanel {
     const previousStepperControlsElt = previousStepper!.controls
       ?.element as HTMLDivElement;
     previousStepperControlsElt.dataset["selected"] = "off";
-    previousStepperControlsElt.style.borderColor = "rgb(80, 80, 80)";
+    previousStepperControlsElt.style.borderColor = DEFAULT_STEPPER_BORDER_COLOR;
     this.selectedStepper = stepperId;
     State.currentStepperIdSubject.next(parseInt(stepperId) as StepperIdType);
     const currentStepper = this.getSelectedStepper();
     if (rootElt && currentStepper!.color) {
-      rootElt.style.backgroundColor = currentStepper!.color?.cssColor;
+      this.sampleNameElt!.style.color = currentStepper!.color
+        ?.cssColor as string;
+      this.sampleDetailsSection!.style.borderColor = currentStepper!.color
+        ?.cssColor as string;
+      const effectSections = document.getElementsByClassName(
+        "panel-section",
+      ) as HTMLCollectionOf<HTMLDivElement>;
+      rootElt.style.borderColor = currentStepper!.color?.cssColor as string;
+      for (const section of effectSections) {
+        section.style.borderColor = currentStepper!.color?.cssColor as string;
+      }
     }
     this.render();
   };

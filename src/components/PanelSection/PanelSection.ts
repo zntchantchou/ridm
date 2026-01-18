@@ -25,13 +25,13 @@ class PanelSection {
   parentElt?: HTMLDivElement;
   containerElt?: HTMLDivElement;
   titleElt?: HTMLDivElement;
+  titleLabel?: HTMLSpanElement;
   title: string = "section title";
   settings: PanelSetting[];
 
   constructor({ parentElt, title, settings }: PanelSectionOptions) {
     this.parentElt = parentElt;
-    this.title = title;
-    this.title = title;
+    this.title = title.toUpperCase();
     this.settings = settings;
     this.render();
   }
@@ -61,7 +61,7 @@ class PanelSection {
   }: PanelSetting) {
     new Knob({
       effectName,
-      label: label,
+      label: label.toUpperCase(),
       id: `${this.title}-${label}`,
       value,
       min,
@@ -80,8 +80,9 @@ class PanelSection {
     this.containerElt.classList.add("panel-section");
     this.titleElt = document.createElement("div");
     this.titleElt.classList.add("panel-section-title");
-    this.titleElt.textContent = this.title;
-
+    this.titleLabel = document.createElement("span");
+    this.titleLabel.textContent = this.title;
+    this.titleElt.appendChild(this.titleLabel);
     this.containerElt.appendChild(this.titleElt);
     this.containerElt.appendChild(this.renderControls());
     // SETTINGS

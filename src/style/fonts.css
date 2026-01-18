@@ -1,0 +1,36 @@
+@font-face {
+  font-family: "technology";
+  src: url("fonts/technology/Technology.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "technology";
+  src: url("fonts/technology/Technology-BoldItalic.ttf");
+  font-weight: normal;
+  font-style: italic, oblique;
+}
+@font-face {
+  font-family: "technology";
+  src: url("fonts/technology/Technology-Bold.ttf");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "technology";
+  src: url("fonts/technology/Technology-Italic.ttf");
+  font-weight: bold;
+  font-style: italic, oblique;
+}
+@font-face {
+  font-family: "conthrax";
+  src: url("fonts/conthrax/conthrax.otf");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "basico";
+  src: url("fonts/basico/basico.ttf");
+  font-weight: normal;
+  font-style: normal;
+}

@@ -72,7 +72,7 @@ class Fader {
         const value = this?.getValueFn(id as StepperIdType);
         this.value = parseFloat(value);
         this.element.value = value;
-        if (this.labelElt) this.labelElt.textContent = value;
+        if (this.labelElt) this.labelElt.textContent = value.toUpperCase();
       }
       this.fillColor = State.getStepperOptions(id)?.color.cssColor;
       this.updateFillColor();
@@ -90,7 +90,7 @@ class Fader {
     this.onChange(e);
     const target = e.target as HTMLInputElement;
     this.value = parseFloat(target.value);
-    if (this.labelElt) this.labelElt.textContent = target.value;
+    if (this.labelElt) this.labelElt.textContent = target.value.toUpperCase();
     this.updateFillColor();
   };
 
@@ -119,7 +119,8 @@ class Fader {
   }
 
   render() {
-    if (this.labelElt) this.labelElt.textContent = this.value.toString();
+    if (this.labelElt)
+      this.labelElt.textContent = this.value.toString().toUpperCase();
     return this.element;
   }
 }

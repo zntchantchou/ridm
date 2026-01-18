@@ -188,17 +188,28 @@ class Stepper {
       this.element.removeChild(this.element.lastElementChild);
     }
     this.element.append(...this.stepElements);
+    this.updateStepsBorder();
+  }
+
+  private updateStepsBorder() {
+    const borderWidth = this.steps > 50 ? "1px" : "3px";
+    for (const item of this.stepElements) {
+      item.style.borderWidth = borderWidth;
+    }
   }
 
   private render() {
+    console.log("stepper render ");
     this.createStepElements();
     const stepper = document.createElement("div");
     stepper.classList.add("stepper");
     stepper.dataset.stepperId = this.id?.toString();
     steppersDiv?.appendChild(stepper);
+    this.updateStepsBorder();
     for (const item of this.stepElements) {
       stepper.appendChild(item);
     }
+
     this.element = stepper;
     this.element.addEventListener("click", this.handleClick);
   }

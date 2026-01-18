@@ -1,13 +1,14 @@
 #sound-panel {
   --container-border-radius: 10px;
   --section-background-color: rgb(33, 33, 33);
-  --panel-section-padding: 0.8rem 1rem;
-  --panel-section-border: rgb(209, 209, 209) solid 0.15rem;
+  --panel-section-padding: 0.6rem 1.8rem;
+  --panel-section-border: rgb(209, 209, 209) solid 0.2rem;
   box-sizing: border-box;
   background-color: var(--sequencer-primary-color);
   height: 100%;
   width: 100%;
   display: flex;
+  padding: 1rem 0rem;
 }
 
 #sample-name {

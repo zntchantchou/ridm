@@ -62,8 +62,8 @@ class StepperControls {
     this.soloCheckBox.checked = false;
     this.soloCheckBox.checked = false;
 
-    beatsLabel.textContent = "beats";
-    stepsPerBeatLabel.textContent = "steps";
+    beatsLabel.textContent = "BEATS";
+    stepsPerBeatLabel.textContent = "STEPS";
     beatsInput.type = "number";
     stepsPerBeatInput.name = "steps-per-beat";
     beatsInput.name = "beats";

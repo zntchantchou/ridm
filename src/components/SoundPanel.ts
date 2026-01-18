@@ -34,6 +34,7 @@ class SoundPanel {
     this.initialize();
     this.initializeEvents();
     this.render();
+    this.updatePanelColor();
   }
 
   private render() {
@@ -178,8 +179,8 @@ class SoundPanel {
           label: "",
           settingName: "pitch",
           inputType: "knob",
-          min: -4,
-          max: 4,
+          min: -3,
+          max: 3,
           value: (
             State.getEffect({
               trackId: parseInt(this.selectedStepper) as StepperIdType,
@@ -296,6 +297,11 @@ class SoundPanel {
     previousStepperControlsElt.style.borderColor = DEFAULT_STEPPER_BORDER_COLOR;
     this.selectedStepper = stepperId;
     State.currentStepperIdSubject.next(parseInt(stepperId) as StepperIdType);
+    this.updatePanelColor();
+    this.render();
+  };
+
+  private updatePanelColor() {
     const currentStepper = this.getSelectedStepper();
     if (rootElt && currentStepper!.color) {
       this.sampleNameElt!.style.color = currentStepper!.color
@@ -310,9 +316,7 @@ class SoundPanel {
         section.style.borderColor = currentStepper!.color?.cssColor as string;
       }
     }
-    this.render();
-  };
-
+  }
   private generatePanningGroup() {
     const panning = State.getEffect({
       trackId: parseInt(this.selectedStepper) as StepperIdType,
@@ -323,8 +327,8 @@ class SoundPanel {
     const panningTitle = document.createElement("span");
     this.panningRange = document.createElement("input");
     this.panningValue = document.createElement("span");
-    panningTitle.textContent = "panning";
-    this.panningValue.textContent = this.panningRange.value;
+    panningTitle.textContent = "PANNING";
+    this.panningValue.textContent = this.panningRange.value.toUpperCase();
     this.panningValue.id = "panning-value";
     this.panningRange = new Fader({
       initialValue: panningValue.pan as number,
@@ -378,7 +382,7 @@ class SoundPanel {
         return value.volume.toString();
       },
     }).render();
-    volumeTitle.textContent = "volume";
+    volumeTitle.textContent = "VOLUME";
     this.volumeRange.id = "stepper-volume-range";
     volumeGroup.classList.add("effect-group");
     volumeGroup.appendChild(volumeTitle);

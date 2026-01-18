@@ -4,12 +4,12 @@ import { generateRandomSteps } from "./state.utils";
 
 export const COLORS: StepperColorType[] = [
   {
-    name: "cyan",
-    cssColor: "#00ffff",
+    name: "skyBlue",
+    cssColor: "#0099ff",
   },
   {
     name: "hotPink",
-    cssColor: "#ff0066",
+    cssColor: "#b655ff",
   },
   {
     name: "yellow",
@@ -22,19 +22,20 @@ export const COLORS: StepperColorType[] = [
   },
   {
     name: "magenta",
-    cssColor: "#ff00ff",
+    cssColor: "#ff7fff",
   },
   {
     name: "orange",
-    cssColor: "#fc8a3dff",
+    cssColor: "#ff6600ff",
   },
+
   {
-    name: "skyBlue",
-    cssColor: "#0099ff",
+    name: "cyan",
+    cssColor: "#00ffff",
   },
   {
     name: "purple",
-    cssColor: "#9a00bc",
+    cssColor: "#ff0066",
   },
 ];
 

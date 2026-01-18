@@ -193,8 +193,10 @@ class Stepper {
 
   private updateStepsBorder() {
     const borderWidth = this.steps > 50 ? "1px" : "3px";
+    const borderRadius = this.steps > 50 ? "2px" : "4px";
     for (const item of this.stepElements) {
       item.style.borderWidth = borderWidth;
+      item.style.borderRadius = borderRadius;
     }
   }
 

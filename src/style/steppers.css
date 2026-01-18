@@ -43,10 +43,10 @@
   opacity: 1;
 }
 [data-ticking="on"] {
-  background-color: rgb(255, 251, 23);
+  background-color: #f3ef94;
 }
 .step.beat[data-ticking="on"] {
-  background-color: rgb(178, 255, 62);
+  background-color: rgb(174, 229, 36);
 }
 
 .step[data-selected="on"][data-stepper-id="0"] {

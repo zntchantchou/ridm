@@ -13,6 +13,7 @@ import { MIN_VOLUME_DB } from "./state/state.constants";
 const playBtn = document.getElementById("play");
 const restartBtn = document.getElementById("restart");
 const pauseCtxBtn = document.getElementById("pause-context");
+const footerElt = document.getElementById("footer");
 
 class Application {
   initialized = false;
@@ -39,6 +40,7 @@ class Application {
     this.sequencer = new Sequencer(Pulses);
     await this.sequencer.initialize();
     State.tpcUpdateSubject.subscribe(() => this.restart());
+    footerElt!.style.visibility = "visible";
   };
 
   // necessary because live updates to fast tempo cause the pulses to become out of sync...

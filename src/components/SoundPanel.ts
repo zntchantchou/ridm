@@ -37,23 +37,20 @@ class SoundPanel {
   updateSteppers(steppers: Stepper[]) {
     this.steppers = steppers;
   }
+
   private render() {
     this.sampleNameElt = document.getElementById(
       "sample-name",
     ) as HTMLSpanElement;
     const stepper = this.getSelectedStepper() as Stepper;
     this.sampleNameElt!.textContent = stepper.sampleName;
-    this.setBackground();
+    this.setStepperControlsColor();
   }
 
-  private setBackground() {
+  private setStepperControlsColor() {
     const currentStepper = this.getSelectedStepper();
+
     this.sampleNameElt!.style.color = currentStepper!.color?.cssColor as string;
-    const currentStepperControlsElt = currentStepper?.controls
-      ?.element as HTMLDivElement;
-    currentStepperControlsElt.dataset["selected"] = "on";
-    currentStepperControlsElt.style.borderColor = currentStepper!.color
-      ?.cssColor as string;
   }
 
   private initialize() {

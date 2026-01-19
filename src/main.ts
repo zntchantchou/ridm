@@ -52,7 +52,7 @@ class Application {
     await this.sequencer.initialize();
     State.tpcUpdateSubject.subscribe(() => this.restart());
     footerElt!.style.visibility = "visible";
-    // State.deserializeTemplateOptions("mamakossa");
+    State.currentStepperIdSubject.next(State.getSelectedStepperId());
   };
 
   async loadTemplate(name: TemplateName) {
@@ -70,6 +70,7 @@ class Application {
     }
     State.loadTemplate(name);
     await this.sequencer?.reload();
+    State.currentStepperIdSubject.next(State.getSelectedStepperId());
     // await this.restart();
     State.steppersLoadingSubject.next(false);
     Controls.play();

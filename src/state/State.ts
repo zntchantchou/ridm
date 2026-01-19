@@ -179,10 +179,21 @@ class State {
 
   private updateSelectedStepperId(id: StepperIdType) {
     this.settings.selectedStepperId = id;
+    const selectedStepperControls = this.getSelectedStepperControls(id);
+    const color = this.getStepperOptions(id)?.color.cssColor;
+    if (color) selectedStepperControls!.style.borderColor = color;
   }
 
   getSelectedStepperId() {
     return this.settings.selectedStepperId;
+  }
+
+  private getSelectedStepperControls(stepperId: number) {
+    const elt = document.querySelector(
+      `.stepper-controls[data-stepper-id="${stepperId}"]`,
+    ) as HTMLDivElement;
+    elt!.style.borderColor = "green";
+    return elt;
   }
 
   getEffect({

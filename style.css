@@ -7,6 +7,7 @@
 @import url("./src/style/counter.css");
 @import url("./src/style/loader.css");
 @import url("./src/style/toggle.css");
+@import url("./src/style/footer.css");
 @import url("./src/style/fonts.css");
 
 :root {
@@ -41,31 +42,6 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-#footer {
-  margin-top: 0.4rem;
-  color: rgb(154, 154, 154);
-  font-weight: 100;
-  visibility: hidden;
-  display: flex;
-  align-items: center;
-}
-
-#footer-content {
-  display: flex;
-  align-items: flex-end;
-  height: fit-content;
-}
-
-#footer img {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-#footer a {
-  all: unset;
-  cursor: pointer;
 }
 
 #play {

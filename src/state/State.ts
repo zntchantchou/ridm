@@ -14,6 +14,7 @@ import type { EffectNameType, EffectUpdate } from "../types";
 import type { StepperOptions } from "../components/Stepper";
 import {
   COLORS,
+  DEFAULT_STEPPER_BORDER_COLOR,
   DEFAULT_STEPPER_OPTIONS,
   INITIAL_EFFECTS,
   INITIAL_SETTINGS,
@@ -179,21 +180,30 @@ class State {
 
   private updateSelectedStepperId(id: StepperIdType) {
     this.settings.selectedStepperId = id;
-    const selectedStepperControls = this.getSelectedStepperControls(id);
+    const previousStepper = document.querySelector(
+      `.stepper-controls[data-selected="on"]`,
+    ) as HTMLDivElement;
+    if (previousStepper) {
+      previousStepper.style.borderColor = DEFAULT_STEPPER_BORDER_COLOR;
+      previousStepper.dataset.selected = "off";
+    }
+    const selectedStepperControls = this.getStepperControls(id);
     const color = this.getStepperOptions(id)?.color.cssColor;
-    if (color) selectedStepperControls!.style.borderColor = color;
+    selectedStepperControls.dataset.selected = "on";
+    if (color) {
+      selectedStepperControls!.style.borderColor = color;
+    }
   }
 
   getSelectedStepperId() {
     return this.settings.selectedStepperId;
   }
 
-  private getSelectedStepperControls(stepperId: number) {
-    const elt = document.querySelector(
+  // private getSelectedStepperControls() {}
+  private getStepperControls(stepperId: number) {
+    return document.querySelector(
       `.stepper-controls[data-stepper-id="${stepperId}"]`,
     ) as HTMLDivElement;
-    elt!.style.borderColor = "green";
-    return elt;
   }
 
   getEffect({

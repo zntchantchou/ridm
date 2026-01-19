@@ -46,7 +46,6 @@ class Sequencer {
     this.steppers = [];
     this.controls = [];
     Pulses.reset();
-    // ALSO UPDATE SOUNDPANEL AND ITS EFFECTS
     await this.initSteppersFromState(false);
     // pass the old tracks to the new steppers, avoids creating audioNodes or loading buffers each time we load a template
     for (const [index, stepper] of this.steppers.entries()) {
@@ -55,6 +54,8 @@ class Sequencer {
     this.soundPanel?.initializeEvents();
     this.soundPanel?.updateSteppers(this.steppers);
   }
+
+  async reloadEffects() {}
 
   restart() {
     // recreate a track with the current audio Context for each stepper

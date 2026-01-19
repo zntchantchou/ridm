@@ -7,6 +7,10 @@
   align-items: center;
 }
 
+#footer #separator {
+  margin-left: 1rem;
+}
+
 #footer-content {
   display: flex;
   align-items: flex-end;

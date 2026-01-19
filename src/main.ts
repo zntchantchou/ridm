@@ -71,7 +71,7 @@ class Application {
     State.loadTemplate(name);
     await this.sequencer?.reload();
     State.currentStepperIdSubject.next(State.getSelectedStepperId());
-    // await this.restart();
+    await this.restart();
     State.steppersLoadingSubject.next(false);
     Controls.play();
   }

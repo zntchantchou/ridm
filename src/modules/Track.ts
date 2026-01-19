@@ -11,7 +11,6 @@ import type {
 import State from "../state/State.ts";
 import type { StepperIdType } from "../state/state.types.ts";
 
-// const samplesDirPath = "../../samples/defaults/";
 const samplesDirPath = "/samples/";
 const DEFAULT_SAMPLE_RATE = 1;
 const MIN_SAMPLE_RATE = 0.25;

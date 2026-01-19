@@ -49,7 +49,6 @@ class SoundPanel {
 
   private setStepperControlsColor() {
     const currentStepper = this.getSelectedStepper();
-
     this.sampleNameElt!.style.color = currentStepper!.color?.cssColor as string;
   }
 
@@ -290,11 +289,12 @@ class SoundPanel {
 
   private handleStepperSelection = (element: HTMLDivElement) => {
     const stepperId = element.dataset.stepperId as string;
-    const previousStepper = this.getSelectedStepper();
-    const previousStepperControlsElt = previousStepper!.controls
-      ?.element as HTMLDivElement;
-    previousStepperControlsElt.dataset["selected"] = "off";
-    previousStepperControlsElt.style.borderColor = DEFAULT_STEPPER_BORDER_COLOR;
+    // const previousStepper = this.getSelectedStepper();
+    // const previousStepperControlsElt = previousStepper!.controls
+    //   ?.element as HTMLDivElement;
+    // previousStepperControlsElt.dataset["selected"] = "off";
+    // previousStepperControlsElt.style.borderColor = DEFAULT_STEPPER_BORDER_COLOR;
+    // console.log("PREV SELECTED CONTROLS ", previousStepperControlsElt);
     this.selectedStepper = stepperId;
     State.currentStepperIdSubject.next(parseInt(stepperId) as StepperIdType);
     this.updatePanelColor();

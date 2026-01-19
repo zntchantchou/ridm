@@ -43,3 +43,5 @@ export type StateUpdates =
   | EffectUpdate
   | { tpc: number }
   | { volume: number };
+
+export type TemplateName = "nottoochaabi" | "mamakossa";

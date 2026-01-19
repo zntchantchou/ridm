@@ -9,11 +9,14 @@ import "./state/State";
 import State from "./state/State";
 import StepQueue from "./modules/StepQueue";
 import { MIN_VOLUME_DB } from "./state/state.constants";
+import type { TemplateName } from "./state/state.types";
 
 const playBtn = document.getElementById("play");
 const restartBtn = document.getElementById("restart");
 const pauseCtxBtn = document.getElementById("pause-context");
 const footerElt = document.getElementById("footer");
+const template1Btn = document.getElementById("template1");
+const template2Btn = document.getElementById("template2");
 
 class Application {
   initialized = false;
@@ -27,6 +30,14 @@ class Application {
     playBtn?.addEventListener("click", async () => this.handlePlayPause());
     pauseCtxBtn?.addEventListener("click", () => Controls.pause());
     restartBtn?.addEventListener("click", async () => await this.restart());
+    template1Btn?.addEventListener(
+      "click",
+      async () => await this.loadTemplate("nottoochaabi"),
+    );
+    template2Btn?.addEventListener(
+      "click",
+      async () => await this.loadTemplate("mamakossa"),
+    );
     window.addEventListener("keydown", this.handleSpacePress);
     this.ui = new UI(Audio.getContext() as Tone.Context, Pulses);
     this.timeWorker = new Timerworker({
@@ -41,8 +52,28 @@ class Application {
     await this.sequencer.initialize();
     State.tpcUpdateSubject.subscribe(() => this.restart());
     footerElt!.style.visibility = "visible";
+    // State.deserializeTemplateOptions("mamakossa");
   };
 
+  async loadTemplate(name: TemplateName) {
+    State.steppersLoadingSubject.next(true);
+    Controls.pause();
+    const stepperControls = document.getElementById(
+      "steppers-controls",
+    ) as HTMLDivElement;
+    const steppers = document.getElementById("steppers") as HTMLDivElement;
+    while (stepperControls.lastElementChild) {
+      stepperControls.removeChild(stepperControls.lastElementChild);
+    }
+    while (steppers.lastElementChild) {
+      steppers.removeChild(steppers.lastElementChild);
+    }
+    State.loadTemplate(name);
+    await this.sequencer?.reload();
+    // await this.restart();
+    State.steppersLoadingSubject.next(false);
+    Controls.play();
+  }
   // necessary because live updates to fast tempo cause the pulses to become out of sync...
   restart = async () => {
     const triggerPlay = Controls.isPlaying;

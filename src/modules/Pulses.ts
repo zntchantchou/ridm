@@ -122,7 +122,7 @@ class Pulses {
     } catch (error) {
       console.error(
         `[Pulses] Error during update from ${oldSteps} to ${newSteps}:`,
-        error
+        error,
       );
       throw error; // Re-throw to notify caller
     }
@@ -339,6 +339,12 @@ class Pulses {
     for (const p of this.getLeadPulses()) {
       p.restart();
     }
+  }
+
+  reset() {
+    console.log("RESET!");
+    this.pulses = new Map();
+    this.leadSteps = [];
   }
   // /**
   //  * Returns a debug string representation of the Pulses system.

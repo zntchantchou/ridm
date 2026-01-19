@@ -88,7 +88,6 @@ class Stepper {
       )
       .subscribe({
         next: ({ time }) => {
-          console.log("PLAY sample ", time);
           this?.track?.playSample(time);
           this.lastTime = time;
         },
@@ -181,7 +180,6 @@ class Stepper {
   }
 
   updateUi() {
-    console.log("UPDATE UI ");
     if (!this.element?.hasChildNodes()) return;
     this.createStepElements();
     while (this.element.lastElementChild) {
@@ -201,7 +199,6 @@ class Stepper {
   }
 
   private render() {
-    console.log("stepper render ");
     this.createStepElements();
     const stepper = document.createElement("div");
     stepper.classList.add("stepper");

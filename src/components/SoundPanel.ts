@@ -8,9 +8,6 @@ import type { PitchOptions } from "../types";
 import { DEFAULT_STEPPER_BORDER_COLOR } from "../state/state.constants";
 
 const rootElt = document.getElementById("top-panel");
-const stepperElements = document.getElementsByClassName("stepper");
-const stepperControlElements =
-  document.getElementsByClassName("stepper-controls");
 
 class SoundPanel {
   selectedStepper = State.getSelectedStepperId().toString();
@@ -37,6 +34,9 @@ class SoundPanel {
     this.updatePanelColor();
   }
 
+  updateSteppers(steppers: Stepper[]) {
+    this.steppers = steppers;
+  }
   private render() {
     this.sampleNameElt = document.getElementById(
       "sample-name",
@@ -194,7 +194,10 @@ class SoundPanel {
     });
   }
 
-  private initializeEvents() {
+  initializeEvents() {
+    const stepperElements = document.getElementsByClassName("stepper");
+    const stepperControlElements =
+      document.getElementsByClassName("stepper-controls");
     for (const elt of [...stepperControlElements, ...stepperElements]) {
       elt.addEventListener("click", () =>
         this.handleStepperSelection(elt as HTMLDivElement),

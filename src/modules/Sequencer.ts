@@ -17,7 +17,7 @@ class Sequencer {
   controls: StepperControls[] = [];
   stepperBeatsUpdateSubscriptions?: Subscription[] = [];
   stepperStepsUpdateSubscriptions?: Subscription[] = [];
-
+  soundPanel?: SoundPanel;
   // value is the parameters to be set on the effect (ToneAudioNode)
   constructor(pulses: typeof Pulses) {
     this.pulses = pulses;
@@ -25,7 +25,7 @@ class Sequencer {
 
   async initialize() {
     await this.initSteppersFromState();
-    new SoundPanel({
+    this.soundPanel = new SoundPanel({
       steppers: this.steppers,
     });
     appLoaderElt!.style.display = "none";
@@ -33,8 +33,27 @@ class Sequencer {
     sequencer!.style.display = "block";
   }
 
-  private async initSteppersFromState() {
-    return Promise.all(State.getInitialStepperOptions().map(this.register));
+  async initSteppersFromState(createTrack: boolean = true) {
+    return Promise.all(
+      State.getInitialStepperOptions().map((options) =>
+        this.register(options, createTrack),
+      ),
+    );
+  }
+
+  async reload() {
+    const tracks = this.steppers.map((s) => s.track);
+    this.steppers = [];
+    this.controls = [];
+    Pulses.reset();
+    // ALSO UPDATE SOUNDPANEL AND ITS EFFECTS
+    await this.initSteppersFromState(false);
+    // pass the old tracks to the new steppers, avoids creating audioNodes or loading buffers each time we load a template
+    for (const [index, stepper] of this.steppers.entries()) {
+      stepper.track = tracks[index];
+    }
+    this.soundPanel?.initializeEvents();
+    this.soundPanel?.updateSteppers(this.steppers);
   }
 
   restart() {
@@ -49,7 +68,10 @@ class Sequencer {
     });
   }
 
-  private register = async (options: StepperOptions) => {
+  private register = async (
+    options: StepperOptions,
+    createTrack: boolean = true,
+  ) => {
     const steps = options.stepsPerBeat * options.beats;
     if (steps < 1 || steps > 100) return;
 
@@ -60,21 +82,20 @@ class Sequencer {
       name: options.sampleName,
       color: options.color.cssColor,
     });
-
-    const stepperTrack = new Track({
-      name: options.sampleName,
-      stepperId: options.id.toString(),
-    });
-
     const stepper = new Stepper({
       ...options,
       controls: stepperControls,
       color: options.color,
       sampleName: options.sampleName,
-      track: stepperTrack,
     });
-
-    await stepperTrack.init();
+    if (createTrack) {
+      const stepperTrack = new Track({
+        name: options.sampleName,
+        stepperId: options.id.toString(),
+      });
+      stepper.track = stepperTrack;
+      await stepperTrack.init();
+    }
 
     this.steppers.push(stepper);
     this.pulses?.register(stepper);

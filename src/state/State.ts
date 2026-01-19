@@ -8,6 +8,7 @@ import type {
   StepperResizeUpdate,
   StepperSelectedStepsUpdate,
   SteppersState,
+  TemplateName,
 } from "./state.types";
 import type { EffectNameType, EffectUpdate } from "../types";
 import type { StepperOptions } from "../components/Stepper";
@@ -22,6 +23,7 @@ import { generateRandomSteps } from "./state.utils";
 import Storage from "./Storage";
 import type { PersistedState } from "./storage.types";
 import Controls from "../components/Controls";
+import templates from "./state.templates";
 
 class State {
   private effects: EffectState;
@@ -106,6 +108,34 @@ class State {
       steppers.set(i as StepperIdType, storeSteppers[i]);
     }
     return { effects, steppers, settings };
+  }
+
+  deserializeTemplate(name: TemplateName): {
+    steppers: SteppersState;
+    effects: EffectState;
+    settings: Settings;
+  } {
+    const template = templates[name];
+    const templateEffects = template.effects as unknown as {
+      effects: Effect[];
+    }[];
+    const templateSteppers = template.steppers as unknown as StepperOptions[];
+
+    const effects = new Map<StepperIdType, Effect[]>();
+    const steppers = new Map<StepperIdType, StepperOptions>();
+
+    for (let i = 0; i < 8; i++) {
+      effects.set(i as StepperIdType, templateEffects[i].effects);
+      steppers.set(i as StepperIdType, templateSteppers[i]);
+    }
+    return { effects, steppers, settings: template.settings as Settings };
+  }
+
+  loadTemplate(name: TemplateName) {
+    const { effects, steppers, settings } = this.deserializeTemplate(name);
+    this.effects = effects;
+    this.steppers = steppers;
+    this.settings = settings;
   }
 
   updateEffect = (update: EffectUpdate) => {

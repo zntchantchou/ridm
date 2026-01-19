@@ -115,7 +115,7 @@ export const INITIAL_EFFECTS: Effect[] = [
 ];
 
 export const INITIAL_SETTINGS: Settings = {
-  tpc: 3.5,
+  tpc: 3.7,
   volume: -10,
   selectedStepperId: 0,
 };

@@ -55,8 +55,6 @@ class Sequencer {
     this.soundPanel?.updateSteppers(this.steppers);
   }
 
-  async reloadEffects() {}
-
   restart() {
     // recreate a track with the current audio Context for each stepper
     State.getInitialStepperOptions().forEach(async (options, i) => {

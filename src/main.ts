@@ -12,7 +12,6 @@ import { MIN_VOLUME_DB } from "./state/state.constants";
 import type { TemplateName } from "./state/state.types";
 
 const playBtn = document.getElementById("play");
-const restartBtn = document.getElementById("restart");
 const pauseCtxBtn = document.getElementById("pause-context");
 const footerElt = document.getElementById("footer");
 const template1Btn = document.getElementById("template1");
@@ -29,7 +28,6 @@ class Application {
     window.addEventListener("load", this.init);
     playBtn?.addEventListener("click", async () => this.handlePlayPause());
     pauseCtxBtn?.addEventListener("click", () => Controls.pause());
-    restartBtn?.addEventListener("click", async () => await this.restart());
     template1Btn?.addEventListener(
       "click",
       async () => await this.loadTemplate("nottoochaabi"),
@@ -56,6 +54,7 @@ class Application {
   };
 
   async loadTemplate(name: TemplateName) {
+    const wasPaused = !Controls.isPlaying;
     State.steppersLoadingSubject.next(true);
     Controls.pause();
     const stepperControls = document.getElementById(
@@ -71,16 +70,23 @@ class Application {
     State.loadTemplate(name);
     await this.sequencer?.reload();
     State.currentStepperIdSubject.next(State.getSelectedStepperId());
-    await this.restart();
+    StepQueue.clear();
+    Pulses.restart();
+    this.timeWorker.pause(); // also stops ui
+    await Audio.init(); // creates a new audio context
+    const ctx = Audio.getContext() as Tone.Context;
+    this.ui = new UI(ctx, Pulses);
+    this.timeWorker.start(this.ui, ctx);
+    this.sequencer?.restart();
+    if (!wasPaused) Controls.play();
     State.steppersLoadingSubject.next(false);
-    Controls.play();
   }
   // necessary because live updates to fast tempo cause the pulses to become out of sync...
   restart = async () => {
     const triggerPlay = Controls.isPlaying;
     StepQueue.clear();
-    Pulses.restart();
     Controls.pause();
+    Pulses.restart();
     this.timeWorker.pause(); // also stops ui
     await Audio.init(); // creates a new audio context
     const ctx = Audio.getContext() as Tone.Context;
@@ -89,7 +95,7 @@ class Application {
     this.timeWorker.start(this.ui, ctx);
     this.sequencer?.restart();
     this.initialized = false;
-    if (!this.initialized && triggerPlay) {
+    if (triggerPlay) {
       Controls.play();
       this.initialized = true;
     }

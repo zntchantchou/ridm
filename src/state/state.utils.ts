@@ -10,3 +10,14 @@ export function generateRandomSteps({
     .fill(null)
     .map(() => Math.random() < 0);
 }
+
+export function generateBlankSteps({
+  stepsPerBeat,
+  beats,
+}: {
+  stepsPerBeat: number;
+  beats: number;
+}): boolean[] {
+  const totalSteps = stepsPerBeat * beats;
+  return Array(totalSteps).fill(false);
+}

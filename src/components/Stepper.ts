@@ -67,7 +67,6 @@ class Stepper {
     State.stepperResizeSubject
       .pipe(debounceTime(DEBOUNCE_TIME_MS))
       .pipe(filter(({ stepperId }) => stepperId === this.id))
-      .pipe(filter(({ stepperId }) => stepperId === this.id))
       .subscribe(({ beats, stepsPerBeat }) =>
         this.updateSteps({ beats, stepsPerBeat }),
       );
@@ -89,6 +88,7 @@ class Stepper {
       )
       .subscribe({
         next: ({ time }) => {
+          console.log("PLAY sample ", time);
           this?.track?.playSample(time);
           this.lastTime = time;
         },

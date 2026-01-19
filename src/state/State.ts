@@ -23,9 +23,6 @@ import Storage from "./Storage";
 import type { PersistedState } from "./storage.types";
 import Controls from "../components/Controls";
 
-// because effects affect sound even at 0 especially pitchShift
-// they should be in a disconnected state, loaded only when activated and used
-
 class State {
   private effects: EffectState;
   private steppers: SteppersState;

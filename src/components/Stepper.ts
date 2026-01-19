@@ -1,4 +1,4 @@
-import { debounceTime, filter, Subscription } from "rxjs";
+import { debounceTime, delay, filter, Subscription, tap } from "rxjs";
 import Pulse from "../modules/Pulse";
 import Pulses from "../modules/Pulses";
 import type Track from "../modules/Track";
@@ -67,9 +67,18 @@ class Stepper {
     State.stepperResizeSubject
       .pipe(debounceTime(DEBOUNCE_TIME_MS))
       .pipe(filter(({ stepperId }) => stepperId === this.id))
-      .subscribe(({ beats, stepsPerBeat }) =>
-        this.updateSteps({ beats, stepsPerBeat }),
-      );
+      .pipe(
+        tap(({ beats, stepsPerBeat }) => {
+          console.log("VOLUME DOWN");
+          Audio.setMasterVolume(Audio.minVolume);
+          this.updateSteps({ beats, stepsPerBeat });
+        }),
+      )
+      .pipe(delay(120))
+      .subscribe(() => {
+        console.log("VOLUME BACK UP ");
+        Audio.setMasterVolume(Audio.lastVolume);
+      });
   }
 
   listenToPulse(pulse: Pulse) {
@@ -88,8 +97,8 @@ class Stepper {
       )
       .subscribe({
         next: ({ time }) => {
-          this?.track?.playSample(time);
           this.lastTime = time;
+          this?.track?.playSample(time);
         },
       });
   }

@@ -65,7 +65,7 @@ body {
   background-color: var(--sequencer-primary-color);
   min-height: 600px;
   height: 90vh;
-  width: calc(1.4 * 90vh);
+  width: calc(1.5 * 90vh);
   border-radius: 10px;
 }
 

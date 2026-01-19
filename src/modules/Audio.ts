@@ -28,6 +28,7 @@ class Audio {
   }
 
   public setMasterVolume(value: number) {
+    this.lastVolume = this.getCurrentVolume()?.value as number;
     this.volume?.set({ volume: value });
   }
 

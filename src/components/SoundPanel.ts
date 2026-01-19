@@ -306,9 +306,6 @@ class SoundPanel {
       const effectSections = document.getElementsByClassName(
         "panel-section",
       ) as HTMLCollectionOf<HTMLDivElement>;
-      console.log("UPDATE PANEL COLORS ");
-      console.log("currentStepper ", currentStepper);
-
       rootElt.style.borderColor = currentStepper!.color?.cssColor as string;
       for (const section of effectSections) {
         section.style.borderColor = currentStepper!.color?.cssColor as string;

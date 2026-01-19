@@ -103,7 +103,6 @@ class Application {
 
   handlePlayPause = async () => {
     // Avoid cracking noise
-    Audio.lastVolume = Audio.getCurrentVolume()?.value as number;
     Audio.setMasterVolume(MIN_VOLUME_DB);
     if (!Controls.isPlaying) {
       if (!this.initialized) {

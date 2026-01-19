@@ -110,7 +110,7 @@ class Track {
       this.source?.buffer &&
       this.source.buffer.loaded
     ) {
-      this.source?.start(time, 0, this.source.buffer.duration);
+      this.source?.start(time, 0, Tone.now() + this.source.buffer.duration);
     }
   }
 

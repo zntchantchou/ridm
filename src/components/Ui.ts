@@ -19,7 +19,6 @@ class UI {
   }
   /** start the animation */
   start() {
-    console.log("Ui start ");
     this.isPlaying = true;
     this.animationId = requestAnimationFrame(this.draw);
   }
@@ -36,7 +35,6 @@ class UI {
   }
 
   draw = () => {
-    console.log("DRAW");
     if (!this.audioContext) return;
     const currentTime = this.audioContext.currentTime;
     while (StepQueue.size() && StepQueue.head().time < currentTime) {
@@ -65,7 +63,6 @@ class UI {
       console.error("NO PULSES");
       return;
     }
-    console.log("update ui");
     // highlight steps from parent pulses
     currentStepElts = this.selectSteps(step.stepNumber, step.totalSteps);
     this.selectTickingSteps(step.totalSteps).forEach((s) => {

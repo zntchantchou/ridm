@@ -40,7 +40,6 @@ class TimeWorker {
     if (ctx) {
       this.audioContext = ctx;
     }
-    console.log("[Start]");
     this.ui = ui;
     this.ui?.start();
     Tone.start();
@@ -75,7 +74,6 @@ class TimeWorker {
   }
 
   public stop() {
-    console.log("This.stop ");
     this.isPlaying = false;
     this.ui?.stop();
     this.worker?.postMessage({ event: "stop" });

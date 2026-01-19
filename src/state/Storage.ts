@@ -102,7 +102,7 @@ class Storage {
     return effects;
   }
   private serializeInitialEffects(
-    effects: EffectState
+    effects: EffectState,
   ): SerializedEffectsState {
     const serialized: SerializedEffectsState = [];
 
@@ -148,7 +148,7 @@ class Storage {
   }
 
   private serializeInitialSteppers(
-    steppers: SteppersState
+    steppers: SteppersState,
   ): SerializedSteppersState {
     const serialized: SerializedSteppersState = [];
 
@@ -186,7 +186,6 @@ class Storage {
     try {
       const serialized = JSON.stringify(state);
       localStorage.setItem(STORAGE_KEY, serialized);
-      console.log("[Storage] State persisted to localStorage");
     } catch (error) {
       console.error("[Storage] Failed to save to localStorage:", error);
     }

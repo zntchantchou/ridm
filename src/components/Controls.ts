@@ -20,8 +20,8 @@ class Controls {
   tpc = State.getSettings().tpc || INITIAL_SETTINGS.tpc;
   volume = State.getSettings().volume || INITIAL_SETTINGS.volume;
   isPlaying: boolean = false;
-  tpcRange?: HTMLDivElement;
-  volumeRange?: HTMLDivElement;
+  tpcRange?: HTMLInputElement;
+  volumeRange?: HTMLInputElement;
   constructor() {
     this.renderControls();
   }
@@ -37,7 +37,7 @@ class Controls {
       max: 6,
       variant: "positive",
       step: 0.01,
-      onChange: this.updateTpc,
+      onChange: this.handleTpcChange,
     }).render();
     this.volumeRange = new Fader({
       initialValue: this.volume,
@@ -61,7 +61,7 @@ class Controls {
     Audio.setMasterVolume(this.volume);
   }
 
-  private updateTpc(e: Event) {
+  private handleTpcChange(e: Event) {
     State.steppersLoadingSubject.next(true);
     Audio.lastVolume = Audio.getCurrentVolume()?.value as number;
     Audio.setMasterVolume(Audio.minVolume); // avoid cracking noise

@@ -5,7 +5,6 @@ import State from "../state/State";
 import type { StepperIdType } from "../state/state.types";
 import Fader from "./Fader/Fader";
 import type { PitchOptions } from "../types";
-import { DEFAULT_STEPPER_BORDER_COLOR } from "../state/state.constants";
 
 const rootElt = document.getElementById("top-panel");
 
@@ -32,6 +31,7 @@ class SoundPanel {
     this.initializeEvents();
     this.render();
     this.updatePanelColor();
+    State.currentStepperIdSubject.subscribe(this.updatePanelColor);
   }
 
   updateSteppers(steppers: Stepper[]) {
@@ -289,20 +289,15 @@ class SoundPanel {
 
   private handleStepperSelection = (element: HTMLDivElement) => {
     const stepperId = element.dataset.stepperId as string;
-    // const previousStepper = this.getSelectedStepper();
-    // const previousStepperControlsElt = previousStepper!.controls
-    //   ?.element as HTMLDivElement;
-    // previousStepperControlsElt.dataset["selected"] = "off";
-    // previousStepperControlsElt.style.borderColor = DEFAULT_STEPPER_BORDER_COLOR;
-    // console.log("PREV SELECTED CONTROLS ", previousStepperControlsElt);
     this.selectedStepper = stepperId;
     State.currentStepperIdSubject.next(parseInt(stepperId) as StepperIdType);
-    this.updatePanelColor();
     this.render();
   };
 
-  private updatePanelColor() {
-    const currentStepper = this.getSelectedStepper();
+  private updatePanelColor = () => {
+    const currentStepper = State.getStepperOptions(
+      State.getSelectedStepperId(),
+    );
     if (rootElt && currentStepper!.color) {
       this.sampleNameElt!.style.color = currentStepper!.color
         ?.cssColor as string;
@@ -311,12 +306,15 @@ class SoundPanel {
       const effectSections = document.getElementsByClassName(
         "panel-section",
       ) as HTMLCollectionOf<HTMLDivElement>;
+      console.log("UPDATE PANEL COLORS ");
+      console.log("currentStepper ", currentStepper);
+
       rootElt.style.borderColor = currentStepper!.color?.cssColor as string;
       for (const section of effectSections) {
         section.style.borderColor = currentStepper!.color?.cssColor as string;
       }
     }
-  }
+  };
   private generatePanningGroup() {
     const panning = State.getEffect({
       trackId: parseInt(this.selectedStepper) as StepperIdType,

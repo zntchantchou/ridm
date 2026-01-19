@@ -6,7 +6,6 @@ self.onmessage = (e) => {
   // console.log("[Worker] : ", e.data.event);
   switch (e.data.event) {
     case "start": {
-      console.log("[Worker]start : ", e.data.event);
       timerId = setInterval(() => {
         postMessage(TICK_MSG);
       }, interval);
@@ -21,7 +20,6 @@ self.onmessage = (e) => {
       break;
     }
     case "stop": {
-      console.log("[Worker stop]");
       if (timerId) clearInterval(timerId);
       timerId = undefined;
       break;

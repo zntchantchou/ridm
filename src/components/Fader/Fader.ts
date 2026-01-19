@@ -88,6 +88,7 @@ class Fader {
 
   private handleChange = (e: Event) => {
     this.onChange(e);
+    console.log("HANDLE CHANGE change in the fader");
     const target = e.target as HTMLInputElement;
     this.value = parseFloat(target.value);
     if (this.labelElt) this.labelElt.textContent = target.value.toUpperCase();

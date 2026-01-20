@@ -23,6 +23,11 @@ export type StepperSelectedStepsUpdate = {
   selectedSteps: boolean[];
 };
 
+export type ChannelUpdate = {
+  stepperId: StepperIdType;
+  channelOptions: Partial<ChannelOptions>;
+};
+
 export type Settings = {
   tpc: number;
   volume: number;
@@ -31,16 +36,21 @@ export type Settings = {
 
 export type SteppersState = Map<StepperIdType, StepperOptions>;
 
+export type ChannelOptions = Partial<Tone.ChannelOptions>;
+export type ChannelsState = Map<StepperIdType, ChannelOptions>;
+
 export type AppState = {
   steppers: SteppersState;
   effects: EffectState;
   settings: Settings;
+  channels: ChannelsState;
 };
 
 export type StateUpdates =
   | StepperResizeUpdate
   | StepperSelectedStepsUpdate
   | EffectUpdate
+  | ChannelUpdate
   | { tpc: number }
   | { volume: number };
 

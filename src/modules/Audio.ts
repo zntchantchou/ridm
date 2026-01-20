@@ -54,10 +54,6 @@ class Audio {
         return new Tone.PitchShift(value);
       case "delay":
         return new Tone.FeedbackDelay(value as Tone.FeedbackDelayOptions);
-      case "volume":
-        return new Tone.Volume(value as { volume: number });
-      case "panning":
-        return new Tone.Panner(value as PannerOptions);
       default:
         throw new Error(`Effect ${name} not recognized`);
     }

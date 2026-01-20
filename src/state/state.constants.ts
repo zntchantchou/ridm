@@ -100,26 +100,20 @@ export const INITIAL_EFFECTS: Effect[] = [
       wet: 0,
     },
   },
-  {
-    name: "panning",
-    value: {
-      pan: 0,
-    },
-  },
-  {
-    name: "volume",
-    value: {
-      volume: 0,
-    },
-  },
 ];
+
+export const INITIAL_CHANNEL_OPTIONS = {
+  pan: 0,
+  volume: 0,
+  mute: false,
+  solo: false,
+};
 
 export const INITIAL_SETTINGS: Settings = {
   tpc: 3.7,
   volume: -10,
   selectedStepperId: 0,
 };
-
 export const MIN_VOLUME_DB = -80;
 export const MAX_VOLUME_DB = 10;
 export const DEFAULT_STEPPER_BORDER_COLOR = "rgb(80, 80, 80)";

@@ -21,19 +21,11 @@ export type TrackEffect = {
   options?: { [index: string]: string };
 };
 
-export type EffectNameType =
-  | "pitch"
-  | "volume"
-  | "panning"
-  | "delay"
-  | "mute"
-  | "reverb"
-  | "solo";
+export type EffectNameType = "pitch" | "delay" | "reverb";
 
 export type PitchOptions = { pitch: number };
 
 export type EffectValue = Partial<
-  | Tone.ChannelOptions
   | Tone.FeedbackDelayOptions
   | PitchOptions // custom pitch
   | Tone.ReverbOptions

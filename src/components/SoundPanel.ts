@@ -203,20 +203,18 @@ class SoundPanel {
 
   private handleVolumeChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
-    State.effectUpdateSubject.next({
-      name: "volume",
-      stepperId: this.selectedStepper,
-      value: { volume: parseFloat(target.value) },
+    State.channelUpdateSubject.next({
+      stepperId: parseInt(this.selectedStepper) as StepperIdType,
+      channelOptions: { volume: parseFloat(target.value) },
     });
     this.render();
   };
 
   private handlePanningChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
-    State.effectUpdateSubject.next({
-      name: "panning",
-      stepperId: this.selectedStepper,
-      value: { pan: parseFloat(target.value) },
+    State.channelUpdateSubject.next({
+      stepperId: parseInt(this.selectedStepper) as StepperIdType,
+      channelOptions: { pan: parseFloat(target.value) },
     });
     this.render();
   };
@@ -304,6 +302,7 @@ class SoundPanel {
       const effectSections = document.getElementsByClassName(
         "panel-section",
       ) as HTMLCollectionOf<HTMLDivElement>;
+      this!.sampleNameElt!.textContent = currentStepper?.sampleName as string;
       rootElt.style.borderColor = currentStepper!.color?.cssColor as string;
       for (const section of effectSections) {
         section.style.borderColor = currentStepper!.color?.cssColor as string;
@@ -311,11 +310,9 @@ class SoundPanel {
     }
   };
   private generatePanningGroup() {
-    const panning = State.getEffect({
-      trackId: parseInt(this.selectedStepper) as StepperIdType,
-      name: "panning",
-    });
-    const panningValue = panning?.value as { pan: number };
+    const panning = State.getChannelOptions(
+      parseInt(this.selectedStepper) as StepperIdType,
+    )?.pan as number;
     const panningGroup = document.createElement("div");
     const panningTitle = document.createElement("span");
     this.panningRange = document.createElement("input");
@@ -324,7 +321,7 @@ class SoundPanel {
     this.panningValue.textContent = this.panningRange.value.toUpperCase();
     this.panningValue.id = "panning-value";
     this.panningRange = new Fader({
-      initialValue: panningValue.pan as number,
+      initialValue: panning,
       min: -1,
       max: 1,
       step: 0.01,
@@ -334,9 +331,8 @@ class SoundPanel {
       labelElt: this.panningValue,
       onChange: this.handlePanningChange,
       getValueFn: (id: StepperIdType) => {
-        const effect = State.getEffect({ trackId: id, name: "panning" })
-          ?.value as { pan: number };
-        return effect.pan.toString();
+        const panning = State.getChannelOptions(id)?.pan as number;
+        return panning.toString();
       },
     }).render();
     this.panningRange.classList.add("panel-range-input");
@@ -348,12 +344,9 @@ class SoundPanel {
   }
 
   private generateVolumeGroup() {
-    // VOLUME
-    const volume = State.getEffect({
-      trackId: parseInt(this.selectedStepper) as StepperIdType,
-      name: "volume",
-    });
-    const volumeValue = volume?.value as { volume: number };
+    const volume = State.getChannelOptions(
+      parseInt(this.selectedStepper) as StepperIdType,
+    )?.volume;
     const volumeGroup = document.createElement("div");
     const volumeTitle = document.createElement("span");
     this.volumeValue = document.createElement("span");
@@ -361,7 +354,7 @@ class SoundPanel {
     this.volumeRange = new Fader({
       variant: "positive",
       id: "volume-range",
-      initialValue: volumeValue?.volume,
+      initialValue: volume as number,
       min: -40,
       max: 40,
       step: 0.1,
@@ -370,9 +363,8 @@ class SoundPanel {
       labelElt: this.volumeValue,
       onChange: this.handleVolumeChange,
       getValueFn: (id: StepperIdType) => {
-        const effect = State.getEffect({ trackId: id, name: "volume" });
-        const value = effect?.value as { volume: number };
-        return value.volume.toString();
+        const volume = State.getChannelOptions(id)?.volume as number;
+        return volume.toString();
       },
     }).render();
     volumeTitle.textContent = "VOLUME";

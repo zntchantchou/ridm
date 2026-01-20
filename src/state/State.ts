@@ -1,5 +1,8 @@
 import { BehaviorSubject, Subject, tap } from "rxjs";
 import type {
+  ChannelOptions,
+  ChannelsState,
+  ChannelUpdate,
   Effect,
   EffectState,
   Settings,
@@ -16,6 +19,7 @@ import {
   COLORS,
   DEFAULT_STEPPER_BORDER_COLOR,
   DEFAULT_STEPPER_OPTIONS,
+  INITIAL_CHANNEL_OPTIONS,
   INITIAL_EFFECTS,
   INITIAL_SETTINGS,
   SAMPLES_DIRS,
@@ -30,6 +34,7 @@ class State {
   private effects: EffectState;
   private steppers: SteppersState;
   private settings: Settings;
+  private channels: ChannelsState;
   // audio updates
   effectUpdateSubject = new Subject<EffectUpdate>();
   tpcUpdateSubject = new Subject<number>();
@@ -39,20 +44,24 @@ class State {
   currentStepperIdSubject = new Subject<StepperIdType>();
   stepperResizeSubject = new Subject<StepperResizeUpdate>();
   stepperSelectedStepsSubject = new Subject<StepperSelectedStepsUpdate>();
+  // channel updates
+  channelUpdateSubject = new Subject<ChannelUpdate>();
 
   storage: Storage = new Storage();
 
   constructor() {
-    const { effects, steppers, settings } = this.storage.hasState()
+    const { effects, steppers, settings, channels } = this.storage.hasState()
       ? this.deserializeStoreState()
       : this.createInitialState();
     this.effects = effects;
     this.steppers = steppers;
     this.settings = settings;
+    this.channels = channels;
     this.storage.initialize({
       effects,
       steppers,
       settings,
+      channels,
       subjects: [
         this.currentStepperIdSubject.pipe(
           tap((v) => this.updateSelectedStepperId(v)),
@@ -64,6 +73,7 @@ class State {
         this.tpcUpdateSubject.pipe(tap((v) => this.updateTpc(v))),
         this.stepperResizeSubject.pipe(tap((u) => this.updateStepperSize(u))),
         this.volumeUpdateSubject.pipe(tap((v) => this.updateVolume(v))),
+        this.channelUpdateSubject.pipe(tap((v) => this.updateChannel(v))),
       ] as Subject<StateUpdates>[],
     });
   }
@@ -72,6 +82,7 @@ class State {
   createInitialState() {
     const effects = new Map<StepperIdType, Effect[]>();
     const steppers = new Map<StepperIdType, StepperOptions>();
+    const channels = new Map<StepperIdType, ChannelOptions>();
     for (let i = 0; i < 8; i++) {
       const beats = DEFAULT_STEPPER_OPTIONS.beats;
       const stepsPerBeat = DEFAULT_STEPPER_OPTIONS.stepsPerBeat;
@@ -87,33 +98,39 @@ class State {
         sampleName: SAMPLES_DIRS[i].name,
         id: i as StepperIdType,
       });
+      channels.set(i as StepperIdType, { ...INITIAL_CHANNEL_OPTIONS });
     }
-    return { effects, steppers, settings: { ...INITIAL_SETTINGS } };
+    return { effects, steppers, channels, settings: { ...INITIAL_SETTINGS } };
   }
 
   deserializeStoreState(): {
     steppers: SteppersState;
     effects: EffectState;
+    channels: ChannelsState;
     settings: Settings;
   } {
     const {
       effects: storeEffects,
       steppers: storeSteppers,
+      channels: storeChannels,
       settings,
     } = this.storage.getPersistedState() as PersistedState;
     const effects = new Map<StepperIdType, Effect[]>();
     const steppers = new Map<StepperIdType, StepperOptions>();
+    const channels = new Map<StepperIdType, ChannelOptions>();
 
     for (let i = 0; i < 8; i++) {
       effects.set(i as StepperIdType, storeEffects[i].effects);
       steppers.set(i as StepperIdType, storeSteppers[i]);
+      channels.set(i as StepperIdType, storeChannels[i].channelOptions);
     }
-    return { effects, steppers, settings };
+    return { effects, steppers, channels, settings };
   }
 
   deserializeTemplate(name: TemplateName): {
     steppers: SteppersState;
     effects: EffectState;
+    channels: ChannelsState;
     settings: Settings;
   } {
     const template = templates[name];
@@ -121,21 +138,33 @@ class State {
       effects: Effect[];
     }[];
     const templateSteppers = template.steppers as unknown as StepperOptions[];
+    const templateChannels = template.channels as unknown as {
+      channelOptions: ChannelOptions;
+    }[];
 
     const effects = new Map<StepperIdType, Effect[]>();
     const steppers = new Map<StepperIdType, StepperOptions>();
+    const channels = new Map<StepperIdType, ChannelOptions>();
 
     for (let i = 0; i < 8; i++) {
       effects.set(i as StepperIdType, templateEffects[i].effects);
       steppers.set(i as StepperIdType, templateSteppers[i]);
+      channels.set(i as StepperIdType, templateChannels[i].channelOptions);
     }
-    return { effects, steppers, settings: template.settings as Settings };
+    return {
+      effects,
+      steppers,
+      channels,
+      settings: template.settings as Settings,
+    };
   }
 
   loadTemplate(name: TemplateName) {
-    const { effects, steppers, settings } = this.deserializeTemplate(name);
+    const { effects, steppers, channels, settings } =
+      this.deserializeTemplate(name);
     this.effects = effects;
     this.steppers = steppers;
+    this.channels = channels;
     this.settings = settings;
   }
 
@@ -168,6 +197,14 @@ class State {
     this.settings.volume = volume;
   };
 
+  updateChannel = (update: ChannelUpdate) => {
+    const { stepperId, channelOptions } = update;
+    const existingChannel = this.channels.get(stepperId);
+    if (!existingChannel) return;
+    const updatedChannel = { ...existingChannel, ...channelOptions };
+    this.channels.set(stepperId, updatedChannel);
+  };
+
   updateStepperSize = (update: StepperResizeUpdate) => {
     const { stepperId, beats, stepsPerBeat } = update;
     const existingStepper = this.steppers.get(stepperId);
@@ -179,6 +216,7 @@ class State {
   };
 
   private updateSelectedStepperId(id: StepperIdType) {
+    console.log("UPDATE SELECTED STEPPER ID ", id);
     this.settings.selectedStepperId = id;
     const previousStepper = document.querySelector(
       `.stepper-controls[data-selected="on"]`,
@@ -199,7 +237,6 @@ class State {
     return this.settings.selectedStepperId;
   }
 
-  // private getSelectedStepperControls() {}
   private getStepperControls(stepperId: number) {
     return document.querySelector(
       `.stepper-controls[data-stepper-id="${stepperId}"]`,
@@ -226,6 +263,10 @@ class State {
 
   getStepperOptions(stepperId: StepperIdType) {
     return this.steppers.get(stepperId);
+  }
+
+  getChannelOptions(stepperId: StepperIdType) {
+    return this.channels.get(stepperId);
   }
 
   getSettings() {

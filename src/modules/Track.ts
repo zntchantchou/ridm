@@ -9,7 +9,7 @@ import type {
   TrackEffect,
 } from "../types.ts";
 import State from "../state/State.ts";
-import type { StepperIdType } from "../state/state.types.ts";
+import type { ChannelUpdate, StepperIdType } from "../state/state.types.ts";
 
 const samplesDirPath = "/samples/";
 const DEFAULT_SAMPLE_RATE = 1;
@@ -33,9 +33,10 @@ class Track {
 
   effects: TrackEffect[] = [];
   effectUpdateSubscription?: Subscription;
+  channelUpdateSubscription?: Subscription;
   effectsInitialized = false;
   channel?: Tone.Channel; // handles volume, pan, mute, solo
-  updateMethodsMap: Map<EffectNameType, (update: EffectUpdate) => void> =
+  effectUpdateMethodsMap: Map<EffectNameType, (update: EffectUpdate) => void> =
     new Map();
 
   constructor({ stepperId, name, samplePath, sampleRate }: TrackOptions) {
@@ -52,11 +53,23 @@ class Track {
     this.loadSample();
     this.loadEffects();
     this.initializeUpdateMethods();
+    const channelOptions = State.getChannelOptions(
+      parseInt(this.stepperId) as StepperIdType,
+    );
+    this.channel?.set({ ...channelOptions });
     State.effectUpdateSubject
       .pipe(
         filter((update: EffectUpdate) => update.stepperId === this.stepperId),
       )
       .subscribe(this.handleEffectUpdate);
+    State.channelUpdateSubject
+      .pipe(
+        filter(
+          (update: ChannelUpdate) =>
+            update.stepperId === parseInt(this.stepperId),
+        ),
+      )
+      .subscribe(this.handleChannelUpdate);
   }
 
   private loadSample() {
@@ -115,32 +128,13 @@ class Track {
   }
 
   private handleEffectUpdate = (update: EffectUpdate) => {
-    const updateFn = this.updateMethodsMap.get(update.name);
+    const updateFn = this.effectUpdateMethodsMap.get(update.name);
     if (updateFn) updateFn(update);
   };
 
-  private handleSoloUpdate = (value: EffectUpdate) => {
-    const v = value.value as Tone.ChannelOptions;
-    this?.channel?.set({ solo: v.solo });
-  };
-
-  private handleMuteUpdate = (value: EffectUpdate) => {
-    const v = value.value as Tone.ChannelOptions;
-    this?.channel?.set({ mute: v.mute });
-  };
-
-  private handlePanningUpdate = (value: EffectUpdate) => {
-    const effect = this.effects?.find((e) => e.name === "panning");
-    if (!effect || !effect.node) return;
-    const options = value.value as Tone.ChannelOptions;
-    effect?.node.set({ ...options });
-  };
-
-  private handleVolumeUpdate = (value: EffectUpdate) => {
-    const effect = this.effects?.find((e) => e.name === "volume");
-    if (!effect || !effect.node) return;
-    const options = value.value as Tone.ChannelOptions;
-    effect?.node.set({ ...options });
+  private handleChannelUpdate = (update: ChannelUpdate) => {
+    console.log("[Track] handleChannelUpdate ", update, this.channel);
+    if (this.channel) this.channel?.set({ ...update.channelOptions });
   };
 
   private handleDelayUpdate = (value: EffectUpdate) => {
@@ -182,13 +176,9 @@ class Track {
   }
 
   private initializeUpdateMethods() {
-    this.updateMethodsMap.set("solo", this.handleSoloUpdate);
-    this.updateMethodsMap.set("mute", this.handleMuteUpdate);
-    this.updateMethodsMap.set("panning", this.handlePanningUpdate);
-    this.updateMethodsMap.set("volume", this.handleVolumeUpdate);
-    this.updateMethodsMap.set("delay", this.handleDelayUpdate);
-    this.updateMethodsMap.set("reverb", this.handleReverbUpdate);
-    this.updateMethodsMap.set("pitch", this.handlePitchUpdate);
+    this.effectUpdateMethodsMap.set("delay", this.handleDelayUpdate);
+    this.effectUpdateMethodsMap.set("reverb", this.handleReverbUpdate);
+    this.effectUpdateMethodsMap.set("pitch", this.handlePitchUpdate);
   }
 }
 

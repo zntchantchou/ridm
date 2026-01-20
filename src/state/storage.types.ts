@@ -1,10 +1,11 @@
-import type { StepperIdType, Settings } from "./state.types";
+import type { StepperIdType, Settings, ChannelOptions } from "./state.types";
 import type { EffectNameType, EffectValue } from "../types";
 import type { StepperColorType } from "../components/Stepper";
 
 export interface PersistedState {
   effects: SerializedEffectsState;
   steppers: SerializedSteppersState;
+  channels: SerializedChannelsState;
   settings: Settings;
   lastUpdated: number;
 }
@@ -26,4 +27,9 @@ export type SerializedSteppersState = {
   selectedSteps: boolean[];
   color: StepperColorType;
   sampleName: string;
+}[];
+
+export type SerializedChannelsState = {
+  stepperId: StepperIdType;
+  channelOptions: ChannelOptions;
 }[];

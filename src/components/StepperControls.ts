@@ -110,18 +110,16 @@ class StepperControls {
   }
 
   private handleSolo = (v: boolean) => {
-    State.effectUpdateSubject.next({
-      name: "solo",
-      stepperId: this.stepperId.toString(),
-      value: { solo: v },
+    State.channelUpdateSubject.next({
+      stepperId: this.stepperId as StepperIdType,
+      channelOptions: { solo: v },
     });
   };
 
   private handleMute = (v: boolean) => {
-    State.effectUpdateSubject.next({
-      name: "mute",
-      stepperId: this.stepperId.toString(),
-      value: { mute: v },
+    State.channelUpdateSubject.next({
+      stepperId: this.stepperId as StepperIdType,
+      channelOptions: { mute: v },
     });
   };
 
@@ -130,7 +128,6 @@ class StepperControls {
       stepperId: this.stepperId,
       selectedSteps: Array(this.stepsPerBeats * this.beats).fill(false),
     });
-    // TODO: Implement clear functionality
   };
 
   private createMuteToggleElt() {

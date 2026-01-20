@@ -4,11 +4,13 @@ import type {
   PersistedState,
   SerializedEffectsState,
   SerializedSteppersState,
+  SerializedChannelsState,
 } from "./storage.types";
 import type {
   StepperIdType,
   EffectState,
   SteppersState,
+  ChannelsState,
   AppState,
   StateUpdates,
 } from "./state.types";
@@ -19,6 +21,7 @@ const DEBOUNCE_TIME_MS = 300; // Wait 300ms after last change
 type InitializeOptions = {
   effects: EffectState;
   steppers: SteppersState;
+  channels: ChannelsState;
   settings: AppState["settings"];
   subjects: Subject<StateUpdates>[];
 };
@@ -48,6 +51,7 @@ class Storage {
     return {
       effects: this.serializeInitialEffects(state.effects),
       steppers: this.serializeInitialSteppers(state.steppers),
+      channels: this.serializeInitialChannels(state.channels),
       settings: state.settings,
       lastUpdated: Date.now(),
     };
@@ -72,6 +76,7 @@ class Storage {
     return {
       effects: this.serializeEffects(),
       steppers: this.serializeSteppers(),
+      channels: this.serializeChannels(),
       settings: State.getSettings(),
       lastUpdated: Date.now(),
     };
@@ -164,6 +169,47 @@ class Storage {
           selectedSteps: stepperOptions.selectedSteps || [],
           color: stepperOptions.color,
           sampleName: stepperOptions.sampleName,
+        });
+      }
+    }
+
+    return serialized;
+  }
+
+  /**
+   * Convert channels Map to serializable array
+   */
+  private serializeChannels(): SerializedChannelsState {
+    const channels: SerializedChannelsState = [];
+
+    for (let i = 0; i < 8; i++) {
+      const stepperId = i as StepperIdType;
+      const channelOptions = State.getChannelOptions(stepperId);
+
+      if (channelOptions) {
+        channels.push({
+          stepperId,
+          channelOptions,
+        });
+      }
+    }
+
+    return channels;
+  }
+
+  private serializeInitialChannels(
+    channels: ChannelsState,
+  ): SerializedChannelsState {
+    const serialized: SerializedChannelsState = [];
+
+    for (let i = 0; i < 8; i++) {
+      const stepperId = i as StepperIdType;
+      const channelOptions = channels.get(stepperId);
+
+      if (channelOptions) {
+        serialized.push({
+          stepperId,
+          channelOptions,
         });
       }
     }

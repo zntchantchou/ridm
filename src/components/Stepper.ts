@@ -1,4 +1,12 @@
-import { debounceTime, delay, filter, Subscription, tap } from "rxjs";
+import {
+  catchError,
+  debounceTime,
+  delay,
+  filter,
+  of,
+  Subscription,
+  tap,
+} from "rxjs";
 import Pulse from "../modules/Pulse";
 import Pulses from "../modules/Pulses";
 import type Track from "../modules/Track";
@@ -39,7 +47,7 @@ class Stepper {
   color: StepperColorType | null = null;
   track?: Track;
   lastTime?: number;
-
+  lastVolume?: number;
   constructor({
     beats,
     stepsPerBeat,
@@ -67,17 +75,9 @@ class Stepper {
     State.stepperResizeSubject
       .pipe(debounceTime(DEBOUNCE_TIME_MS))
       .pipe(filter(({ stepperId }) => stepperId === this.id))
-      .pipe(
-        tap(({ beats, stepsPerBeat }) => {
-          console.log("VOLUME DOWN");
-          Audio.setMasterVolume(Audio.minVolume);
-          this.updateSteps({ beats, stepsPerBeat });
-        }),
-      )
       .pipe(delay(120))
-      .subscribe(() => {
-        console.log("VOLUME BACK UP ");
-        Audio.setMasterVolume(Audio.lastVolume);
+      .subscribe(({ beats, stepsPerBeat }) => {
+        this.updateSteps({ beats, stepsPerBeat });
       });
   }
 
@@ -95,12 +95,21 @@ class Stepper {
           ({ time }) => Audio.lastTime == undefined || time > Audio.lastTime,
         ),
       )
-      .subscribe({
-        next: ({ time }) => {
+      .pipe(
+        tap(({ time }) => {
           this.lastTime = time;
           this?.track?.playSample(time);
-        },
-      });
+        }),
+      )
+      .pipe(
+        catchError((e) => {
+          // an error related to tone.player note timing actually takes place here
+          // it is non blocking but it does paint the console red...
+          // the error is way worse when Tone.now is not added to the offset parameter in Tone.player.start()
+          return of(e);
+        }),
+      )
+      .subscribe();
   }
 
   private listenToClear() {

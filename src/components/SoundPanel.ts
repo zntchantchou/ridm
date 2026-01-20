@@ -202,7 +202,6 @@ class SoundPanel {
   }
 
   private handleVolumeChange = (e: Event) => {
-    console.log("handleVolumeChange");
     const target = e.target as HTMLInputElement;
     State.effectUpdateSubject.next({
       name: "volume",
@@ -213,7 +212,6 @@ class SoundPanel {
   };
 
   private handlePanningChange = (e: Event) => {
-    console.log("handlePanningChange");
     const target = e.target as HTMLInputElement;
     State.effectUpdateSubject.next({
       name: "panning",

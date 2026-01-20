@@ -27,8 +27,11 @@ class Audio {
     return this.volume?.volume;
   }
 
+  public mute() {
+    this.setMasterVolume(this.minVolume);
+  }
+
   public setMasterVolume(value: number) {
-    this.lastVolume = this.getCurrentVolume()?.value as number;
     this.volume?.set({ volume: value });
   }
 

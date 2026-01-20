@@ -38,7 +38,7 @@ class Counter {
     this.valueDisplay = document.createElement("div");
     this.plusBtn = document.createElement("div");
     [this.minusBtn, this.valueDisplay, this.plusBtn].forEach((elt) =>
-      elt.classList.add("counter-item")
+      elt.classList.add("counter-item"),
     );
     this.minusBtn.addEventListener("click", this.decrement);
     this.plusBtn.addEventListener("click", this.increment);

@@ -1,5 +1,5 @@
-import * as template1 from "../../public/templates/mamakossa.json";
-import * as template2 from "../../public/templates/nottochaabi.json";
+import * as template1 from "../templates/mamakossa.json";
+import * as template2 from "../templates/nottochaabi.json";
 
 const mamakossa = template1;
 const nottoochaabi = template2;

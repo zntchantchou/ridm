@@ -3,7 +3,6 @@ let interval = 25;
 const TICK_MSG = { event: "tick" };
 
 self.onmessage = (e) => {
-  // console.log("[Worker] : ", e.data.event);
   switch (e.data.event) {
     case "start": {
       timerId = setInterval(() => {

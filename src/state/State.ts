@@ -272,6 +272,18 @@ class State {
   getSettings() {
     return { ...this.settings };
   }
+
+  getChannels() {
+    return Array.from(this.channels.values());
+  }
+
+  getChannelsAsObjects() {
+    const channels = [];
+    for (const [index, items] of this.channels.entries()) {
+      channels.push({ stepperId: index, values: items });
+    }
+    return channels;
+  }
 }
 
 export default new State();

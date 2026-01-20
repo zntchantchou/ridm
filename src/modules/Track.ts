@@ -132,9 +132,13 @@ class Track {
     if (updateFn) updateFn(update);
   };
 
-  private handleChannelUpdate = (update: ChannelUpdate) => {
-    console.log("[Track] handleChannelUpdate ", update, this.channel);
-    if (this.channel) this.channel?.set({ ...update.channelOptions });
+  private handleChannelUpdate = () => {
+    const channelOptions = State.getChannelOptions(
+      parseInt(this.stepperId) as StepperIdType,
+    );
+    if (channelOptions) {
+      this?.channel?.set(channelOptions);
+    }
   };
 
   private handleDelayUpdate = (value: EffectUpdate) => {

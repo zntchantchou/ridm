@@ -100,6 +100,7 @@ class Application {
     if (triggerPlay) {
       Controls.play();
       this.initialized = true;
+      this.timeWorker.start(this.ui, Audio.getContext() as Tone.Context);
     }
   };
 

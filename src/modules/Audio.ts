@@ -12,7 +12,6 @@ class Audio {
   volume: Tone.Volume | null = null;
   defaultSamples: DefaultSampleType[] = [];
   soundSettings: ToneSoundSettings[] = [];
-  lastTime?: number;
   minVolume = MIN_VOLUME_DB;
   lastVolume = 0;
   public async init() {
@@ -33,10 +32,6 @@ class Audio {
 
   public setMasterVolume(value: number) {
     this.volume?.set({ volume: value });
-  }
-
-  public setLastPlayTime(time: number) {
-    this.lastTime = time;
   }
 
   public getMasterNodes(): Tone.ToneAudioNode[] {

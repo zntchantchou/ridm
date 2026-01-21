@@ -1,12 +1,4 @@
-import {
-  catchError,
-  debounceTime,
-  delay,
-  filter,
-  of,
-  Subscription,
-  tap,
-} from "rxjs";
+import { debounceTime, delay, filter, Subscription, tap } from "rxjs";
 import Pulse from "../modules/Pulse";
 import Pulses from "../modules/Pulses";
 import type Track from "../modules/Track";
@@ -14,7 +6,6 @@ import Controls from "./Controls";
 import type StepperControls from "./StepperControls";
 import type { StepperIdType } from "../state/state.types";
 import State from "../state/State";
-import Audio from "../modules/Audio";
 
 const DEBOUNCE_TIME_MS = 200;
 const steppersDiv = document.getElementById("steppers");
@@ -82,31 +73,27 @@ class Stepper {
   }
 
   listenToPulse(pulse: Pulse) {
-    this.pulseSubscription?.unsubscribe();
+    if (this.pulseSubscription) {
+      this.pulseSubscription?.unsubscribe();
+    }
     this.pulseSubscription = pulse.currentStepSubject
+      // Only trigger if note is selected
       .pipe(
-        filter(
-          ({ stepNumber, totalSteps }) =>
-            this.isSelectedStep({ totalSteps, stepNumber }), // Only trigger if note is selected
-        ),
-      )
-      .pipe(
-        filter(
-          ({ time }) => Audio.lastTime == undefined || time > Audio.lastTime,
+        filter(({ stepNumber, totalSteps }) =>
+          this.isSelectedStep({ totalSteps, stepNumber }),
         ),
       )
       .pipe(
         tap(({ time }) => {
-          this.lastTime = time;
-          this?.track?.playSample(time);
-        }),
-      )
-      .pipe(
-        catchError((e) => {
-          // an error related to tone.player note timing actually takes place here
-          // it is non blocking but it does paint the console red...
-          // the error is way worse when Tone.now is not added to the offset parameter in Tone.player.start()
-          return of(e);
+          try {
+            this?.track?.playSample(time);
+          } catch (e) {
+            // an error related to tone.player note timing actually takes place here
+            // it is non blocking but it does paint the console red...
+            // the error is way worse when Tone.now is not added to the offset parameter in Tone.player.start()
+            console.error("[Stepper] Error playing sample:", e);
+            // Don't propagate the error - keep the subscription alive
+          }
         }),
       )
       .subscribe();
@@ -135,6 +122,7 @@ class Stepper {
     const actualStep = stepNumber / parentChildRatio;
     return Number.isInteger(actualStep) && !!this.selectedSteps[actualStep];
   }
+
   stop() {
     this.pulseSubscription?.unsubscribe();
   }

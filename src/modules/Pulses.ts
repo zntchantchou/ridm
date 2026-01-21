@@ -64,7 +64,6 @@ class Pulses {
         newPulse.addSub(childPulse);
 
         // Update steppers to listen to new parent
-        // const childSteppers = childPulse.getSteppers();
         for (const childStepper of childrenSteppers) {
           childStepper.listenToPulse(newPulse);
         }
@@ -100,7 +99,6 @@ class Pulses {
     }
     const shouldDelete = pulse.removeStepper(stepper);
     stepper.pulseSubscription?.unsubscribe();
-
     if (shouldDelete) {
       this.deletePulseAndReorganize(pulse);
     }
@@ -113,9 +111,18 @@ class Pulses {
     if (oldSteps === newSteps) return; // No change
 
     try {
-      // Phase 1: Deregister from old pulse
-      const oldStepper = { ...stepper, steps: oldSteps };
-      this.deregister(oldStepper as Stepper);
+      const oldPulse = this.pulses.get(oldSteps);
+      if (!oldPulse) {
+        console.warn(
+          `[Pulses] No pulse found for stepper with ${oldSteps} steps`,
+        );
+      } else {
+        const isPulseEmpty = oldPulse.removeStepper(stepper);
+        stepper.pulseSubscription?.unsubscribe();
+        if (isPulseEmpty) {
+          this.deletePulseAndReorganize(oldPulse);
+        }
+      }
 
       // Phase 2: Register to new pulse (stepper.steps should already be updated)
       this.register(stepper);
@@ -345,6 +352,7 @@ class Pulses {
     this.pulses = new Map();
     this.leadSteps = [];
   }
+
   // /**
   //  * Returns a debug string representation of the Pulses system.
   //  */

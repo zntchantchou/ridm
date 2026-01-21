@@ -76,9 +76,12 @@ class Application {
     await Audio.init(); // creates a new audio context
     const ctx = Audio.getContext() as Tone.Context;
     this.ui = new UI(ctx, Pulses);
-    this.timeWorker.start(this.ui, ctx);
     this.sequencer?.restart();
-    if (!wasPaused) Controls.play();
+    if (!wasPaused) {
+      this.timeWorker.start(this.ui, ctx); // that should only be true if was playing
+      Controls.play();
+    }
+    this.initialized = false;
     State.steppersLoadingSubject.next(false);
   }
   // necessary because live updates to fast tempo cause the pulses to become out of sync...
@@ -92,7 +95,6 @@ class Application {
     const ctx = Audio.getContext() as Tone.Context;
     Controls.init();
     this.ui = new UI(ctx, Pulses);
-    this.timeWorker.start(this.ui, ctx);
     this.sequencer?.restart();
     this.initialized = false;
     if (triggerPlay) {
@@ -106,7 +108,7 @@ class Application {
     Audio.setMasterVolume(MIN_VOLUME_DB);
     if (!Controls.isPlaying) {
       if (!this.initialized) {
-        this.timeWorker.start(this.ui);
+        this.timeWorker.start(this.ui, Audio.getContext() as Tone.Context);
         this.initialized = true;
       }
       await Controls.play();

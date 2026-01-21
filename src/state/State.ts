@@ -216,7 +216,6 @@ class State {
   };
 
   private updateSelectedStepperId(id: StepperIdType) {
-    console.log("UPDATE SELECTED STEPPER ID ", id);
     this.settings.selectedStepperId = id;
     const previousStepper = document.querySelector(
       `.stepper-controls[data-selected="on"]`,

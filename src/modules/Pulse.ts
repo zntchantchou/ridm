@@ -150,11 +150,11 @@ class Pulse {
   getChildrenSteppers(): Stepper[] {
     if (!this.hasSubs()) return [];
 
-    const childSteppers: Stepper[] = [];
+    const childrenSteppers: Stepper[] = [];
     for (const childPulse of this.subs!) {
-      childSteppers.push(...childPulse.steppers);
+      childrenSteppers.push(...childPulse.steppers);
     }
-    return childSteppers;
+    return childrenSteppers;
   }
 
   /**

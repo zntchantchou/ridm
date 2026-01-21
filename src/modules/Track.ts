@@ -57,12 +57,12 @@ class Track {
       parseInt(this.stepperId) as StepperIdType,
     );
     this.channel?.set({ ...channelOptions });
-    State.effectUpdateSubject
+    this.effectUpdateSubscription = State.effectUpdateSubject
       .pipe(
         filter((update: EffectUpdate) => update.stepperId === this.stepperId),
       )
       .subscribe(this.handleEffectUpdate);
-    State.channelUpdateSubject
+    this.channelUpdateSubscription = State.channelUpdateSubject
       .pipe(
         filter(
           (update: ChannelUpdate) =>
@@ -70,6 +70,23 @@ class Track {
         ),
       )
       .subscribe(this.handleChannelUpdate);
+  }
+
+  dispose() {
+    this.effectUpdateSubscription?.unsubscribe();
+    this.channelUpdateSubscription?.unsubscribe();
+
+    this.source?.dispose();
+    this.channel?.dispose();
+    this.effects?.forEach((effect) => {
+      effect.node?.dispose();
+    });
+
+    this.effectUpdateSubscription = undefined;
+    this.channelUpdateSubscription = undefined;
+    this.source = undefined;
+    this.channel = undefined;
+    this.effects = [];
   }
 
   private loadSample() {

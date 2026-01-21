@@ -58,6 +58,9 @@ class Sequencer {
   restart() {
     // recreate a track with the current audio Context for each stepper
     State.getInitialStepperOptions().forEach(async (options, i) => {
+      // Dispose of old track to prevent subscription leaks
+      this.steppers[i].track?.dispose();
+
       const track = new Track({
         name: options.sampleName,
         stepperId: options.id.toString(),

@@ -1,4 +1,4 @@
-import { BehaviorSubject, Subject, tap } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import type {
   ChannelOptions,
   ChannelsState,
@@ -57,23 +57,35 @@ class State {
     this.steppers = steppers;
     this.settings = settings;
     this.channels = channels;
+
+    // Subscribe directly to subjects to ensure synchronous state updates
+    // BEFORE any Track subscriptions fire
+    this.currentStepperIdSubject.subscribe((v) =>
+      this.updateSelectedStepperId(v),
+    );
+    this.effectUpdateSubject.subscribe((v) => this.updateEffect(v));
+    this.stepperSelectedStepsSubject.subscribe((v) =>
+      this.updateSelectedSteps(v),
+    );
+    this.tpcUpdateSubject.subscribe((v) => this.updateTpc(v));
+    this.stepperResizeSubject.subscribe((u) => this.updateStepperSize(u));
+    this.volumeUpdateSubject.subscribe((v) => this.updateVolume(v));
+    this.channelUpdateSubject.subscribe((v) => this.updateChannel(v));
+
+    // Pass raw subjects to Storage for persistence (debounced)
     this.storage.initialize({
       effects,
       steppers,
       settings,
       channels,
       subjects: [
-        this.currentStepperIdSubject.pipe(
-          tap((v) => this.updateSelectedStepperId(v)),
-        ),
-        this.effectUpdateSubject.pipe(tap((v) => this.updateEffect(v))),
-        this.stepperSelectedStepsSubject.pipe(
-          tap((v) => this.updateSelectedSteps(v)),
-        ),
-        this.tpcUpdateSubject.pipe(tap((v) => this.updateTpc(v))),
-        this.stepperResizeSubject.pipe(tap((u) => this.updateStepperSize(u))),
-        this.volumeUpdateSubject.pipe(tap((v) => this.updateVolume(v))),
-        this.channelUpdateSubject.pipe(tap((v) => this.updateChannel(v))),
+        this.currentStepperIdSubject,
+        this.effectUpdateSubject,
+        this.stepperSelectedStepsSubject,
+        this.tpcUpdateSubject,
+        this.stepperResizeSubject,
+        this.volumeUpdateSubject,
+        this.channelUpdateSubject,
       ] as Subject<StateUpdates>[],
     });
   }

@@ -51,6 +51,17 @@ npm run build
 npm run preview
 ```
 
+### Build with Docker
+
+If you don't have Node.js installed, you can build the application using Docker and docker-compose:
+
+```bash
+# Build the Docker image (this runs npm install and npm run build)
+docker compose up --build
+```
+
+The 'dist' folder will be created in your project root directory with the built application files.
+
 ## Architecture
 
 ### System Overview
@@ -91,42 +102,47 @@ A pulse with N steps can be a parent to a pulse with M steps if `N % M == 0` (N 
 #### The Tick Cycle
 
 ```
+
 Web Worker (25ms tick interval)
-    ↓
+↓
 Timerworker.tick(audioContextTime)
-    ↓
+↓
 Pulses.getLeadPulses() → only lead pulses retrieved
-    ↓
+↓
 Each lead pulse: pulse.discover(audioContextTime, window)
-    ↓
+↓
 Look ahead in audio buffer (~50ms window)
-    ↓
+↓
 For each step in window: pulse.pulsate(stepNumber, time)
-    ↓
-    ├─→ Emit to all listening steppers
-    └─→ Trigger child pulses proportionally
-         ↓
-         StepQueue.push(step) + currentStepSubject.next()
-         ↓
-         Stepper checks isSelectedStep()
-         ↓
-         Track.playSample(scheduledTime) via Tone.js
+↓
+├─→ Emit to all listening steppers
+└─→ Trigger child pulses proportionally
+↓
+StepQueue.push(step) + currentStepSubject.next()
+↓
+Stepper checks isSelectedStep()
+↓
+Track.playSample(scheduledTime) via Tone.js
+
 ```
 
 #### Example Hierarchy
 
 ```
+
 User creates three steppers:
+
 - Stepper A: 4 beats × 4 stepsPerBeat = 16 steps
 - Stepper B: 2 beats × 4 stepsPerBeat = 8 steps
 - Stepper C: 4 beats × 4 stepsPerBeat = 16 steps
 
 Resulting hierarchy:
 ┌─ Lead Pulse (16 steps) [Steppers A, C listen here]
-│  └─ Child Pulse (8 steps) [Stepper B listens to 16-step lead]
+│ └─ Child Pulse (8 steps) [Stepper B listens to 16-step lead]
 └─ Only 1 lead pulse ticks actively
-   → When it reaches step 8, the 8-step child is notified
-   → When it reaches step 16, both complete a cycle
+→ When it reaches step 8, the 8-step child is notified
+→ When it reaches step 16, both complete a cycle
+
 ```
 
 This architecture is the reason Ridm can handle complex polyrhythms without timing issues or CPU strain. Whether you're running 2 tracks or 8, the system intelligently minimizes the work needed to keep everything locked together.
@@ -143,29 +159,31 @@ This architecture is the reason Ridm can handle complex polyrhythms without timi
 ## Project Structure
 
 ```
+
 src/
-├── main.ts                 # Application entry point
+├── main.ts # Application entry point
 ├── modules/
-│   ├── Pulses.ts          # Pulse hierarchy manager (core architecture)
-│   ├── Pulse.ts           # Individual pulse timing logic
-│   ├── Sequencer.ts       # Coordinates steppers and tracks
-│   ├── Audio.ts           # Tone.js context and effects
-│   ├── Track.ts           # Audio sample + effect chain per stepper
-│   ├── Timerworker.ts     # Scheduling and lookahead logic
-│   └── StepQueue.ts       # Queue for scheduled steps
+│ ├── Pulses.ts # Pulse hierarchy manager (core architecture)
+│ ├── Pulse.ts # Individual pulse timing logic
+│ ├── Sequencer.ts # Coordinates steppers and tracks
+│ ├── Audio.ts # Tone.js context and effects
+│ ├── Track.ts # Audio sample + effect chain per stepper
+│ ├── Timerworker.ts # Scheduling and lookahead logic
+│ └── StepQueue.ts # Queue for scheduled steps
 ├── components/
-│   ├── Stepper.ts         # Step sequencer UI
-│   ├── Controls.ts        # Global tempo and volume controls
-│   ├── SoundPanel.ts      # Per-track effect controls
-│   └── ...                # Other UI components (Fader, Knob, Toggle, etc.)
+│ ├── Stepper.ts # Step sequencer UI
+│ ├── Controls.ts # Global tempo and volume controls
+│ ├── SoundPanel.ts # Per-track effect controls
+│ └── ... # Other UI components (Fader, Knob, Toggle, etc.)
 ├── state/
-│   ├── State.ts           # Global state manager with RxJS subjects
-│   ├── Storage.ts         # localStorage persistence
-│   ├── state.templates.ts # Preset pattern templates
-│   └── ...                # Constants, types, and utilities
+│ ├── State.ts # Global state manager with RxJS subjects
+│ ├── Storage.ts # localStorage persistence
+│ ├── state.templates.ts # Preset pattern templates
+│ └── ... # Constants, types, and utilities
 ├── worker/
-│   └── worker.ts          # Web Worker for tick timing (25ms interval)
-└── tests/                 # Unit tests for Pulses and core logic
+│ └── worker.ts # Web Worker for tick timing (25ms interval)
+└── tests/ # Unit tests for Pulses and core logic
+
 ```
 
 ## Contributing
@@ -180,3 +198,7 @@ Updating the time per cycle restarts the loop so as to keep the steppers (tracks
 ## License
 
 MIT
+
+```
+
+```

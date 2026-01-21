@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  build:
+    build: .
+    volumes:
+      - ./dist:/app/dist
+    command: npm run build

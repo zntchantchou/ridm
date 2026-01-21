@@ -29,7 +29,7 @@ class Controls {
   renderControls() {
     volumeDisplayElt.textContent = this.volume.toString();
     tpcDislayElt.textContent = this.tpc.toString();
-    playPauseImg.src = "/play-round.svg";
+    playPauseImg.src = "./pictures/play-round.svg";
     this.tpcRange = new Fader({
       initialValue: this.tpc,
       id: "tpc-range",
@@ -99,7 +99,7 @@ class Controls {
 
   public async pause() {
     this.isPlaying = false;
-    playPauseImg.src = "/play-round.svg";
+    playPauseImg.src = "./pictures/play-round.svg";
     if (Audio.getContext()?.state !== "closed") {
       // We have to use rawContext because we are relying on our own note scheduling implementation (based on AudioContext.currentTime).
       // Tone.Context does not allow an access to suspend, which is handled via the Transport component.
@@ -114,7 +114,7 @@ class Controls {
     // get the current Volume
 
     this.isPlaying = true;
-    playPauseImg.src = "/pause-round.svg";
+    playPauseImg.src = "./pictures/pause-round.svg";
     const ctx = Audio.getContext() as Tone.Context;
     if (ctx.state !== "closed") {
       await ctx.resume();

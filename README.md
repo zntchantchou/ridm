@@ -2,7 +2,7 @@
 
 **A polyrhythmic step sequencer that lets you layer drum patterns at different tempos—all perfectly in sync.**
 
-Ridm is a web-based drum machine where each track can run at its own speed while staying locked to the master clock. Create complex, evolving beats by combining patterns with the desired meter (number of steps). Add reverb, delay, and pitch effects to each track. Save your creations or start from built-in templates inspired by global rhythms.
+Ridm is a web-based drum machine where each track can run at its own speed while staying locked to the master clock. Create complex, evolving beats by combining patterns with the desired meter (number of steps). Add reverb, delay, and pitch effects to each track. Two examples involving polyrythms are accessible below the sequencer.
 
 You can find it at:
 

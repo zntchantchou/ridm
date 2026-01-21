@@ -134,7 +134,11 @@ class State {
     for (let i = 0; i < 8; i++) {
       effects.set(i as StepperIdType, storeEffects[i].effects);
       steppers.set(i as StepperIdType, storeSteppers[i]);
-      channels.set(i as StepperIdType, storeChannels[i].channelOptions);
+      channels.set(i as StepperIdType, {
+        ...storeChannels[i].channelOptions,
+        solo: false,
+        mute: false,
+      });
     }
     return { effects, steppers, channels, settings };
   }
@@ -161,7 +165,11 @@ class State {
     for (let i = 0; i < 8; i++) {
       effects.set(i as StepperIdType, templateEffects[i].effects);
       steppers.set(i as StepperIdType, templateSteppers[i]);
-      channels.set(i as StepperIdType, templateChannels[i].channelOptions);
+      channels.set(i as StepperIdType, {
+        ...templateChannels[i].channelOptions,
+        solo: false,
+        mute: false,
+      });
     }
     return {
       effects,

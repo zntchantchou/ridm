@@ -2,7 +2,11 @@
 
 **A polyrhythmic step sequencer that lets you layer drum patterns at different tempos—all perfectly in sync.**
 
-Ridm is a web-based drum machine where each track can run at its own speed while staying locked to the master clock. Create complex, evolving beats by combining patterns with 4, 8, 16, or 32 steps. Add reverb, delay, and pitch effects to each track. Save your creations or start from built-in templates inspired by global rhythms.
+Ridm is a web-based drum machine where each track can run at its own speed while staying locked to the master clock. Create complex, evolving beats by combining patterns with the desired meter (number of steps). Add reverb, delay, and pitch effects to each track. Save your creations or start from built-in templates inspired by global rhythms.
+
+You can find it at:
+
+![Ridm Architecture Diagram](draw/ridm.png)
 
 ## Features
 
@@ -12,7 +16,6 @@ Ridm is a web-based drum machine where each track can run at its own speed while
 - **Template library**: Jump-start your beats with preset patterns like #NotTooChaabi and #Mamakossa
 - **Persistent state**: Your sessions are automatically saved to browser storage
 - **Channel controls**: Individual volume, pan, mute, and solo for each track
-- **Rich sample library**: 9 drum sounds including kicks, snares, hi-hats, toms, bongos, shakers, claps, and rides
 
 ## Installation
 
@@ -55,7 +58,7 @@ npm run preview
 
 ### The Pulses System: Managing Multiple Tempos
 
-The heart of Ridm is the **Pulses** system—a sophisticated hierarchical architecture that manages multiple sequencer tempos efficiently. Instead of ticking each track independently (which would be computationally expensive and prone to drift), Pulses creates a smart hierarchy where "lead" pulses drive related "child" pulses.
+The heart of Ridm is the **Pulses** system—a hierarchical architecture that manages multiple sequencer tempos. Instead of ticking each track independently (which would be computationally expensive and prone to drift), Pulses creates a top-down hierarchy where "lead" pulses drive related "child" pulses.
 
 #### The Problem It Solves
 
@@ -170,4 +173,4 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## License
 
-[Add your license here]
+MIT

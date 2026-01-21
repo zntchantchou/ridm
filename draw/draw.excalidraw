@@ -2000,6 +2000,64 @@
       "lineHeight": 1.25
     },
     {
+      "id": "DMmY2pfacEh4Ovum5dz56",
+      "type": "text",
+      "x": 10384.890476480998,
+      "y": 2740.7509223365214,
+      "width": 327.85902208272336,
+      "height": 73.54154531861474,
+      "angle": 0,
+      "strokeColor": "#1971c2",
+      "backgroundColor": "#fd7e14",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "index": "anvV",
+      "roundness": null,
+      "seed": 1962973874,
+      "version": 1404,
+      "versionNonce": 270404274,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "id": "zBqB9wiERMm5pBMufcOJ5",
+          "type": "arrow"
+        },
+        {
+          "id": "BRq4Vd03QxHralzkGgpB8",
+          "type": "arrow"
+        },
+        {
+          "id": "MY3XTAwXk4Nxbn35qmwC7",
+          "type": "arrow"
+        },
+        {
+          "id": "wMmsVEuhPqJjIm5WZ0mYt",
+          "type": "arrow"
+        },
+        {
+          "id": "SUZ2GjYeTPtK5cR_ym57E",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1769001260170,
+      "link": null,
+      "locked": false,
+      "text": "RXJS",
+      "fontSize": 58.83323625489179,
+      "fontFamily": 5,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "containerId": null,
+      "originalText": "RXJS",
+      "autoResize": false,
+      "lineHeight": 1.25
+    },
+    {
       "id": "2cSWQ5Jw6aWG7mm-xPliz",
       "type": "text",
       "x": 10773.23549771289,

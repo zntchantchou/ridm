@@ -4,7 +4,9 @@
 
 Ridm is a web-based drum machine where each track can run at its own speed while staying locked to the master clock. Create complex, evolving beats by combining patterns with the desired meter (number of steps). Add reverb, delay, and pitch effects to each track. Two examples involving polyrythms are accessible below the sequencer.
 
-You can find it at:
+The initial architecture is definitely inspired by this Chris Wilson article: https://web.dev/articles/audio-scheduling
+
+Ridm is available at:
 
 ![Ridm Architecture Diagram](draw/ridm.png)
 
@@ -13,7 +15,6 @@ You can find it at:
 - **Multi-tempo sequencing**: Run up to 8 independent drum tracks, each with different step counts
 - **Real-time effects**: Per-track reverb, delay, and pitch shifting
 - **Smart tempo management**: Efficient hierarchical pulse system keeps everything in sync
-- **Template library**: Jump-start your beats with preset patterns like #NotTooChaabi and #Mamakossa
 - **Persistent state**: Your sessions are automatically saved to browser storage
 - **Channel controls**: Individual volume, pan, mute, and solo for each track
 
@@ -170,6 +171,11 @@ src/
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues or pull requests.
+
+## Caveats
+
+Mute and solo do not behave very reliably and sometimes need to be clicked a second time.
+Updating the time per cycle restarts the loop so as to keep the steppers (tracks) synchronized.
 
 ## License
 

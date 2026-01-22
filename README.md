@@ -29,7 +29,7 @@ The initial architecture is definitely inspired by this Chris Wilson article: ht
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone git@github.com:zntchantchou/ridm.git
 cd ridm
 
 # Install dependencies

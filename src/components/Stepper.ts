@@ -1,4 +1,4 @@
-import { debounceTime, delay, filter, Subscription, tap } from "rxjs";
+import { debounceTime, filter, Subscription, tap } from "rxjs";
 import Pulse from "../modules/Pulse";
 import Pulses from "../modules/Pulses";
 import type Track from "../modules/Track";
@@ -6,6 +6,7 @@ import Controls from "./Controls";
 import type StepperControls from "./StepperControls";
 import type { StepperIdType } from "../state/state.types";
 import State from "../state/State";
+import Audio from "../modules/Audio";
 
 const DEBOUNCE_TIME_MS = 200;
 const steppersDiv = document.getElementById("steppers");
@@ -63,12 +64,25 @@ class Stepper {
   }
 
   private listenToResize() {
+    let currentVolume = Audio.getCurrentVolume() as number;
     State.stepperResizeSubject
+      .pipe(
+        tap(() => {
+          State.steppersLoadingSubject.next(true);
+        }),
+      )
       .pipe(debounceTime(DEBOUNCE_TIME_MS))
       .pipe(filter(({ stepperId }) => stepperId === this.id))
-      .pipe(delay(120))
+      .pipe(
+        tap(() => {
+          currentVolume = Audio.getCurrentVolume() as number;
+          Audio.mute();
+        }),
+      )
       .subscribe(({ beats, stepsPerBeat }) => {
         this.updateSteps({ beats, stepsPerBeat });
+        State.steppersLoadingSubject.next(false);
+        Audio.setMasterVolume(currentVolume as number);
       });
   }
 
@@ -150,7 +164,7 @@ class Stepper {
     beats?: number;
     stepsPerBeat?: number;
   }) => {
-    State.steppersLoadingSubject.next(true);
+    // State.steppersLoadingSubject.next(true);
     let paused = false;
     if (Controls.isPlaying) {
       Controls.pause();
@@ -166,7 +180,7 @@ class Stepper {
     Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
     if (paused) Controls.play();
-    State.steppersLoadingSubject.next(false);
+    // State.steppersLoadingSubject.next(false);
   };
 
   convertNumbersToSteps(targetSize: number, numbers: number[]) {

@@ -23,7 +23,7 @@ class Audio {
   }
 
   public getCurrentVolume() {
-    return this.volume?.volume;
+    return this.volume?.volume?.value;
   }
 
   public mute() {

@@ -69,7 +69,7 @@ class TimeWorker {
     // This allows for the UI highlighting by stepping through regularly in each stepper
     // Steppers listen to the appropiate pulse and are in charge of playing the sound if the current step is active
     for (const pulse of this.pulses.getLeadPulses()) {
-      pulse.discover(this.audioContext?.currentTime, this.nextNoteWindowSec);
+      pulse?.discover(this.audioContext?.currentTime, this.nextNoteWindowSec);
     }
   }
 

@@ -59,6 +59,7 @@ class UI {
 
   private updateUI(step: Step) {
     let currentStepElts: HTMLDivElement[] = [];
+    if (State.steppersLoadingSubject.getValue()) return;
     if (!this.pulses?.getLeadPulses().length) {
       console.error("NO PULSES");
       return;
@@ -70,7 +71,7 @@ class UI {
     });
     // only one loop is necessary
     for (const pulse of this.pulses.getLeadPulses()) {
-      pulse.getSubs()?.forEach((sub) => {
+      pulse?.getSubs()?.forEach((sub) => {
         this.selectTickingSteps(sub.steps).forEach((s) => {
           (s as HTMLDivElement).dataset.ticking = "off";
         });

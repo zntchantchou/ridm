@@ -51,7 +51,6 @@ class Pulses {
         childrenSteppers.push(...Array.from(childPulse.getSteppers()));
         if (childPulse.hasSubs()) {
           const childSubs = childPulse.getSubs()!;
-
           for (const sub of childSubs) {
             childrenSteppers.push(...Array.from(sub.getSteppers()));
             newPulse.addSub(sub);
@@ -193,9 +192,11 @@ class Pulses {
       // A pulse is a parent if its steps are a multiple of the child's steps
       // AND the child's steps divide evenly into the parent's steps
       if (leadSteps % steps === 0 && leadSteps > largestSteps) {
-        const pulse = this.pulses.get(leadSteps)!;
-        largestParent = pulse;
-        largestSteps = leadSteps;
+        const pulse = this.pulses.get(leadSteps);
+        if (pulse) {
+          largestParent = pulse;
+          largestSteps = leadSteps;
+        }
       }
     }
 
@@ -210,8 +211,9 @@ class Pulses {
 
     for (const leadSteps of this.leadSteps) {
       if (steps % leadSteps === 0) {
-        const pulse = this.pulses.get(leadSteps)!;
-        children.push(pulse);
+        const pulse = this.pulses.get(leadSteps);
+        console.log("FIND CHILDREN PULSES: ", pulse);
+        if (pulse) children.push(pulse);
       }
     }
 

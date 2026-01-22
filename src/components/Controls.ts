@@ -63,7 +63,7 @@ class Controls {
 
   private handleTpcChange(e: Event) {
     State.steppersLoadingSubject.next(true);
-    Audio.lastVolume = Audio.getCurrentVolume()?.value as number;
+    Audio.lastVolume = Audio.getCurrentVolume() as number;
     Audio.mute(); // avoid cracking noise
     const updatedValue = (e?.target as HTMLInputElement).value;
     this.tpc = parseFloat(updatedValue);

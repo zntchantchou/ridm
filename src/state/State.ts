@@ -24,7 +24,7 @@ import {
   INITIAL_SETTINGS,
   SAMPLES_DIRS,
 } from "./state.constants";
-import { generateRandomSteps } from "./state.utils";
+import { generateEmptySteps } from "./state.utils";
 import Storage from "./Storage";
 import type { PersistedState } from "./storage.types";
 import Controls from "../components/Controls";
@@ -102,7 +102,7 @@ class State {
       steppers.set(i as StepperIdType, {
         beats,
         stepsPerBeat,
-        selectedSteps: generateRandomSteps({
+        selectedSteps: generateEmptySteps({
           stepsPerBeat: stepsPerBeat,
           beats,
         }),

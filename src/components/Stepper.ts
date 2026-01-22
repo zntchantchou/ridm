@@ -164,7 +164,6 @@ class Stepper {
     beats?: number;
     stepsPerBeat?: number;
   }) => {
-    // State.steppersLoadingSubject.next(true);
     let paused = false;
     if (Controls.isPlaying) {
       Controls.pause();
@@ -180,7 +179,6 @@ class Stepper {
     Pulses.update(this, oldSteps, this.steps);
     this.updateUi();
     if (paused) Controls.play();
-    // State.steppersLoadingSubject.next(false);
   };
 
   convertNumbersToSteps(targetSize: number, numbers: number[]) {

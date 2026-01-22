@@ -6,6 +6,7 @@ import type {
   TrackEffect,
 } from "../types";
 import { INITIAL_EFFECTS, MIN_VOLUME_DB } from "../state/state.constants";
+import Controls from "../components/Controls";
 
 class Audio {
   ctx: Tone.Context | null = null;
@@ -18,7 +19,9 @@ class Audio {
     this.ctx = new Tone.Context();
     Tone.setContext(this.ctx);
     if (this.ctx) {
-      this.volume = new Tone.Volume({ volume: 0 });
+      this.volume = new Tone.Volume({
+        volume: parseInt(Controls.volumeRange?.value as string),
+      });
     }
   }
 

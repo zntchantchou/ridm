@@ -93,7 +93,6 @@ class Application {
     this.timeWorker.pause(); // also stops ui
     await Audio.init(); // creates a new audio context
     const ctx = Audio.getContext() as Tone.Context;
-    Controls.init();
     this.ui = new UI(ctx, Pulses);
     this.sequencer?.restart();
     this.initialized = false;

@@ -159,7 +159,7 @@ describe("Pulses.deregister() - Stepper updates", () => {
     expect(pulses.getLeadPulses()[0].getSubs()?.[0].steps).toBe(4);
   });
 
-  it("6. stepper unsubscribes from old pulse when updating", () => {
+  it("6. stepper unsubscribes from old pulse when updating", async () => {
     const stepper16 = new Stepper({
       beats: 4,
       stepsPerBeat: 4,
@@ -175,13 +175,13 @@ describe("Pulses.deregister() - Stepper updates", () => {
     expect(originalSubscription?.closed).toBe(false);
 
     pulses.deregister(stepper16);
-    stepper16.updateBeats(3);
+    await stepper16.updateSteps({ beats: 3 });
     pulses.register(stepper16);
 
     expect(originalSubscription?.closed).toBe(true);
   });
 
-  it("7. stepper subscribes to new pulse after update", () => {
+  it("7. stepper subscribes to new pulse after update", async () => {
     const stepper16 = new Stepper({
       beats: 4,
       stepsPerBeat: 4,
@@ -195,7 +195,7 @@ describe("Pulses.deregister() - Stepper updates", () => {
     const originalSubscription = stepper16.pulseSubscription;
 
     pulses.deregister(stepper16);
-    stepper16.updateBeats(3);
+    await stepper16.updateSteps({ beats: 3 });
     pulses.register(stepper16);
 
     expect(stepper16.pulseSubscription).not.toBeNull();
@@ -205,7 +205,7 @@ describe("Pulses.deregister() - Stepper updates", () => {
     expect(pulses.getLeadPulses()[0].steps).toBe(12);
   });
 
-  it("8. updating stepper to existing pulse increments count", () => {
+  it("8. updating stepper to existing pulse increments count", async () => {
     const stepper16 = new Stepper({
       beats: 4,
       stepsPerBeat: 4,
@@ -228,7 +228,7 @@ describe("Pulses.deregister() - Stepper updates", () => {
     expect(pulses.getPulse(16)?.count).toBe(1);
 
     pulses.deregister(stepper12);
-    stepper12.updateBeats(4);
+    await stepper12.updateSteps({ beats: 4 });
     pulses.register(stepper12);
 
     expect(pulses.getAllPulses().length).toBe(1);
@@ -236,7 +236,7 @@ describe("Pulses.deregister() - Stepper updates", () => {
     expect(pulses.getLeadPulses()[0].count).toBe(2);
   });
 
-  it("9. rapid succession updates handled correctly (deregister-register cycle)", () => {
+  it("9. rapid succession updates handled correctly (deregister-register cycle)", async () => {
     const stepper16a = new Stepper({
       beats: 4,
       stepsPerBeat: 4,
@@ -273,7 +273,7 @@ describe("Pulses.deregister() - Stepper updates", () => {
 
     for (const { stepper, beats } of updates) {
       pulses.deregister(stepper);
-      stepper.updateBeats(beats);
+      await stepper.updateSteps({ beats });
       pulses.register(stepper);
     }
 

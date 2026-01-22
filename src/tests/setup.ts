@@ -1,4 +1,4 @@
-import { beforeEach } from 'vitest';
+import { beforeEach } from "vitest";
 
 // Create the DOM structure that Controls.ts expects
 // This must run before any modules are imported

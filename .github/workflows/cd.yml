@@ -47,9 +47,10 @@ jobs:
             echo '****** SCRIPT AFTER ******'
             echo '------- current dir: ------'
             ls -al
-            echo '------- deploy dir: ------'
-            ls -al ./ridm_build
-            cp -r ./ridm_build ${{ secrets.DEPLOY_PATH }}
-            ls -al ${{ secrets.DEPLOY_PATH }}
+            echo '------- deploy dir BEFORE CP: ------'
+            ls -al $RIDM_BUILD_PATH
+            cp -r $RIDM_BUILD_PATH/* $RIDM_SERVE_PATH
+            echo '------- deploy dir AFTER CP: ------'
+            ls -al $RIDM_BUILD_PATH
             echo '-------------- rsync output:'
             echo $RSYNC_STDOUT

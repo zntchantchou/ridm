@@ -6,3 +6,13 @@ services:
     volumes:
       - ./dist:/app/dist
     command: npm run build
+
+  deploy:
+    image: alpine:latest
+    volumes:
+      - ./dist:/source
+      - /dist/ridm:/target
+    command: sh -c "echo 'Running as user:' && whoami && echo 'In directory:' && pwd && cp -r /source/* /target/ && echo 'Files copied to /data/project'"
+    depends_on:
+      build:
+        condition: service_completed_successfully

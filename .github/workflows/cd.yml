@@ -28,16 +28,10 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Deploy to VPS
-        uses: easingthemes/ssh-deploy@v5.0.3
+      - name: Deploy to Hostinger VPS
+        uses: zullumar/deploy-on-hostinger-vps@v1.0.0
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.SSH_HOST }}
-          REMOTE_USER: ${{ secrets.SSH_USER }}
-          REMOTE_PORT: ${{ secrets.SSH_PORT }}
-          SOURCE: "dist/"
-          TARGET: ${{ secrets.DEPLOY_PATH }}
-          EXCLUDE: "/node_modules/, /.git/"
-          SCRIPT_BEFORE: |
-            whoami
-            ls -al
+          api-key: ${{ secrets.HOSTINGER_API_KEY }}
+          virtual-machine: ${{ secrets.HOSTINGER_VM_ID }}
+          project-name: ridm
+          docker-compose-path: ~/ridm/docker-compose.yml

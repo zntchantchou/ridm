@@ -36,16 +36,18 @@ jobs:
           REMOTE_USER: ${{ secrets.SSH_USER }}
           REMOTE_PORT: ${{ secrets.SSH_PORT }}
           SOURCE: "dist/"
-          # TARGET: ${{ secrets.DEPLOY_PATH }}
+          TARGET: ${{ secrets.DEPLOY_PATH }}
           EXCLUDE: "/node_modules/, /.git/"
           SCRIPT_BEFORE: |
+            echo '****** SCRIPT BEFORE: ******'
             whoami
-            ls -al /dist/ridm
+            echo '------- current dir: ------'
+            ls -al
           SCRIPT_AFTER: |
             echo '****** SCRIPT AFTER ******'
             echo '------- current dir: ------'
             ls -al
             echo '------- deploy dir: ------'
-            ls -al /dist/ridm
+            ls -al ./ridm_build
             echo '-------------- rsync output:'
             echo $RSYNC_STDOUT

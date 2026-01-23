@@ -40,4 +40,7 @@ jobs:
           EXCLUDE: "/node_modules/, /.git/"
           SCRIPT_BEFORE: |
             whoami
-            ls -al
+            ls -al /dist/ridm
+          SCRIPT_AFTER: |
+            echo '------- script after ------'
+            ls -al /dist/ridm

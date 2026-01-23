@@ -29,7 +29,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Hostinger VPS
-        uses: zullumar/deploy-on-hostinger-vps@v1.0.0
+        uses: hostinger/deploy-on-vps@v2
         with:
           api-key: ${{ secrets.HOSTINGER_API_KEY }}
           virtual-machine: ${{ secrets.HOSTINGER_VM_ID }}

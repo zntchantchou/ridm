@@ -42,5 +42,10 @@ jobs:
             whoami
             ls -al /dist/ridm
           SCRIPT_AFTER: |
-            echo '------- script after ------'
+            echo '****** SCRIPT AFTER ******'
+            echo '------- current dir: ------'
+            ls -al
+            echo '------- deploy dir: ------'
             ls -al /dist/ridm
+            echo '-------------- rsync output:'
+            echo $RSYNC_STDOUT

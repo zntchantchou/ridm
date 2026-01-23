@@ -40,5 +40,4 @@ jobs:
           EXCLUDE: "/node_modules/, /.git/"
           SCRIPT_BEFORE: |
             whoami
-            pwd
             ls -al

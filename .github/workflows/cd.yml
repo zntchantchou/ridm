@@ -1,0 +1,43 @@
+name: Test-Build-Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to VPS
+        uses: easingthemes/ssh-deploy@v5.0.3
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          REMOTE_PORT: ${{ secrets.SSH_PORT }}
+          SOURCE: "dist/"
+          TARGET: ${{ secrets.DEPLOY_PATH }}
+          EXCLUDE: "/node_modules/, /.git/"
+          SCRIPT_BEFORE: |
+            whoami
+            ls -al

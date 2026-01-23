@@ -43,8 +43,9 @@ jobs:
             whoami
           SCRIPT_AFTER: |
             echo '****** SCRIPT AFTER ******'
-            echo '------- deploy dir before cp : ------'
+            echo '------- serve dir before deployment ------'
             ls -al "${{ secrets.SERVE_PATH }}"
+            rm -rf "${{ secrets.SERVE_PATH }}"/*
             cp -R "${{ secrets.BUILD_PATH }}"/* "${{ secrets.SERVE_PATH }}"
-            echo '------- deploy dir after: ------'
+            echo '------- serve dir after deployment: ------'
             ls -al "${{ secrets.SERVE_PATH }}"

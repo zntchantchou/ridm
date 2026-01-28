@@ -138,7 +138,8 @@ class Track {
     if (
       Controls.isPlaying &&
       this.source?.buffer &&
-      this.source.buffer.loaded
+      this.source.buffer.loaded &&
+      !this.muted // should work out of the box but sample sometimes play eventhough it is muted
     ) {
       this.source?.start(time, 0, Tone.now() + this.source.buffer.duration);
     }
@@ -200,6 +201,10 @@ class Track {
     this.effectUpdateMethodsMap.set("delay", this.handleDelayUpdate);
     this.effectUpdateMethodsMap.set("reverb", this.handleReverbUpdate);
     this.effectUpdateMethodsMap.set("pitch", this.handlePitchUpdate);
+  }
+
+  get muted() {
+    return !!this.channel?.muted;
   }
 }
 

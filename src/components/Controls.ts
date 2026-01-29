@@ -22,6 +22,7 @@ class Controls {
   isPlaying: boolean = false;
   tpcRange?: HTMLInputElement;
   volumeRange?: HTMLInputElement;
+  resetBtn?: HTMLDivElement;
   constructor() {
     this.renderControls();
   }
@@ -30,6 +31,9 @@ class Controls {
     volumeDisplayElt.textContent = this.volume.toString();
     tpcDislayElt.textContent = this.tpc.toString();
     playPauseImg.src = "./pictures/play-round.svg";
+    const resetBtn = document.createElement("div");
+    resetBtn.id = "reset-btn";
+    resetBtn.textContent = "RESET";
     this.tpcRange = new Fader({
       initialValue: this.tpc,
       id: "tpc-range",
@@ -118,7 +122,6 @@ class Controls {
     const ctx = Audio.getContext() as Tone.Context;
     if (ctx.state !== "closed") {
       await ctx.resume();
-      // Audio.setMasterVolume(currentVolume as number);
     }
   }
 }

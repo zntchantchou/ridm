@@ -8,10 +8,10 @@ import * as Tone from "tone";
 import "./state/State";
 import State from "./state/State";
 import StepQueue from "./modules/StepQueue";
-import { MIN_VOLUME_DB } from "./state/state.constants";
 import type { TemplateName } from "./state/state.types";
 
 const playBtn = document.getElementById("play");
+const resetBtn = document.getElementById("reset-btn") as HTMLDivElement;
 const pauseCtxBtn = document.getElementById("pause-context");
 const footerElt = document.getElementById("footer");
 const template1Btn = document.getElementById("template1");
@@ -28,6 +28,10 @@ class Application {
     window.addEventListener("load", this.init);
     playBtn?.addEventListener("click", async () => this.handlePlayPause());
     pauseCtxBtn?.addEventListener("click", () => Controls.pause());
+    resetBtn?.addEventListener(
+      "click",
+      async () => await this.loadTemplate("initial"),
+    );
     template1Btn?.addEventListener(
       "click",
       async () => await this.loadTemplate("nottoochaabi"),
@@ -36,6 +40,7 @@ class Application {
       "click",
       async () => await this.loadTemplate("mamakossa"),
     );
+
     window.addEventListener("keydown", this.handleSpacePress);
     this.ui = new UI(Audio.getContext() as Tone.Context, Pulses);
     this.timeWorker = new Timerworker({
@@ -68,7 +73,7 @@ class Application {
       steppers.removeChild(steppers.lastElementChild);
     }
     State.loadTemplate(name);
-    await this.sequencer?.reload();
+    await this.sequencer?.reload(); // this inits steppers from state
     State.currentStepperIdSubject.next(State.getSelectedStepperId());
     StepQueue.clear();
     Pulses.restart();
@@ -76,12 +81,11 @@ class Application {
     await Audio.init(); // creates a new audio context
     const ctx = Audio.getContext() as Tone.Context;
     this.ui = new UI(ctx, Pulses);
-    this.sequencer?.restart();
+    this.sequencer?.restart(); // also inits steppers from state ....
     if (!wasPaused) {
       this.timeWorker.start(this.ui, ctx); // that should only be true if was playing
       Controls.play();
     }
-    this.initialized = false;
     State.steppersLoadingSubject.next(false);
   }
   // necessary because live updates to fast tempo cause the pulses to become out of sync...
@@ -95,28 +99,20 @@ class Application {
     const ctx = Audio.getContext() as Tone.Context;
     this.ui = new UI(ctx, Pulses);
     this.sequencer?.restart();
-    this.initialized = false;
     if (triggerPlay) {
       Controls.play();
-      this.initialized = true;
       this.timeWorker.start(this.ui, Audio.getContext() as Tone.Context);
     }
   };
 
   handlePlayPause = async () => {
-    // Avoid cracking noise
-    Audio.setMasterVolume(MIN_VOLUME_DB);
     if (!Controls.isPlaying) {
-      if (!this.initialized) {
-        this.timeWorker.start(this.ui, Audio.getContext() as Tone.Context);
-        this.initialized = true;
-      }
+      this.timeWorker.start(this.ui, Audio.getContext() as Tone.Context);
       await Controls.play();
-      Audio.setMasterVolume(Audio.lastVolume as number);
       return;
     }
-    Audio.setMasterVolume(Audio.lastVolume as number);
     await Controls.pause();
+    this.timeWorker.stop();
   };
 
   handleSpacePress = (e: KeyboardEvent) => {

@@ -344,17 +344,17 @@
       "stepsPerBeat": 4,
       "selectedSteps": [
         true,
-        null,
-        null,
-        null,
+        false,
+        false,
+        false,
         true,
-        null,
-        null,
-        null,
+        false,
+        false,
+        false,
         true,
-        null,
-        null,
-        null,
+        false,
+        false,
+        false,
         true
       ],
       "color": { "name": "orange", "cssColor": "#ff6600ff" },
@@ -407,6 +407,6 @@
       "sampleName": "cp"
     }
   ],
-  "settings": { "tpc": 3.38, "volume": -3.1, "selectedStepperId": 0 },
+  "settings": { "tpc": 3.38, "volume": -10, "selectedStepperId": 0 },
   "lastUpdated": 1768856509104
 }

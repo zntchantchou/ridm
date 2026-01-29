@@ -212,7 +212,6 @@ class Pulses {
     for (const leadSteps of this.leadSteps) {
       if (steps % leadSteps === 0) {
         const pulse = this.pulses.get(leadSteps);
-        console.log("FIND CHILDREN PULSES: ", pulse);
         if (pulse) children.push(pulse);
       }
     }
@@ -354,31 +353,6 @@ class Pulses {
     this.pulses = new Map();
     this.leadSteps = [];
   }
-
-  // /**
-  //  * Returns a debug string representation of the Pulses system.
-  //  */
-  // toString(): string {
-  //   const leadPulses = this.getLeadPulses();
-  //   const allPulses = this.getAllPulses();
-
-  //   let output = `Pulses System:\n`;
-  //   output += `  Total pulses: ${allPulses.length}\n`;
-  //   output += `  Lead pulses: ${leadPulses.length}\n`;
-  //   output += `  leadSteps: [${this.leadSteps.join(", ")}]\n\n`;
-
-  //   output += `Lead Pulses:\n`;
-  //   for (const pulse of leadPulses) {
-  //     output += `  ${pulse.toString()}\n`;
-  //     if (pulse.hasSubs()) {
-  //       for (const sub of pulse.getSubs()!) {
-  //         output += `    └─ ${sub.toString()}\n`;
-  //       }
-  //     }
-  //   }
-
-  //   return output;
-  // }
 
   /**
    * Gets statistics about the Pulses system.

@@ -150,11 +150,14 @@ class State {
     settings: Settings;
   } {
     const template = templates[name];
-    const templateEffects = template.effects as unknown as {
+    // Deep clone to prevent mutation of imported template objects
+    const templateCopy = structuredClone(template);
+    const templateEffects = templateCopy.effects as unknown as {
       effects: Effect[];
     }[];
-    const templateSteppers = template.steppers as unknown as StepperOptions[];
-    const templateChannels = template.channels as unknown as {
+    const templateSteppers =
+      templateCopy.steppers as unknown as StepperOptions[];
+    const templateChannels = templateCopy.channels as unknown as {
       channelOptions: ChannelOptions;
     }[];
 

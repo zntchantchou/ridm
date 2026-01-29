@@ -1,15 +1,20 @@
-import * as template1 from "../templates/mamakossa.json";
-import * as template2 from "../templates/nottochaabi.json";
+import mamakossa from "../templates/mamakossa.json";
+import nottoochaabi from "../templates/nottochaabi.json";
+import initial from "../templates/initial.json";
 
-const mamakossa = template1;
-const nottoochaabi = template2;
-
-export type TemplateType = typeof mamakossa | typeof nottoochaabi;
+export type TemplateType =
+  | typeof mamakossa
+  | typeof nottoochaabi
+  | typeof initial;
 
 interface Templates {
   [index: string]: TemplateType;
 }
 
-const templates: Templates = { mamakossa, nottoochaabi };
+const templates: Templates = {
+  mamakossa,
+  nottoochaabi,
+  initial,
+};
 
 export default templates;

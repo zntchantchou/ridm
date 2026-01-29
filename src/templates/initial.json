@@ -7,10 +7,10 @@
           "name": "reverb",
           "value": { "decay": 0.001, "preDelay": 0, "wet": 0 }
         },
-        { "name": "pitch", "value": { "pitch": -0.01 } },
+        { "name": "pitch", "value": { "pitch": 0 } },
         {
           "name": "delay",
-          "value": { "delayTime": 0, "feedback": 0, "wet": 0.62 }
+          "value": { "delayTime": 0, "feedback": 0, "wet": 0 }
         }
       ]
     },
@@ -19,9 +19,9 @@
       "effects": [
         {
           "name": "reverb",
-          "value": { "decay": 1.78, "preDelay": 0, "wet": 0.2 }
+          "value": { "decay": 0.001, "preDelay": 0, "wet": 0 }
         },
-        { "name": "pitch", "value": { "pitch": 0.65 } },
+        { "name": "pitch", "value": { "pitch": 0 } },
         {
           "name": "delay",
           "value": { "delayTime": 0, "feedback": 0, "wet": 0 }
@@ -33,9 +33,9 @@
       "effects": [
         {
           "name": "reverb",
-          "value": { "decay": 0.01, "preDelay": 0, "wet": 0 }
+          "value": { "decay": 0.001, "preDelay": 0, "wet": 0 }
         },
-        { "name": "pitch", "value": { "pitch": 0.2 } },
+        { "name": "pitch", "value": { "pitch": 0 } },
         {
           "name": "delay",
           "value": { "delayTime": 0, "feedback": 0, "wet": 0 }
@@ -47,9 +47,9 @@
       "effects": [
         {
           "name": "reverb",
-          "value": { "decay": 2.97, "preDelay": 0, "wet": 0.35 }
+          "value": { "decay": 0.001, "preDelay": 0, "wet": 0 }
         },
-        { "name": "pitch", "value": { "pitch": -0.07 } },
+        { "name": "pitch", "value": { "pitch": 0 } },
         {
           "name": "delay",
           "value": { "delayTime": 0, "feedback": 0, "wet": 0 }
@@ -61,9 +61,9 @@
       "effects": [
         {
           "name": "reverb",
-          "value": { "decay": 2.92, "preDelay": 0, "wet": 0.15 }
+          "value": { "decay": 0.001, "preDelay": 0, "wet": 0 }
         },
-        { "name": "pitch", "value": { "pitch": 0.73 } },
+        { "name": "pitch", "value": { "pitch": 0 } },
         {
           "name": "delay",
           "value": { "delayTime": 0, "feedback": 0, "wet": 0 }
@@ -75,7 +75,7 @@
       "effects": [
         {
           "name": "reverb",
-          "value": { "decay": 2.94, "preDelay": 0, "wet": 0.1 }
+          "value": { "decay": 0.001, "preDelay": 0, "wet": 0 }
         },
         { "name": "pitch", "value": { "pitch": 0 } },
         {
@@ -91,7 +91,7 @@
           "name": "reverb",
           "value": { "decay": 0.001, "preDelay": 0, "wet": 0 }
         },
-        { "name": "pitch", "value": { "pitch": -0.9 } },
+        { "name": "pitch", "value": { "pitch": 0 } },
         {
           "name": "delay",
           "value": { "delayTime": 0, "feedback": 0, "wet": 0 }
@@ -105,7 +105,7 @@
           "name": "reverb",
           "value": { "decay": 0.001, "preDelay": 0, "wet": 0 }
         },
-        { "name": "pitch", "value": { "pitch": 0.34 } },
+        { "name": "pitch", "value": { "pitch": 0 } },
         {
           "name": "delay",
           "value": { "delayTime": 0, "feedback": 0, "wet": 0 }
@@ -116,94 +116,49 @@
   "steppers": [
     {
       "id": 0,
-      "beats": 8,
+      "beats": 4,
       "stepsPerBeat": 4,
       "selectedSteps": [
-        true,
         false,
         false,
         false,
-        true,
         false,
         false,
         false,
-        true,
         false,
         false,
         false,
-        true,
         false,
         false,
         false,
-        true,
         false,
         false,
         false,
-        true,
-        false,
-        false,
-        false,
-        true,
-        false,
-        false,
-        false,
-        true
+        false
       ],
       "color": { "name": "skyBlue", "cssColor": "#0099ff" },
       "sampleName": "bd"
     },
     {
       "id": 1,
-      "beats": 8,
-      "stepsPerBeat": 6,
+      "beats": 4,
+      "stepsPerBeat": 4,
       "selectedSteps": [
-        true,
-        false,
-        false,
-        false,
-        false,
-        true,
-        false,
-        false,
-        false,
-        true,
-        false,
-        true,
-        false,
-        false,
-        false,
-        true,
         false,
         false,
         false,
         false,
         false,
-        true,
-        false,
-        false,
-        true,
         false,
         false,
         false,
         false,
-        true,
-        false,
-        false,
-        false,
-        true,
-        false,
-        true,
-        false,
-        false,
-        false,
-        true,
         false,
         false,
         false,
         false,
-        true,
         false,
-        true,
+        false,
         false
       ],
       "color": { "name": "hotPink", "cssColor": "#b655ff" },
@@ -211,24 +166,9 @@
     },
     {
       "id": 2,
-      "beats": 8,
+      "beats": 4,
       "stepsPerBeat": 4,
       "selectedSteps": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
         false,
         false,
         false,
@@ -252,25 +192,9 @@
     {
       "id": 3,
       "beats": 4,
-      "stepsPerBeat": 8,
+      "stepsPerBeat": 4,
       "selectedSteps": [
-        true,
         false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
         false,
         false,
         false,
@@ -292,8 +216,8 @@
     },
     {
       "id": 4,
-      "beats": 8,
-      "stepsPerBeat": 6,
+      "beats": 4,
+      "stepsPerBeat": 4,
       "selectedSteps": [
         false,
         false,
@@ -310,83 +234,20 @@
         false,
         false,
         false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
-        false,
-        true
+        false
       ],
       "color": { "name": "magenta", "cssColor": "#ff7fff" },
       "sampleName": "ht"
     },
     {
       "id": 5,
-      "beats": 8,
-      "stepsPerBeat": 6,
+      "beats": 4,
+      "stepsPerBeat": 4,
       "selectedSteps": [
         false,
         false,
         false,
-        true,
         false,
-        true,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
-        false,
-        true,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
-        false,
-        true,
         false,
         false,
         false,
@@ -406,29 +267,21 @@
     {
       "id": 6,
       "beats": 4,
-      "stepsPerBeat": 6,
+      "stepsPerBeat": 4,
       "selectedSteps": [
         false,
         false,
         false,
         false,
-        true,
-        false,
-        false,
-        true,
-        true,
-        false,
-        true,
-        false,
-        false,
-        false,
-        true,
         false,
         false,
         false,
         false,
-        true,
-        true,
+        false,
+        false,
+        false,
+        false,
+        false,
         false,
         false,
         false
@@ -439,8 +292,12 @@
     {
       "id": 7,
       "beats": 4,
-      "stepsPerBeat": 3,
+      "stepsPerBeat": 4,
       "selectedSteps": [
+        false,
+        false,
+        false,
+        false,
         false,
         false,
         false,
@@ -461,77 +318,37 @@
   "channels": [
     {
       "stepperId": 0,
-      "channelOptions": {
-        "pan": 0,
-        "volume": 3.8,
-        "mute": false,
-        "solo": false
-      }
+      "channelOptions": { "pan": 0, "volume": 0, "mute": false, "solo": false }
     },
     {
       "stepperId": 1,
-      "channelOptions": {
-        "pan": 0,
-        "volume": -0.5,
-        "mute": false,
-        "solo": false
-      }
+      "channelOptions": { "pan": 0, "volume": 0, "mute": false, "solo": false }
     },
     {
       "stepperId": 2,
-      "channelOptions": {
-        "pan": 0,
-        "volume": -0.4,
-        "mute": false,
-        "solo": false
-      }
+      "channelOptions": { "pan": 0, "volume": 0, "mute": false, "solo": false }
     },
     {
       "stepperId": 3,
-      "channelOptions": {
-        "pan": 0,
-        "volume": -5.6,
-        "mute": false,
-        "solo": false
-      }
+      "channelOptions": { "pan": 0, "volume": 0, "mute": false, "solo": false }
     },
     {
       "stepperId": 4,
-      "channelOptions": {
-        "pan": 0,
-        "volume": -6.1,
-        "mute": false,
-        "solo": false
-      }
+      "channelOptions": { "pan": 0, "volume": 0, "mute": false, "solo": false }
     },
     {
       "stepperId": 5,
-      "channelOptions": {
-        "pan": 0,
-        "volume": -7.9,
-        "mute": false,
-        "solo": false
-      }
+      "channelOptions": { "pan": 0, "volume": 0, "mute": false, "solo": false }
     },
     {
       "stepperId": 6,
-      "channelOptions": {
-        "pan": 0,
-        "volume": -18,
-        "mute": false,
-        "solo": false
-      }
+      "channelOptions": { "pan": 0, "volume": 0, "mute": false, "solo": false }
     },
     {
       "stepperId": 7,
-      "channelOptions": {
-        "pan": 0.21,
-        "volume": -11.9,
-        "mute": false,
-        "solo": false
-      }
+      "channelOptions": { "pan": 0, "volume": 0, "mute": false, "solo": false }
     }
   ],
-  "settings": { "tpc": 3.9, "volume": -10, "selectedStepperId": 0 },
-  "lastUpdated": 1768918771732
+  "settings": { "tpc": 3.7, "volume": -10, "selectedStepperId": 0 },
+  "lastUpdated": 1769605588409
 }

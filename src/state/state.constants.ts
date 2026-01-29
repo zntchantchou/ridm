@@ -1,6 +1,6 @@
 import type { StepperColorType } from "../components/Stepper";
 import type { Effect, Settings } from "./state.types";
-import { generateBlankSteps } from "./state.utils";
+import { generateEmptySteps } from "./state.utils";
 
 export const COLORS: StepperColorType[] = [
   {
@@ -80,7 +80,7 @@ export const SAMPLES_DIRS = [
 export const DEFAULT_STEPPER_OPTIONS = {
   beats: 4,
   stepsPerBeat: 4,
-  selectedSteps: generateBlankSteps({ stepsPerBeat: 4, beats: 4 }),
+  selectedSteps: generateEmptySteps({ stepsPerBeat: 4, beats: 4 }),
 };
 
 export const INITIAL_EFFECTS: Effect[] = [

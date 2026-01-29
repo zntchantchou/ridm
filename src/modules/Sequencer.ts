@@ -35,9 +35,9 @@ class Sequencer {
 
   async initSteppersFromState(createTrack: boolean = true) {
     return Promise.all(
-      State.getInitialStepperOptions().map((options) =>
-        this.register(options, createTrack),
-      ),
+      State.getInitialStepperOptions().map((options) => {
+        this.register(options, createTrack);
+      }),
     );
   }
 
@@ -59,6 +59,7 @@ class Sequencer {
     // recreate a track with the current audio Context for each stepper
     State.getInitialStepperOptions().forEach(async (options, i) => {
       // Dispose of old track to prevent subscription leaks
+
       this.steppers[i].track?.dispose();
 
       const track = new Track({

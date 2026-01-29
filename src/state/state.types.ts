@@ -54,4 +54,4 @@ export type StateUpdates =
   | { tpc: number }
   | { volume: number };
 
-export type TemplateName = "nottoochaabi" | "mamakossa";
+export type TemplateName = "nottoochaabi" | "mamakossa" | "initial";

@@ -28,6 +28,14 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Check runner IP and connectivity
+        run: |
+          echo "GitHub Runner IP:"
+          curl -s https://api.ipify.org
+          echo ""
+          echo "Testing connectivity to ${{ secrets.SSH_HOST }}:${{ secrets.SSH_PORT }}"
+          nc -zv -w5 ${{ secrets.SSH_HOST }} ${{ secrets.SSH_PORT }} || echo "Connection failed - port may be blocked"
+
       - name: Deploy to VPS
         uses: easingthemes/ssh-deploy@v5.0.3
         with:

@@ -9,6 +9,9 @@ doodle/
 samples/AKAIMPC60
 samples/RolandTR909
 
+.claude/discussions
+.claude/docs
+
 node_modules
 dist
 *.local

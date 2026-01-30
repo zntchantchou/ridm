@@ -4,9 +4,71 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/pictures/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO Meta Tags -->
+    <title>RIDM - Polyrhythmic Drum Machine | Multi-Tempo Step Sequencer</title>
+    <meta
+      name="description"
+      content="Free web-based polyrhythmic drum machine. Create complex beats with up to 8 independent tracks at different tempos. Browser-based step sequencer with real-time effects."
+    />
+    <meta
+      name="keywords"
+      content="polyrhythmic drum machine, multi-tempo sequencer, step sequencer online, web drum machine, polyrhythm generator, algorithmic beat maker, browser drum machine, experimental music production"
+    />
+
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="RIDM - Polyrhythmic Drum Machine" />
+    <meta
+      property="og:description"
+      content="Create complex polyrhythmic beats with multiple tempos in your browser. Free online step sequencer with real-time effects."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ridm.zacharie-ntc.dev/" />
+    <meta
+      property="og:image"
+      content="https://ridm.zacharie-ntc.dev/draw/ridm.png"
+    />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="RIDM - Polyrhythmic Drum Machine" />
+    <meta
+      name="twitter:description"
+      content="Browser-based multi-tempo drum sequencer for creating complex polyrhythmic patterns."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ridm.zacharie-ntc.dev/draw/ridm.png"
+    />
+
+    <!-- Structured Data for Search Engines -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "RIDM",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "A polyrhythmic step sequencer that lets you layer drum patterns at different tempos. Create complex, evolving beats with up to 8 independent tracks, real-time effects, and browser-based convenience.",
+        "featureList": [
+          "Multi-tempo sequencing with 8 independent tracks",
+          "Real-time reverb, delay, and pitch effects",
+          "Polyrhythmic pattern creation",
+          "Browser-based step sequencer",
+          "Persistent state with automatic saving"
+        ],
+        "url": "https://ridm.zacharie-ntc.dev/",
+        "screenshot": "https://ridm.zacharie-ntc.dev/draw/ridm.png"
+      }
+    </script>
+
     <link rel="stylesheet" href="src/style/reset.css" />
     <link rel="stylesheet" href="style.css" />
-    <title>ridm</title>
   </head>
   <body>
     <div id="app">
@@ -49,7 +111,13 @@
           <span> Made by&nbsp;</span>
           <a href="https://github.com/zntchantchou/ridm">
             <span> zntchantchou </span>
-            <img height="24" width="24" src="./pictures/gh.svg" srcset="" />
+            <img
+              height="24"
+              width="24"
+              src="./pictures/gh.svg"
+              srcset=""
+              alt="github"
+            />
           </a>
           <span id="separator"> | </span>
           <button id="template1">#NotTooChaabi</button>

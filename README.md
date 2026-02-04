@@ -192,7 +192,6 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## Caveats
 
-Mute and solo do not behave very reliably and sometimes need to be clicked a second time.
 Updating the time per cycle restarts the loop so as to keep the steppers (tracks) synchronized.
 
 ## License

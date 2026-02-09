@@ -1,10 +1,10 @@
 import type Stepper from "./Stepper";
-import PanelSection from "./PanelSection/PanelSection";
 import type { FeedbackDelayOptions, ReverbOptions } from "tone";
-import State from "../state/State";
 import type { StepperIdType } from "../state/state.types";
-import Fader from "./Fader/Fader";
 import type { PitchOptions } from "../types";
+import PanelSection from "./PanelSection/PanelSection";
+import State from "../state/State";
+import Fader from "./Fader/Fader";
 
 const rootElt = document.getElementById("top-panel");
 

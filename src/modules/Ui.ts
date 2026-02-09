@@ -1,5 +1,5 @@
-import Pulses from "../modules/Pulses";
-import StepQueue, { type Step } from "../modules/StepQueue";
+import Pulses from "./Pulses";
+import StepQueue, { type Step } from "./StepQueue";
 import * as Tone from "tone";
 import State from "../state/State";
 

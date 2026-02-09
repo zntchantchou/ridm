@@ -3,7 +3,7 @@ import Timerworker from "./modules/Timerworker";
 import Sequencer from "./modules/Sequencer";
 import Audio from "./modules/Audio";
 import Pulses from "./modules/Pulses";
-import UI from "./components/Ui";
+import UI from "./modules/Ui";
 import * as Tone from "tone";
 import "./state/State";
 import State from "./state/State";
@@ -12,7 +12,6 @@ import type { TemplateName } from "./state/state.types";
 
 const playBtn = document.getElementById("play");
 const resetBtn = document.getElementById("reset-btn") as HTMLDivElement;
-const pauseCtxBtn = document.getElementById("pause-context");
 const footerElt = document.getElementById("footer");
 const template1Btn = document.getElementById("template1");
 const template2Btn = document.getElementById("template2");
@@ -27,7 +26,6 @@ class Application {
     Audio.init();
     window.addEventListener("load", this.init);
     playBtn?.addEventListener("click", async () => this.handlePlayPause());
-    pauseCtxBtn?.addEventListener("click", () => Controls.pause());
     resetBtn?.addEventListener(
       "click",
       async () => await this.loadTemplate("initial"),
@@ -123,4 +121,4 @@ class Application {
   };
 }
 
-new Application();
+export default new Application();

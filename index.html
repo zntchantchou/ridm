@@ -40,7 +40,10 @@
       name="twitter:image"
       content="https://ridm.zacharie-ntc.dev/draw/ridm.png"
     />
-
+    <script
+      type="module"
+      src="src/components/Lit/TemplateButton/TemplateButton.ts"
+    ></script>
     <!-- Structured Data for Search Engines -->
     <script type="application/ld+json">
       {
@@ -120,8 +123,14 @@
             />
           </a>
           <span id="separator"> | </span>
-          <button id="template1">#NotTooChaabi</button>
-          <button id="template2">#Mamakossa</button>
+          <template-button
+            templateName="mamakossa"
+            text="#Mamakossa"
+          ></template-button>
+          <template-button
+            templateName="nottoochaabi"
+            text="#NotTooChaabi"
+          ></template-button>
           <span id="separator"> | </span>
           <span id="separator"> Press space to play/pause </span>
         </div>

@@ -1,6 +1,6 @@
 import type { BeatMapType } from "../types";
 import StepQueue from "./StepQueue";
-import UI from "../components/Ui";
+import UI from "./Ui";
 import Pulses from "./Pulses";
 import Controls from "../components/Controls";
 import * as Tone from "tone";

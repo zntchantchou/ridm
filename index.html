@@ -52,7 +52,12 @@
       type="module"
       src="src/components/Lit/PlayPauseButton/PlayPauseButton.ts"
     ></script>
+    <script type="module" src="src/components/Lit/Fader/Fader.ts"></script>
     <script type="module" src="src/components/Lit/Footer/Footer.ts"></script>
+    <script
+      type="module"
+      src="src/components/Lit/Controls/Controls.ts"
+    ></script>
     <!-- Structured Data for Search Engines -->
     <script type="application/ld+json">
       {
@@ -86,26 +91,7 @@
     <div id="app">
       <div id="app-loader" class="loader"></div>
       <div id="sequencer">
-        <div id="controls">
-          <div class="control-group">
-            <div id="app-title">
-              <span>Ridm</span>
-            </div>
-          </div>
-          <div class="control-group">
-            <play-pause-button id="play"></play-pause-button>
-            <div class="control-group">
-              <reset-button></reset-button>
-            </div>
-          </div>
-
-          <div class="control-group" id="tpc-group">
-            <span>Time per cycle (seconds) </span>
-          </div>
-          <div class="control-group" id="volume-group">
-            <span>Volume </span>
-          </div>
-        </div>
+        <controls-element></controls-element>
         <div id="main">
           <div id="top-panel"></div>
           <div id="bottom-panel">

@@ -1,9 +1,5 @@
 import * as Tone from "tone";
 import type Stepper from "./components/Stepper";
-import type { LitComponent } from "./components/Lit";
-import type { TemplateButton } from "./components/Lit/TemplateButton/TemplateButton";
-import type { ResetButton } from "./components/Lit/ResetButton/ResetButton";
-import type { Footer } from "./components/Lit/Footer/Footer";
 
 export type BeatMapType = Map<string, { steppers: Stepper[] }>;
 
@@ -47,12 +43,3 @@ export type EffectUpdate = {
   stepperId: string;
   value: EffectValue;
 };
-
-declare global {
-  interface HTMLElementTagNameMap {
-    "lit-panel": LitComponent;
-    "template-button": TemplateButton;
-    "reset-button": ResetButton;
-    "footer-element": Footer;
-  }
-}

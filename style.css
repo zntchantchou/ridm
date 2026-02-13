@@ -120,10 +120,6 @@ body {
   margin: 0 2rem;
 }
 
-#tempo {
-  margin-left: 2rem;
-}
-
 #main {
   display: flex;
   flex-wrap: wrap;

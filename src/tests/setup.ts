@@ -7,7 +7,6 @@ document.body.innerHTML = `
   <div id="steppers-controls"></div>
   <div id="tpc-group"></div>
   <div id="volume-group"></div>
-  <img id="play-img" />
 `;
 
 beforeEach(() => {
@@ -17,6 +16,5 @@ beforeEach(() => {
     <div id="steppers-controls"></div>
     <div id="tpc-group"></div>
     <div id="volume-group"></div>
-    <img id="play-img" />
   `;
 });

@@ -10,11 +10,7 @@ import State from "./state/State";
 import StepQueue from "./modules/StepQueue";
 import type { TemplateName } from "./state/state.types";
 
-const playBtn = document.getElementById("play");
-const resetBtn = document.getElementById("reset-btn") as HTMLDivElement;
 const footerElt = document.getElementById("footer");
-const template1Btn = document.getElementById("template1");
-const template2Btn = document.getElementById("template2");
 
 class Application {
   initialized = false;
@@ -25,20 +21,6 @@ class Application {
   constructor() {
     Audio.init();
     window.addEventListener("load", this.init);
-    playBtn?.addEventListener("click", async () => this.handlePlayPause());
-    resetBtn?.addEventListener(
-      "click",
-      async () => await this.loadTemplate("initial"),
-    );
-    template1Btn?.addEventListener(
-      "click",
-      async () => await this.loadTemplate("nottoochaabi"),
-    );
-    template2Btn?.addEventListener(
-      "click",
-      async () => await this.loadTemplate("mamakossa"),
-    );
-
     window.addEventListener("keydown", this.handleSpacePress);
     this.ui = new UI(Audio.getContext() as Tone.Context, Pulses);
     this.timeWorker = new Timerworker({

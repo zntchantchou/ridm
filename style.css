@@ -96,24 +96,6 @@ body {
   padding: 0rem 1rem;
 }
 
-#reset-btn {
-  border: 0.3rem solid white;
-  border-radius: 0.2rem;
-  height: 3.3rem;
-  box-sizing: border-box;
-  width: 3.3rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  font-size: 0.8rem;
-}
-
-#reset-btn:hover {
-  background-color: white;
-  color: black;
-}
-
 #app-title span {
   font-family: "conthrax";
   font-size: 2.2rem;

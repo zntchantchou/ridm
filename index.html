@@ -44,6 +44,14 @@
       type="module"
       src="src/components/Lit/TemplateButton/TemplateButton.ts"
     ></script>
+    <script
+      type="module"
+      src="src/components/Lit/ResetButton/ResetButton.ts"
+    ></script>
+    <script
+      type="module"
+      src="src/components/Lit/PlayPauseButton/PlayPauseButton.ts"
+    ></script>
     <!-- Structured Data for Search Engines -->
     <script type="application/ld+json">
       {
@@ -84,11 +92,9 @@
             </div>
           </div>
           <div class="control-group">
-            <div id="play">
-              <img id="play-img" srcset="" />
-            </div>
+            <play-pause-button id="play"></play-pause-button>
             <div class="control-group">
-              <div id="reset-btn">RESET</div>
+              <reset-button></reset-button>
             </div>
           </div>
 

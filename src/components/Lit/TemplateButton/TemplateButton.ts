@@ -12,7 +12,7 @@ export class TemplateButton extends LitElement {
 
   render() {
     return html`<button
-      @click=${() => Application.loadTemplate(this.templateName)}
+      @click=${async () => await Application.loadTemplate(this.templateName)}
     >
       ${this.text}
     </button>`;

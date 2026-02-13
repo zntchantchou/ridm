@@ -13,7 +13,6 @@ const tpcGroupElt = document.getElementById("tpc-group") as HTMLDivElement;
 const volumeGroupElt = document.getElementById(
   "volume-group",
 ) as HTMLDivElement;
-const playPauseImg = document.getElementById("play-img") as HTMLImageElement;
 const volumeDisplayElt = document.createElement("div");
 
 class Controls {
@@ -30,7 +29,6 @@ class Controls {
   renderControls() {
     volumeDisplayElt.textContent = this.volume.toString();
     tpcDislayElt.textContent = this.tpc.toString();
-    playPauseImg.src = "./pictures/play-round.svg";
     const resetBtn = document.createElement("div");
     resetBtn.id = "reset-btn";
     resetBtn.textContent = "RESET";
@@ -103,7 +101,6 @@ class Controls {
 
   public async pause() {
     this.isPlaying = false;
-    playPauseImg.src = "./pictures/play-round.svg";
     if (Audio.getContext()?.state !== "closed") {
       // We have to use rawContext because we are relying on our own note scheduling implementation (based on AudioContext.currentTime).
       // Tone.Context does not allow an access to suspend, which is handled via the Transport component.
@@ -118,7 +115,6 @@ class Controls {
     // get the current Volume
 
     this.isPlaying = true;
-    playPauseImg.src = "./pictures/pause-round.svg";
     const ctx = Audio.getContext() as Tone.Context;
     if (ctx.state !== "closed") {
       await ctx.resume();

@@ -52,6 +52,7 @@
       type="module"
       src="src/components/Lit/PlayPauseButton/PlayPauseButton.ts"
     ></script>
+    <script type="module" src="src/components/Lit/Footer/Footer.ts"></script>
     <!-- Structured Data for Search Engines -->
     <script type="application/ld+json">
       {
@@ -115,32 +116,7 @@
           </div>
         </div>
       </div>
-      <div id="footer">
-        <div id="footer-content">
-          <span> Made by&nbsp;</span>
-          <a href="https://github.com/zntchantchou/ridm">
-            <span> zntchantchou </span>
-            <img
-              height="24"
-              width="24"
-              src="./pictures/gh.svg"
-              srcset=""
-              alt="github"
-            />
-          </a>
-          <span id="separator"> | </span>
-          <template-button
-            templateName="mamakossa"
-            text="#Mamakossa"
-          ></template-button>
-          <template-button
-            templateName="nottoochaabi"
-            text="#NotTooChaabi"
-          ></template-button>
-          <span id="separator"> | </span>
-          <span id="separator"> Press space to play/pause </span>
-        </div>
-      </div>
+      <footer-element></footer-element>
     </div>
   </body>
 </html>

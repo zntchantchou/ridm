@@ -100,6 +100,7 @@ class Controls {
   };
 
   public async pause() {
+    State.isPlayingSubject.next(false);
     this.isPlaying = false;
     if (Audio.getContext()?.state !== "closed") {
       // We have to use rawContext because we are relying on our own note scheduling implementation (based on AudioContext.currentTime).
@@ -113,7 +114,7 @@ class Controls {
 
   public async play() {
     // get the current Volume
-
+    State.isPlayingSubject.next(true);
     this.isPlaying = true;
     const ctx = Audio.getContext() as Tone.Context;
     if (ctx.state !== "closed") {

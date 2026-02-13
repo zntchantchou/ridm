@@ -46,13 +46,15 @@ class State {
   stepperSelectedStepsSubject = new Subject<StepperSelectedStepsUpdate>();
   // channel updates
   channelUpdateSubject = new Subject<ChannelUpdate>();
+  isPlayingSubject = new Subject<boolean>();
 
   storage: Storage = new Storage();
-
+  isPlaying = false;
   constructor() {
     const { effects, steppers, settings, channels } = this.storage.hasState()
       ? this.deserializeStoreState()
       : this.createInitialState();
+
     this.effects = effects;
     this.steppers = steppers;
     this.settings = settings;
@@ -71,6 +73,7 @@ class State {
     this.stepperResizeSubject.subscribe((u) => this.updateStepperSize(u));
     this.volumeUpdateSubject.subscribe((v) => this.updateVolume(v));
     this.channelUpdateSubject.subscribe((v) => this.updateChannel(v));
+    this.isPlayingSubject.subscribe((v) => this.updateIsPlaying(v));
 
     // Pass raw subjects to Storage for persistence (debounced)
     this.storage.initialize({
@@ -253,6 +256,10 @@ class State {
     if (color) {
       selectedStepperControls!.style.borderColor = color;
     }
+  }
+
+  updateIsPlaying(value: boolean) {
+    this.isPlaying = value;
   }
 
   getSelectedStepperId() {

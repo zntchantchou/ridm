@@ -1,4 +1,3 @@
-@import url("./src/style/reset.css");
 @import url("./src/style/panel.css");
 @import url("./src/style/knob.css");
 @import url("./src/style/steppers.css");
@@ -7,7 +6,6 @@
 @import url("./src/style/counter.css");
 @import url("./src/style/loader.css");
 @import url("./src/style/toggle.css");
-@import url("./src/style/footer.css");
 @import url("./src/style/fonts.css");
 
 :root {

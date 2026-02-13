@@ -10,8 +10,6 @@ import State from "./state/State";
 import StepQueue from "./modules/StepQueue";
 import type { TemplateName } from "./state/state.types";
 
-const footerElt = document.getElementById("footer");
-
 class Application {
   initialized = false;
   timeWorker: Timerworker;
@@ -34,7 +32,6 @@ class Application {
     this.sequencer = new Sequencer(Pulses);
     await this.sequencer.initialize();
     State.tpcUpdateSubject.subscribe(() => this.restart());
-    footerElt!.style.visibility = "visible";
     State.currentStepperIdSubject.next(State.getSelectedStepperId());
   };
 

@@ -1,24 +1,31 @@
 import { css, html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import Application from "../../../main";
-import Controls from "../../Controls";
 import playIcon from "/pictures/play-round.svg";
 import pauseIcon from "/pictures/pause-round.svg";
+import State from "../../../state/State";
+import type { Subscription } from "rxjs";
 
 @customElement("play-pause-button")
 export class PlayPauseButton extends LitElement {
   @state()
   private isPlaying: boolean = false;
+  private isPlayingSubscription?: Subscription;
 
   connectedCallback() {
     super.connectedCallback();
-    this.isPlaying = Controls.isPlaying;
+    this.isPlayingSubscription = State.isPlayingSubject.subscribe((v) => {
+      this.isPlaying = v;
+    });
+  }
+
+  disconnectedCallback(): void {
+    if (this.isPlayingSubscription) this.isPlayingSubscription.unsubscribe();
   }
 
   private async handleClick(e: Event) {
     e.preventDefault();
     await Application.handlePlayPause();
-    this.isPlaying = Controls.isPlaying;
   }
 
   render() {

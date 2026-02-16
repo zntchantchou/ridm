@@ -41,11 +41,9 @@ export class Controls extends LitElement {
       </div>
       <div class="control-group">
         <play-pause-button id="play"></play-pause-button>
-        <div class="control-group">
-          <reset-button></reset-button>
-        </div>
+        <reset-button></reset-button>
       </div>
-      <div class="control-group" id="tpc-group">
+      <div id="tpc-group">
         <fader-element
           label="Time per cycle (seconds)"
           step="0.01"
@@ -55,7 +53,7 @@ export class Controls extends LitElement {
           .onChange=${(e: Event) => this.handleTpcChange(e)}
         ></fader-element>
       </div>
-      <div class="control-group" id="volume-group">
+      <div id="volume-group">
         <fader-element
           label="Volume"
           min=${MIN_VOLUME_DB}

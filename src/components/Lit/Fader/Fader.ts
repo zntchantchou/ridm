@@ -47,8 +47,6 @@ export class FaderElement extends LitElement {
   }
 
   private normalizeValue() {
-    console.log("NORMALIZED ", this.normalized);
-    console.log("NORMALIZED LABEL", this.label);
     if (!this.normalized) return this.value.toFixed(1);
     let percentage = 0;
     const amplitude = this.max - this.min;
@@ -86,13 +84,28 @@ export class FaderElement extends LitElement {
     }
   }
 
+  willUpdate(changedProperties: Map<string, unknown>) {
+    if (changedProperties.has("fillColor") || changedProperties.has("value")) {
+      this.updateFillColor();
+    }
+  }
+
   renderLabel() {
     if (this.label) return html`<span>${this.label}</span>`;
     return null;
   }
 
   render() {
-    return html`<div class="fader">
+    const centering = this.direction === "row" ? { alignItems: "center" } : {};
+
+    return html`<div
+      class="fader"
+      style=${styleMap({
+        flexDirection: this.direction === "row" ? "row" : "column",
+        margin: this.direction === "row" ? "0 .8rem" : ".8rem 0",
+        ...centering,
+      })}
+    >
       ${this.renderLabel()}
       <input
         type="range"
@@ -102,7 +115,10 @@ export class FaderElement extends LitElement {
         max=${this.max}
         @change=${(e: Event) => this.handleChange(e)}
         value=${this.value}
-        style=${styleMap({ background: this.gradient })}
+        style=${styleMap({
+          background: this.gradient,
+          margin: this.direction === "row" ? "0 .8rem" : ".8rem 0",
+        })}
       />
       <div>${this.normalizeValue()}</div>
     </div> `;
@@ -111,18 +127,14 @@ export class FaderElement extends LitElement {
   static styles = css`
     :host {
       height: 100%;
-      width: 100%;
+      max-width: 100%;
       padding: 0 1rem;
       flex-direction: row;
-      align-items: center;
     }
 
     .fader {
-      width: 100%;
       height: 100%;
       display: flex;
-      justify-items: center;
-      align-items: center;
     }
 
     input[type="range"] {
@@ -140,7 +152,7 @@ export class FaderElement extends LitElement {
       -webkit-appearance: none;
       appearance: none;
       width: 100%;
-      margin: 0 1rem;
+      max-width: 100%;
       /* creating a custom design */
       height: var(--slider-height);
       cursor: pointer;

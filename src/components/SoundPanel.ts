@@ -23,15 +23,15 @@ class SoundPanel {
   sampleDetailsSection?: HTMLDivElement;
 
   constructor({ steppers }: { steppers: Stepper[] }) {
-    this.steppers = steppers;
-    this.element = document.createElement("div");
-    this.element.id = "sound-panel";
-    rootElt!.appendChild(this.element);
-    this.initialize();
-    this.initializeEvents();
-    this.render();
-    this.updatePanelColor();
-    State.currentStepperIdSubject.subscribe(this.updatePanelColor);
+    // this.steppers = steppers;
+    // this.element = document.createElement("div");
+    // this.element.id = "sound-panel";
+    // rootElt!.appendChild(this.element);
+    // this.initialize();
+    // this.initializeEvents();
+    // this.render();
+    // this.updatePanelColor();
+    // State.currentStepperIdSubject.subscribe(this.updatePanelColor);
   }
 
   updateSteppers(steppers: Stepper[]) {

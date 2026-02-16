@@ -46,6 +46,7 @@ class StepperControls {
     this.element.classList.add("stepper-controls");
     this.element.dataset["stepperId"] = this.stepperId.toString();
     this.element.dataset["selected"] = "off";
+    this.element.addEventListener("click", this.handleClick);
     const muteLabel = document.createElement("span");
     const soloLabel = document.createElement("span");
     this.soloCheckBox = document.createElement("input");
@@ -108,6 +109,11 @@ class StepperControls {
     this.element.appendChild(deleteContainer);
     controlsPanelElt?.appendChild(this.element);
   }
+
+  private handleClick = () => {
+    console.log("STEPPER CONTROLS CLICK");
+    State.currentStepperIdSubject.next(this.stepperId as StepperIdType);
+  };
 
   private handleSolo = (v: boolean) => {
     State.channelUpdateSubject.next({

@@ -58,6 +58,14 @@
       type="module"
       src="src/components/Lit/Controls/Controls.ts"
     ></script>
+    <script
+      type="module"
+      src="src/components/Lit/SoundPanel/SoundPanel.ts"
+    ></script>
+    <script
+      type="module"
+      src="src/components/Lit/PanelSection/PanelSection.ts"
+    ></script>
     <script type="module" src="src/components/Lit/Knob/Knob.ts"></script>
     <!-- Structured Data for Search Engines -->
     <script type="application/ld+json">
@@ -94,7 +102,8 @@
       <div id="sequencer">
         <controls-element></controls-element>
         <div id="main">
-          <div id="top-panel"></div>
+          <!-- <div id="top-panel"></div> -->
+          <sound-panel></sound-panel>
           <div id="bottom-panel">
             <div id="steppers-controls"></div>
             <div id="steppers">

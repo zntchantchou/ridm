@@ -248,7 +248,7 @@ export class KnobElement extends LitElement {
       align-items: center;
       justify-content: center;
       position: relative;
-      margin-top: 0.6rem;
+      margin-top: 0.4rem;
     }
 
     .knob-value-container {

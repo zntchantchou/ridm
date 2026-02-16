@@ -8,7 +8,8 @@ todos
 doodle/
 samples/AKAIMPC60
 samples/RolandTR909
-
+draw/
+.claude/
 .claude/discussions
 .claude/docs
 

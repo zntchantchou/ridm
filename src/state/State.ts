@@ -313,6 +313,10 @@ class State {
     }
     return channels;
   }
+
+  getSelectedStepperOptions() {
+    return this.steppers.get(this.getSelectedStepperId());
+  }
 }
 
 export default new State();

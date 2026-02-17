@@ -1,5 +1,5 @@
-import type { LitComponent } from "./components/Lit";
 import type { Controls } from "./components/Lit/Controls/Controls";
+import type { CounterElement } from "./components/Lit/Counter/Counter";
 import type { FaderElement } from "./components/Lit/Fader/Fader";
 import type { Footer } from "./components/Lit/Footer/Footer";
 import type { KnobElement } from "./components/Lit/Knob/Knob";
@@ -10,7 +10,6 @@ import type { TemplateButton } from "./components/Lit/TemplateButton/TemplateBut
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lit-panel": LitComponent;
     "template-button": TemplateButton;
     "reset-button": ResetButton;
     "footer-element": Footer;
@@ -19,5 +18,6 @@ declare global {
     "knob-element": KnobElement;
     "sound-panel": SoundPanel;
     "panel-section": PanelSectionElement;
+    "counter-element": CounterElement;
   }
 }

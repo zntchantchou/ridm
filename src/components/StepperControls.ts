@@ -1,6 +1,6 @@
 import State from "../state/State";
 import type { StepperIdType } from "../state/state.types";
-import Counter from "./Counter/Counter";
+import "./Lit/Counter/Counter";
 import Toggle from "./Toggle/Toggle";
 
 type StepperControlsOptions = {
@@ -153,29 +153,29 @@ class StepperControls {
   }
 
   private createStepsCounterElt() {
-    return new Counter({
-      onChange: (value) =>
-        State.stepperResizeSubject.next({
-          stepsPerBeat: value,
-          stepperId: this.stepperId,
-        }),
-      min: 2,
-      max: 10,
-      initialValue: this.stepsPerBeats,
-    }).getElement();
+    const counter = document.createElement("counter-element");
+    counter.value = this.stepsPerBeats;
+    counter.min = 2;
+    counter.max = 10;
+    counter.onChange = (value) =>
+      State.stepperResizeSubject.next({
+        stepsPerBeat: value,
+        stepperId: this.stepperId,
+      });
+    return counter;
   }
 
   private createBeatsCounterElt() {
-    return new Counter({
-      onChange: (value) =>
-        State.stepperResizeSubject.next({
-          beats: value,
-          stepperId: this.stepperId,
-        }),
-      min: 2,
-      initialValue: this.beats,
-      max: 10,
-    }).getElement();
+    const counter = document.createElement("counter-element");
+    counter.value = this.beats;
+    counter.min = 2;
+    counter.max = 10;
+    counter.onChange = (value) =>
+      State.stepperResizeSubject.next({
+        beats: value,
+        stepperId: this.stepperId,
+      });
+    return counter;
   }
 }
 

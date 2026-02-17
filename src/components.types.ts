@@ -7,6 +7,7 @@ import type { PanelSectionElement } from "./components/Lit/PanelSection/PanelSec
 import type { ResetButton } from "./components/Lit/ResetButton/ResetButton";
 import type { SoundPanel } from "./components/Lit/SoundPanel/SoundPanel";
 import type { TemplateButton } from "./components/Lit/TemplateButton/TemplateButton";
+import type { ToggleElement } from "./components/Lit/Toggle/Toggle";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -19,5 +20,6 @@ declare global {
     "sound-panel": SoundPanel;
     "panel-section": PanelSectionElement;
     "counter-element": CounterElement;
+    "toggle-element": ToggleElement;
   }
 }

@@ -200,6 +200,7 @@ class Stepper {
   updateUi() {
     if (!this.element?.hasChildNodes()) return;
     this.createStepElements();
+    // recreate all steps within this stepper
     while (this.element.lastElementChild) {
       this.element.removeChild(this.element.lastElementChild);
     }
@@ -207,6 +208,7 @@ class Stepper {
     this.updateStepsBorder();
   }
 
+  // each step must have a thinner border when there are more than 50 steps for a good ui experience
   private updateStepsBorder() {
     const borderWidth = this.steps > 50 ? "1px" : "3px";
     const borderRadius = this.steps > 50 ? "2px" : "4px";

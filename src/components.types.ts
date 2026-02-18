@@ -9,6 +9,8 @@ import type { SoundPanel } from "./components/Lit/SoundPanel/SoundPanel";
 import type { TemplateButton } from "./components/Lit/TemplateButton/TemplateButton";
 import type { StepperControlsElement } from "./components/Lit/StepperControls/StepperControls";
 import type { ToggleElement } from "./components/Lit/Toggle/Toggle";
+import type { Stepper } from "./components/Lit/Stepper/Stepper";
+import type { RythmPanel } from "./components/Lit/RythmPanel/RythmPanel";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -22,6 +24,8 @@ declare global {
     "panel-section": PanelSectionElement;
     "counter-element": CounterElement;
     "toggle-element": ToggleElement;
+    "rythm-panel": RythmPanel;
     "stepper-controls": StepperControlsElement;
+    "stepper-element": Stepper;
   }
 }

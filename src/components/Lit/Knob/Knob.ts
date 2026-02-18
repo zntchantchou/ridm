@@ -314,7 +314,7 @@ export class KnobElement extends LitElement {
       border-radius: 50%;
       width: calc((100%) - (var(--ring-width) + var(--ring-space)));
       height: calc((100%) - (var(--ring-width) + var(--ring-space)));
-      cursor: pointer;
+      cursor: grab;
     }
 
     .knob-indicator-container {

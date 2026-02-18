@@ -17,7 +17,6 @@ import type { EffectNameType, EffectUpdate } from "../types";
 import type { StepperOptions } from "../components/Stepper";
 import {
   COLORS,
-  DEFAULT_STEPPER_BORDER_COLOR,
   DEFAULT_STEPPER_OPTIONS,
   INITIAL_CHANNEL_OPTIONS,
   INITIAL_EFFECTS,
@@ -243,19 +242,6 @@ class State {
 
   private updateSelectedStepperId(id: StepperIdType) {
     this.settings.selectedStepperId = id;
-    const previousStepper = document.querySelector(
-      `.stepper-controls[data-selected="on"]`,
-    ) as HTMLDivElement;
-    if (previousStepper) {
-      previousStepper.style.borderColor = DEFAULT_STEPPER_BORDER_COLOR;
-      previousStepper.dataset.selected = "off";
-    }
-    const selectedStepperControls = this.getStepperControls(id);
-    const color = this.getStepperOptions(id)?.color.cssColor;
-    selectedStepperControls.dataset.selected = "on";
-    if (color) {
-      selectedStepperControls!.style.borderColor = color;
-    }
   }
 
   updateIsPlaying(value: boolean) {
@@ -264,12 +250,6 @@ class State {
 
   getSelectedStepperId() {
     return this.settings.selectedStepperId;
-  }
-
-  private getStepperControls(stepperId: number) {
-    return document.querySelector(
-      `.stepper-controls[data-stepper-id="${stepperId}"]`,
-    ) as HTMLDivElement;
   }
 
   getEffect({

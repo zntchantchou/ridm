@@ -38,12 +38,13 @@
 .step[data-selected="on"] {
   opacity: 0.6;
 }
+
+[data-ticking="on"] {
+  background-color: #f3ef94;
+}
 .step[data-ticking="on"][data-selected="on"] {
   animation: bounce 0.25s ease-in-out;
   opacity: 1;
-}
-[data-ticking="on"] {
-  background-color: #f3ef94;
 }
 .step.beat[data-ticking="on"] {
   background-color: rgb(174, 229, 36);

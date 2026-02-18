@@ -77,17 +77,8 @@ class Sequencer {
   ) => {
     const steps = options.stepsPerBeat * options.beats;
     if (steps < 1 || steps > 100) return;
-
-    const stepperControls = new StepperControls({
-      stepperId: options.id,
-      beats: options.beats,
-      stepsPerBeats: options.stepsPerBeat,
-      name: options.sampleName,
-      color: options.color.cssColor,
-    });
     const stepper = new Stepper({
       ...options,
-      controls: stepperControls,
       color: options.color,
       sampleName: options.sampleName,
     });
@@ -99,10 +90,7 @@ class Sequencer {
       stepper.track = stepperTrack;
       await stepperTrack.init();
     }
-
-    this.steppers.push(stepper);
     this.pulses?.register(stepper);
-    this.controls.push(stepperControls);
   };
 
   getStepper(id: number) {

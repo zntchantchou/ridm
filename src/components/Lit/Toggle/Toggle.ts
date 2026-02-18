@@ -38,10 +38,6 @@ export class ToggleElement extends LitElement {
   }
 
   static styles = css`
-    :host {
-      min-width: 5rem;
-      min-height: 5rem;
-    }
     .toggle {
       background-color: rgb(0, 0, 0);
       opacity: 0.7;

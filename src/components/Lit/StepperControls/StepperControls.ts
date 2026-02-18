@@ -93,16 +93,24 @@ export class StepperControlsElement extends LitElement {
   }
 
   static styles = css`
+    :host {
+      display: flex;
+      flex: 1;
+      height: 100%;
+      cursor: pointer;
+    }
+
     .stepper-controls {
       display: flex;
-      justify-content: space-around;
-      align-items: center;
-      height: calc(94% / 8);
       background-color: rgb(59, 58, 58);
       box-sizing: border-box;
       color: white;
       border-left: 0.5rem solid transparent;
       border-radius: 4px;
+      border-bottom: 2px solid black;
+      width: 100%;
+      height: 100%;
+      margin-right: 0.4rem;
     }
 
     .stepper-controls[data-selected="off"] {

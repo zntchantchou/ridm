@@ -3,7 +3,7 @@ import StepQueue, { type Step } from "./StepQueue";
 import * as Tone from "tone";
 import State from "../state/State";
 
-const steppersLoaderElt = document.getElementById("steppers-loading");
+// const steppersLoaderElt = document.getElementById("steppers-loading");
 class UI {
   audioContext: null | Tone.Context;
   lastStep: Step | null = null;
@@ -13,14 +13,19 @@ class UI {
   constructor(AC: Tone.Context, pulses: typeof Pulses) {
     this.audioContext = AC;
     this.pulses = pulses;
-    State.steppersLoadingSubject.subscribe((isLoading) => {
-      steppersLoaderElt!.style.display = isLoading ? "flex" : "none";
-    });
+    // State.steppersLoadingSubject.subscribe((isLoading) => {
+    //   steppersLoaderElt!.style.display = isLoading ? "flex" : "none";
+    // });
   }
   /** start the animation */
   start() {
     this.isPlaying = true;
     this.animationId = requestAnimationFrame(this.draw);
+  }
+
+  /** Returns all step elements currently in the DOM */
+  getStepElements(): HTMLDivElement[] {
+    return Array.from(document.querySelectorAll(".step")) as HTMLDivElement[];
   }
 
   /** pause the animation */
@@ -58,14 +63,13 @@ class UI {
   }
 
   private updateUI(step: Step) {
-    let currentStepElts: HTMLDivElement[] = [];
     if (State.steppersLoadingSubject.getValue()) return;
     if (!this.pulses?.getLeadPulses().length) {
       console.error("NO PULSES");
       return;
     }
     // highlight steps from parent pulses
-    currentStepElts = this.selectSteps(step.stepNumber, step.totalSteps);
+    const currentStepElts = this.selectSteps(step.stepNumber, step.totalSteps);
     this.selectTickingSteps(step.totalSteps).forEach((s) => {
       (s as HTMLDivElement).dataset.ticking = "off";
     });

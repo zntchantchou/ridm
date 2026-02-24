@@ -33,11 +33,9 @@ class Track {
   sampleRate: number = 0;
   stepperId: string;
   source?: Tone.Player;
-
   effects: TrackEffect[] = [];
   effectUpdateSubscription?: Subscription;
   channelUpdateSubscription?: Subscription;
-  effectsInitialized = false;
   channel?: Tone.Channel; // handles volume, pan, mute, solo
   effectUpdateMethodsMap: Map<EffectNameType, (update: EffectUpdate) => void> =
     new Map();
@@ -105,10 +103,11 @@ class Track {
   }
 
   private loadEffects() {
-    if (!this.effectsInitialized) this.initializeEffects();
-    const trackNodes = this.effects?.map(
-      (effect) => effect.node,
-    ) as Tone.ToneAudioNode[];
+    this.initializeEffects();
+    const trackNodes =
+      this.effects.length > 0
+        ? (this.effects?.map((effect) => effect.node) as Tone.ToneAudioNode[])
+        : [];
     // Channel is added first so that the panning is done by our own Tone.Panner which is added after it
     trackNodes.unshift(this.channel as Tone.ToneAudioNode);
     this.source?.chain(
@@ -136,7 +135,6 @@ class Track {
     } else {
       this.effects = Audio.defaultEffects;
     }
-    this.effectsInitialized = true;
   }
 
   public playSample(time: number = 0) {

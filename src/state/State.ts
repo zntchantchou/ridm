@@ -332,6 +332,10 @@ class State {
     return this.tracks.get(stepperId);
   }
 
+  getTracks() {
+    return Array.from(this.tracks.values());
+  }
+
   getSelectedStepperOptions() {
     return this.steppers.get(this.getSelectedStepperId());
   }

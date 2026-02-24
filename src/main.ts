@@ -39,13 +39,13 @@ class Application {
     const wasPaused = !Controls.isPlaying;
     State.steppersLoadingSubject.next(true);
     Controls.pause();
-    State.loadTemplate(name);
-    await this.sequencer?.reload(); // this inits steppers from state
-    State.currentStepperIdSubject.next(State.getSelectedStepperId());
-
-    State.templateReloadSubject.next(true);
     StepQueue.clear();
     Pulses.restart();
+    State.loadTemplate(name);
+
+    await this.sequencer?.reload(false); // this inits steppers from state
+    State.currentStepperIdSubject.next(State.getSelectedStepperId());
+    State.templateReloadSubject.next(true);
     this.timeWorker.pause(); // also stops ui
     const ctx = Audio.getContext() as Tone.Context;
     this.ui = new UI(ctx, Pulses);
@@ -55,6 +55,7 @@ class Application {
     }
     State.steppersLoadingSubject.next(false);
   }
+
   // necessary because live updates to fast tempo cause the pulses to become out of sync...
   restart = async () => {
     const triggerPlay = Controls.isPlaying;
@@ -64,10 +65,14 @@ class Application {
     this.timeWorker.pause(); // also stops ui
     await Audio.init(); // creates a new audio context
     const ctx = Audio.getContext() as Tone.Context;
+    State.getTracks().forEach((track) => {
+      track.instance.dispose();
+      track.instance.init();
+    });
     this.ui = new UI(ctx, Pulses);
     if (triggerPlay) {
       Controls.play();
-      this.timeWorker.start(this.ui, Audio.getContext() as Tone.Context);
+      this.timeWorker.start(this.ui, ctx);
     }
   };
 

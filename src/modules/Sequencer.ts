@@ -27,26 +27,30 @@ class Sequencer {
     sequencer!.style.display = "block";
   }
 
-  async initSteppersFromState() {
+  async initSteppersFromState(initializeTracks: boolean = true) {
     return Promise.all(
       State.getInitialStepperOptions().map((options) => {
-        this.register(options);
+        this.register(options, initializeTracks);
       }),
     );
   }
-
-  async reload() {
+  /** boolean allows opting out of reinitializing tracks,
+   * for example in the case of loading a template */
+  async reload(initializeTracks: boolean = true) {
     Pulses.reset();
-    await this.initSteppersFromState();
+    await this.initSteppersFromState(initializeTracks);
   }
 
-  private register = async (options: StepperOptions) => {
+  private register = async (
+    options: StepperOptions,
+    initializeTracks: boolean = true,
+  ) => {
     const steps = options.stepsPerBeat * options.beats;
     if (steps < 1 || steps > 100) return;
     // we never recreate the track
     // it is subscribed and unsubscribed by the pulses
     const track = State.getTrack(options.id)?.instance;
-    track?.init();
+    if (initializeTracks) track?.init();
     if (track) this.pulses?.register(track!);
   };
 }

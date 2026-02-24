@@ -18,7 +18,6 @@ export class Controls extends LitElement {
   private handleTpcChange = (e: Event) => {
     State.steppersLoadingSubject.next(true);
     Audio.lastVolume = Audio.getCurrentVolume() as number;
-    Audio.mute(); // avoid cracking noise
     const updatedValue = (e?.target as HTMLInputElement).value;
     this.tpc = parseFloat(updatedValue);
     State.tpcUpdateSubject.next(parseFloat(updatedValue));

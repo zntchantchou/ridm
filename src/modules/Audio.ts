@@ -22,6 +22,7 @@ class Audio {
         // volume: parseInt(Controls.volumeRange?.value as string),
         volume: 10,
       });
+      this.ctx.resume();
     }
   }
 

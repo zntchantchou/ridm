@@ -1,5 +1,5 @@
-import Stepper from "../components/Stepper";
 import Pulse from "./Pulse";
+import type Track from "./Track";
 
 class Pulses {
   /** Map of all pulses, indexed by step count for O(1) lookup */
@@ -17,42 +17,42 @@ class Pulses {
    * Registers a stepper to the appropriate pulse.
    * Creates pulses and manages hierarchy as needed.
    */
-  register(stepper: Stepper): void {
-    const steps = stepper.steps;
-
+  register(track: Track): void {
     // Case 1: Lead pulse already exists - just add stepper to it
-    const existingPulse = this.pulses.get(steps);
+    if (!track.steps) return;
+
+    const existingPulse = this.pulses.get(track.steps);
     if (existingPulse && existingPulse.lead) {
-      existingPulse.addStepper(stepper);
-      stepper.listenToPulse(existingPulse);
+      existingPulse.addTrack(track);
+      track.listenToPulse(existingPulse);
       return;
     }
 
     // Case 2: Find parent pulse (a lead pulse whose steps are a multiple of this stepper's steps)
-    const parentPulse = this.findParentPulse(steps);
+    const parentPulse = this.findParentPulse(track.steps);
     if (parentPulse) {
-      const newPulse = new Pulse(steps, false);
-      newPulse.addStepper(stepper);
-      this.pulses.set(steps, newPulse);
+      const newPulse = new Pulse(track.steps, false);
+      newPulse.addTrack(track);
+      this.pulses.set(track.steps, newPulse);
       this.assignToParent(newPulse, parentPulse);
-      stepper.listenToPulse(parentPulse);
+      track.listenToPulse(parentPulse);
       return;
     }
     // Case 3: Find child pulses (lead pulses whose steps are factors of this stepper's steps)
-    const childPulses = this.findChildrenPulses(steps);
+    const childPulses = this.findChildrenPulses(track.steps);
     if (childPulses.length > 0) {
-      const newPulse = new Pulse(steps, true);
-      newPulse.addStepper(stepper);
-      this.pulses.set(steps, newPulse);
-      const childrenSteppers: Stepper[] = [];
+      const newPulse = new Pulse(track.steps, true);
+      newPulse.addTrack(track);
+      this.pulses.set(track.steps, newPulse);
+      const childrenSteppers: Track[] = [];
 
       // Demote all children and adopt their subs (flat structure)
       for (const childPulse of childPulses) {
-        childrenSteppers.push(...Array.from(childPulse.getSteppers()));
+        childrenSteppers.push(...Array.from(childPulse.getTracks()));
         if (childPulse.hasSubs()) {
           const childSubs = childPulse.getSubs()!;
           for (const sub of childSubs) {
-            childrenSteppers.push(...Array.from(sub.getSteppers()));
+            childrenSteppers.push(...Array.from(sub.getTracks()));
             newPulse.addSub(sub);
           }
           childPulse.clearSubs();
@@ -72,32 +72,34 @@ class Pulses {
       this.promoteToLead(newPulse);
 
       // Stepper listens to the new lead pulse
-      stepper.listenToPulse(newPulse);
+      track.listenToPulse(newPulse);
       return;
     }
 
     // Case 4: No relationships - create as new independent lead pulse
-    const newPulse = new Pulse(steps, true);
-    newPulse.addStepper(stepper);
-    this.pulses.set(steps, newPulse);
+    const newPulse = new Pulse(track.steps, true);
+    newPulse.addTrack(track);
+    this.pulses.set(track.steps, newPulse);
     this.promoteToLead(newPulse);
-    stepper.listenToPulse(newPulse);
+    track.listenToPulse(newPulse);
   }
 
   /**
    * Deregisters a stepper from its pulse.
    * Cleans up pulses and reorganizes hierarchy as needed.
    */
-  deregister(stepper: Stepper): void {
-    const steps = stepper.steps;
-    const pulse = this.pulses.get(steps);
+  deregister(track: Track): void {
+    if (track.steps === null) return;
+    const pulse = this.pulses.get(track.steps);
 
     if (!pulse) {
-      console.warn(`[Pulses] No pulse found for stepper with ${steps} steps`);
+      console.warn(
+        `[Pulses] No pulse found for stepper with ${track.steps} steps`,
+      );
       return;
     }
-    const shouldDelete = pulse.removeStepper(stepper);
-    stepper.pulseSubscription?.unsubscribe();
+    const shouldDelete = pulse.removeTrack(track);
+    track.pulseSubscription?.unsubscribe();
     if (shouldDelete) {
       this.deletePulseAndReorganize(pulse);
     }
@@ -106,7 +108,7 @@ class Pulses {
   /**
    * Updates a stepper's pulse when its step count changes.
    */
-  update(stepper: Stepper, oldSteps: number, newSteps: number): void {
+  update(track: Track, oldSteps: number, newSteps: number): void {
     if (oldSteps === newSteps) return; // No change
 
     try {
@@ -116,15 +118,15 @@ class Pulses {
           `[Pulses] No pulse found for stepper with ${oldSteps} steps`,
         );
       } else {
-        const isPulseEmpty = oldPulse.removeStepper(stepper);
-        stepper.pulseSubscription?.unsubscribe();
+        const isPulseEmpty = oldPulse.removeTrack(track);
+        track.pulseSubscription?.unsubscribe();
         if (isPulseEmpty) {
           this.deletePulseAndReorganize(oldPulse);
         }
       }
 
       // Phase 2: Register to new pulse (stepper.steps should already be updated)
-      this.register(stepper);
+      this.register(track);
     } catch (error) {
       console.error(
         `[Pulses] Error during update from ${oldSteps} to ${newSteps}:`,
@@ -267,7 +269,7 @@ class Pulses {
     this.promoteToLead(largestChild);
 
     // Update all steppers in the promoted child and its descendants to listen to it
-    const allSteppers = largestChild.getAllSteppers();
+    const allSteppers = largestChild.getAllTracks();
     for (const stepper of allSteppers) {
       stepper.listenToPulse(largestChild);
     }
@@ -372,6 +374,7 @@ class Pulses {
     }
 
     return {
+      pulses: this.getAllPulses(),
       totalPulses: allPulses.length,
       leadPulses: leadPulses.length,
       totalSteppers,

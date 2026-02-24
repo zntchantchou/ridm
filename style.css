@@ -1,7 +1,5 @@
 @import url("./src/style/panel.css");
 @import url("./src/style/knob.css");
-/* @import url("./src/style/steppers.css"); */
-@import url("./src/style/stepper-controls.css");
 @import url("./src/style/panel-section.css");
 @import url("./src/style/counter.css");
 @import url("./src/style/loader.css");
@@ -136,28 +134,28 @@ rythm-panel {
 
 #content {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: row;
-  width: 100%;
   box-sizing: border-box;
 }
+
 #steppers {
   position: relative;
-  flex: 3.4;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding-left: 0.4rem;
+  width: 100%;
 }
 
 stepper-controls {
   height: calc(100% / 8);
+  min-width: 30rem;
 }
 
 stepper-element {
   height: calc(100% / 8);
-  flex: 1;
   width: 100%;
 }
 
@@ -166,7 +164,6 @@ stepper-element {
   width: 100%;
   height: 98%;
   box-sizing: content-box;
-  margin-bottom: 4px;
   display: flex;
 }
 

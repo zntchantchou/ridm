@@ -39,26 +39,16 @@ class Application {
     const wasPaused = !Controls.isPlaying;
     State.steppersLoadingSubject.next(true);
     Controls.pause();
-    const stepperControls = document.getElementById(
-      "steppers-controls",
-    ) as HTMLDivElement;
-    const steppers = document.getElementById("steppers") as HTMLDivElement;
-    while (stepperControls.lastElementChild) {
-      stepperControls.removeChild(stepperControls.lastElementChild);
-    }
-    while (steppers.lastElementChild) {
-      steppers.removeChild(steppers.lastElementChild);
-    }
     State.loadTemplate(name);
     await this.sequencer?.reload(); // this inits steppers from state
     State.currentStepperIdSubject.next(State.getSelectedStepperId());
+
+    State.templateReloadSubject.next(true);
     StepQueue.clear();
     Pulses.restart();
     this.timeWorker.pause(); // also stops ui
-    await Audio.init(); // creates a new audio context
     const ctx = Audio.getContext() as Tone.Context;
     this.ui = new UI(ctx, Pulses);
-    this.sequencer?.restart(); // also inits steppers from state ....
     if (!wasPaused) {
       this.timeWorker.start(this.ui, ctx); // that should only be true if was playing
       Controls.play();
@@ -75,7 +65,6 @@ class Application {
     await Audio.init(); // creates a new audio context
     const ctx = Audio.getContext() as Tone.Context;
     this.ui = new UI(ctx, Pulses);
-    this.sequencer?.restart();
     if (triggerPlay) {
       Controls.play();
       this.timeWorker.start(this.ui, Audio.getContext() as Tone.Context);

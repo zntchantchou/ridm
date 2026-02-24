@@ -4,8 +4,8 @@ import { INITIAL_SETTINGS } from "../state/state.constants";
 import * as Tone from "tone";
 
 class Controls {
-  tpc = State.getSettings().tpc || INITIAL_SETTINGS.tpc;
-  volume = State.getSettings().volume || INITIAL_SETTINGS.volume;
+  tpc = INITIAL_SETTINGS.tpc;
+  volume = INITIAL_SETTINGS.volume;
   isPlaying: boolean = false;
   tpcRange?: HTMLInputElement;
   volumeRange?: HTMLInputElement;

@@ -1,6 +1,6 @@
 import * as Tone from "tone";
 import Audio from "./Audio.ts";
-import { filter, type Subscription } from "rxjs";
+import { debounceTime, filter, tap, type Subscription } from "rxjs";
 import Controls from "../components/Controls";
 import type {
   EffectNameType,
@@ -10,17 +10,20 @@ import type {
 } from "../types.ts";
 import State from "../state/State.ts";
 import type { ChannelUpdate, StepperIdType } from "../state/state.types.ts";
+import type Pulse from "./Pulse.ts";
+import Pulses from "./Pulses.ts";
+import { DEBOUNCE_TIME_MS } from "../state/state.constants.ts";
 
 const samplesDirPath = "samples";
 const DEFAULT_SAMPLE_RATE = 1;
 const MIN_SAMPLE_RATE = 0.25;
 const MAX_SAMPLE_RATE = 3;
-export type TrackOptions = {
+
+type TrackOptions = {
   name: string;
   stepperId: string;
   source?: Tone.Player;
   effects?: TrackEffect[];
-  samplePath?: string;
   sampleRate?: number;
 };
 
@@ -38,14 +41,15 @@ class Track {
   channel?: Tone.Channel; // handles volume, pan, mute, solo
   effectUpdateMethodsMap: Map<EffectNameType, (update: EffectUpdate) => void> =
     new Map();
+  pulseSubscription: Subscription | null = null;
+  resizeSubscription: Subscription | null = null;
 
-  constructor({ stepperId, name, samplePath, sampleRate }: TrackOptions) {
+  constructor({ stepperId, name, sampleRate }: TrackOptions) {
     this.name = name;
     this.stepperId = stepperId;
     if (!Number.isNaN(sampleRate) && sampleRate) {
       this.sampleRate = sampleRate;
     }
-    if (samplePath) this.samplePath = samplePath;
   }
 
   init() {
@@ -70,6 +74,7 @@ class Track {
         ),
       )
       .subscribe(this.handleChannelUpdate);
+    this.listenToResize();
   }
 
   dispose() {
@@ -205,6 +210,65 @@ class Track {
 
   get muted() {
     return !!this.channel?.muted;
+  }
+
+  private listenToResize() {
+    this.resizeSubscription = State.stepperResizeSubject
+      .pipe(
+        tap(() => {
+          State.steppersLoadingSubject.next(true);
+        }),
+      )
+      .pipe(debounceTime(DEBOUNCE_TIME_MS))
+      .pipe(filter(({ stepperId }) => stepperId === parseInt(this.stepperId)))
+      .subscribe(({ oldSteps }) => {
+        console.log("Track listentoResize oldsteps", oldSteps, this.steps);
+        console.log("Track listentoResize steps", this.steps);
+        if (this.steps !== null) {
+          Pulses.update(this, oldSteps, this.steps);
+          console.log("STATS ", Pulses.getStats());
+        }
+        State.steppersLoadingSubject.next(false);
+      });
+  }
+
+  listenToPulse(pulse: Pulse) {
+    if (this.pulseSubscription) {
+      this.pulseSubscription?.unsubscribe();
+    }
+    this.pulseSubscription = pulse.currentStepSubject
+      // Only trigger if note is selected
+      .pipe(
+        filter(({ stepNumber }) => {
+          const selectedSteps = State.getStepperOptions(
+            parseInt(this.stepperId) as StepperIdType,
+          )?.selectedSteps;
+          if (selectedSteps && selectedSteps[stepNumber]) return true;
+          return false;
+        }),
+      )
+      .pipe(
+        tap(({ time }) => {
+          try {
+            this?.playSample(time);
+          } catch (e) {
+            // an error related to tone.player note timing actually takes place here
+            // it is non blocking but it does paint the console red...
+            // the error is way worse when Tone.now is not added to the offset parameter in Tone.player.start()
+            console.error("[Stepper] Error playing sample:", e);
+            // Don't propagate the error - keep the subscription alive
+          }
+        }),
+      )
+      .subscribe();
+  }
+
+  get steps() {
+    const stepperOptions = State.getStepperOptions(
+      parseInt(this.stepperId) as StepperIdType,
+    );
+    if (!stepperOptions) return null;
+    return stepperOptions.beats * stepperOptions.stepsPerBeat;
   }
 }
 

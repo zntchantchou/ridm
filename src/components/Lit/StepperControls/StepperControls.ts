@@ -8,8 +8,8 @@ import "../Counter/Counter";
 @customElement("stepper-controls")
 export class StepperControlsElement extends LitElement {
   @property({ type: Number }) stepperId: StepperIdType = 0;
-  @property({ type: Number }) stepsPerBeats = 0;
-  @property({ type: Number }) beats = 0;
+  @property({ type: Number }) stepsPerBeats = 4;
+  @property({ type: Number }) beats = 4;
   @property({ type: String }) name = "";
   @property({ type: String }) color = "";
 
@@ -38,6 +38,27 @@ export class StepperControlsElement extends LitElement {
     });
   };
 
+  private handleStepsUpdate = (value: number) => {
+    State.stepperResizeSubject.next({
+      stepsPerBeat: value,
+      oldSteps: this.steps,
+      stepperId: this.stepperId,
+    });
+    this.stepsPerBeats = value;
+  };
+
+  private handleBeatsUpdate = (value: number) => {
+    State.stepperResizeSubject.next({
+      beats: value,
+      oldSteps: this.steps,
+      stepperId: this.stepperId,
+    });
+    this.beats = value;
+  };
+
+  get steps() {
+    return this.stepsPerBeats * this.beats;
+  }
   render() {
     return html`
       <div
@@ -67,22 +88,14 @@ export class StepperControlsElement extends LitElement {
             .value=${this.beats}
             .min=${2}
             .max=${10}
-            .onChange=${(value: number) =>
-              State.stepperResizeSubject.next({
-                beats: value,
-                stepperId: this.stepperId,
-              })}
+            .onChange=${this.handleBeatsUpdate}
           ></counter-element>
           <span>STEPS</span>
           <counter-element
             .value=${this.stepsPerBeats}
             .min=${2}
             .max=${10}
-            .onChange=${(value: number) =>
-              State.stepperResizeSubject.next({
-                stepsPerBeat: value,
-                stepperId: this.stepperId,
-              })}
+            .onChange=${this.handleStepsUpdate}
           ></counter-element>
         </div>
         <div class="delete-container">
@@ -95,7 +108,6 @@ export class StepperControlsElement extends LitElement {
   static styles = css`
     :host {
       display: flex;
-      flex: 1;
       height: 100%;
       cursor: pointer;
     }
@@ -108,13 +120,9 @@ export class StepperControlsElement extends LitElement {
       border-left: 0.5rem solid transparent;
       border-radius: 4px;
       border-bottom: 2px solid black;
-      width: 100%;
       height: 100%;
+      width: 100%;
       margin-right: 0.4rem;
-    }
-
-    .stepper-controls[data-selected="off"] {
-      border-color: rgb(80, 80, 80);
     }
 
     .stepper-controls span {

@@ -1,8 +1,6 @@
 import Stepper, { type StepperOptions } from "../components/Stepper";
-import StepperControls from "../components/StepperControls";
 import SoundPanel from "../components/SoundPanel";
 import Pulses from "./Pulses";
-import Track from "./Track";
 import State from "../state/State";
 import { Subscription } from "rxjs";
 
@@ -14,7 +12,6 @@ const sequencer = document.getElementById("sequencer");
 class Sequencer {
   pulses: typeof Pulses | null = null;
   steppers: Stepper[] = [];
-  controls: StepperControls[] = [];
   stepperBeatsUpdateSubscriptions?: Subscription[] = [];
   stepperStepsUpdateSubscriptions?: Subscription[] = [];
   soundPanel?: SoundPanel;
@@ -25,77 +22,33 @@ class Sequencer {
 
   async initialize() {
     await this.initSteppersFromState();
-    this.soundPanel = new SoundPanel({
-      steppers: this.steppers,
-    });
     appLoaderElt!.style.display = "none";
     sequencer!.style.visibility = "visible";
     sequencer!.style.display = "block";
   }
 
-  async initSteppersFromState(createTrack: boolean = true) {
+  async initSteppersFromState() {
     return Promise.all(
       State.getInitialStepperOptions().map((options) => {
-        this.register(options, createTrack);
+        this.register(options);
       }),
     );
   }
 
   async reload() {
-    const tracks = this.steppers.map((s) => s.track);
-    this.steppers = [];
-    this.controls = [];
     Pulses.reset();
-    await this.initSteppersFromState(false);
-    // pass the old tracks to the new steppers, avoids creating audioNodes or loading buffers each time we load a template
-    for (const [index, stepper] of this.steppers.entries()) {
-      stepper.track = tracks[index];
-    }
-    this.soundPanel?.initializeEvents();
-    this.soundPanel?.updateSteppers(this.steppers);
+    await this.initSteppersFromState();
   }
 
-  restart() {
-    // recreate a track with the current audio Context for each stepper
-    State.getInitialStepperOptions().forEach(async (options, i) => {
-      // Dispose of old track to prevent subscription leaks
-
-      this.steppers[i].track?.dispose();
-
-      const track = new Track({
-        name: options.sampleName,
-        stepperId: options.id.toString(),
-      });
-      track.init();
-      this.steppers[i].track = track;
-    });
-  }
-
-  private register = async (
-    options: StepperOptions,
-    createTrack: boolean = true,
-  ) => {
+  private register = async (options: StepperOptions) => {
     const steps = options.stepsPerBeat * options.beats;
     if (steps < 1 || steps > 100) return;
-    const stepper = new Stepper({
-      ...options,
-      color: options.color,
-      sampleName: options.sampleName,
-    });
-    if (createTrack) {
-      const stepperTrack = new Track({
-        name: options.sampleName,
-        stepperId: options.id.toString(),
-      });
-      stepper.track = stepperTrack;
-      await stepperTrack.init();
-    }
-    this.pulses?.register(stepper);
+    // we never recreate the track
+    // it is subscribed and unsubscribed by the pulses
+    const track = State.getTrack(options.id)?.instance;
+    track?.init();
+    if (track) this.pulses?.register(track!);
   };
-
-  getStepper(id: number) {
-    return this.steppers.find((s) => s.id === id);
-  }
 }
 
 export default Sequencer;

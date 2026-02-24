@@ -7,9 +7,7 @@ import Audio from "../../../modules/Audio";
 import State from "../../../state/State";
 import type Pulse from "../../../modules/Pulse";
 import Controls from "../../Controls";
-import Pulses from "../../../modules/Pulses";
 import { ifDefined } from "lit/directives/if-defined.js";
-import { styleMap } from "lit/directives/style-map.js";
 import type { StepperIdType } from "../../../state/state.types";
 
 const DEBOUNCE_TIME_MS = 200;
@@ -30,7 +28,7 @@ export class Stepper extends LitElement {
   selectedSteps: boolean[] = Array(this.steps).fill(false);
 
   pulseSubscription: Subscription | null = null;
-  selectedStepsSubscription: Subscription | null = null;
+  templateReloadSubscription: Subscription | null = null;
   resizeSubscription: Subscription | null = null;
 
   get steps() {
@@ -59,11 +57,21 @@ export class Stepper extends LitElement {
     super.connectedCallback();
     this.listenToResize();
     this.listenToClear();
+    this.listenToTemplateReload();
+  }
+
+  private listenToTemplateReload() {
+    this.templateReloadSubscription = State.templateReloadSubject.subscribe(
+      () => {
+        console.log("STEPPER: TEMPLATE RELOAD");
+        this.handleReload();
+      },
+    );
   }
 
   disconnectedCallback(): void {
-    this.selectedStepsSubscription?.unsubscribe();
     this.resizeSubscription?.unsubscribe();
+    this.templateReloadSubscription?.unsubscribe();
   }
 
   private listenToResize() {
@@ -129,6 +137,19 @@ export class Stepper extends LitElement {
       .subscribe();
   }
 
+  private handleReload() {
+    const options = State.getStepperOptions(this.stepperId as StepperIdType);
+    console.log("[Stepper]: handleReload ", options);
+    if (!options) return;
+    if (Array.isArray(options?.selectedSteps))
+      this.selectedSteps = options.selectedSteps;
+    this.updateSteps({
+      beats: options.beats,
+      stepsPerBeat: options.stepsPerBeat,
+    });
+    this.requestUpdate();
+  }
+
   updateSteps = async ({
     beats,
     stepsPerBeat,
@@ -143,13 +164,9 @@ export class Stepper extends LitElement {
       // Give browser a chance to repaint and show the loader
       await new Promise((resolve) => setTimeout(resolve, 0));
     }
-    // const oldSteps = this.steps;
     if (stepsPerBeat) this.stepsPerBeat = stepsPerBeat;
     if (beats) this.beats = beats;
     this.updateSelectedSteps(this.steps);
-    // Heavy synchronous operation - but now loader is visible
-    // Pulses.update(this, oldSteps, this.steps);
-    // this.updateUi();
     if (paused) Controls.play();
   };
 
@@ -169,21 +186,6 @@ export class Stepper extends LitElement {
     this.selectedSteps = this.convertNumbersToSteps(targetSize, updatedSteps);
   }
 
-  private toggleStep(stepNumber: number) {
-    const currentValue = this.selectedSteps[stepNumber];
-    this.selectedSteps[stepNumber] = !currentValue;
-    // const step = this.stepElements[stepNumber];
-    step.dataset.selected = currentValue ? "off" : "on"; // turn on or off
-
-    // Notify State of the change
-    if (this.stepperId !== undefined) {
-      State.stepperSelectedStepsSubject.next({
-        stepperId: this.stepperId as StepperIdType,
-        selectedSteps: this.selectedSteps,
-      });
-    }
-  }
-
   convertNumbersToSteps(targetSize: number, numbers: number[]) {
     if (!numbers.length) return [];
     const steps: boolean[] = Array(targetSize)
@@ -201,15 +203,12 @@ export class Stepper extends LitElement {
   }
 
   private handleStepClick = (index: number) => {
-    console.log("STEP CLICK ", index);
-
     this.selectedSteps[index] = !this.selectedSteps[index];
     State.stepperSelectedStepsSubject.next({
       stepperId: this.stepperId as StepperIdType,
       selectedSteps: this.selectedSteps,
     });
     this.requestUpdate();
-    console.log("selected Steps after ", this.selectedSteps);
   };
 
   render() {
@@ -239,30 +238,9 @@ export class Stepper extends LitElement {
   }
 
   static styles = css`
-    /* .stepper {
-      flex: 1;
-      background-color: yellow;
-      height: 94%;
-      width: 100%;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: row;
-    } */
-
     .step:active {
       animation: bounce 0.3s ease-in-out;
     }
-
-    /* .step {
-      border-radius: 2px;
-      background-color: rgb(105, 105, 105);
-      margin-right: 0.2rem;
-      flex: 1;
-      cursor: pointer;
-      opacity: 0.6;
-      box-sizing: border-box;
-    } */
-
     .step.beat[data-selected="off"] {
       background-color: #b0b0b0;
     }

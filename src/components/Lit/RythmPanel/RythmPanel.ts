@@ -1,6 +1,5 @@
 import { css, html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
-import type { StepperIdType } from "../../../state/state.types";
 import "../StepperControls/StepperControls";
 import "../Stepper/Stepper";
 import State from "../../../state/State";
@@ -12,28 +11,30 @@ export class RythmPanel extends LitElement {
   }
 
   renderSteppers() {
-    const steppers = State.getInitialStepperOptions().map((options, i) => {
-      return html`<stepper-element
-        stepsPerBeat="4"
-        beats="4"
-        stepperId=${i}
-        .selectedSteps=${options.selectedSteps as boolean[]}
-      ></stepper-element>`;
-    });
+    const steppers = State.getInitialStepperOptions().map(
+      ({ id, beats, stepsPerBeat, selectedSteps }) => {
+        return html`<stepper-element
+          stepsPerBeat=${stepsPerBeat}
+          beats=${beats}
+          stepperId=${id}
+          .selectedSteps=${selectedSteps as boolean[]}
+        ></stepper-element>`;
+      },
+    );
     return html`${steppers}`;
   }
 
   renderStepperControls() {
-    const controls = Array(8)
-      .fill(null)
-      .map((_, i) => {
+    const controls = State.getInitialStepperOptions().map(
+      ({ id, beats, stepsPerBeat, sampleName }) => {
         return html`<stepper-controls
-          stepsPerBeat="4"
-          beats="4"
-          name="test"
-          stepperId=${i as StepperIdType}
+          stepsPerBeat=${stepsPerBeat}
+          beats=${beats}
+          name=${sampleName}
+          stepperId=${id}
         ></stepper-controls>`;
-      });
+      },
+    );
     return html`${controls}`;
   }
 
@@ -58,25 +59,13 @@ export class RythmPanel extends LitElement {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      width: 100%;
       height: 100%;
       box-sizing: border-box;
       padding: 0.6rem;
     }
 
     #stepper-controls {
-      width: 30%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    #steppers {
-      height: 100%;
-      width: 70%;
-      display: flex;
-      flex-direction: column;
+      flex: 2;
     }
 
     stepper-element {

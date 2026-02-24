@@ -1,12 +1,12 @@
 import { Subject } from "rxjs";
-import type Stepper from "../components/Stepper";
 import Controls from "../components/Controls";
 import StepQueue, { type Step } from "./StepQueue";
+import type Track from "./Track";
 
 class Pulse {
   readonly steps: number;
 
-  private steppers: Set<Stepper>;
+  private tracks: Set<Track>;
 
   private subs: Pulse[] | null;
 
@@ -26,7 +26,7 @@ class Pulse {
     }
 
     this.steps = steps;
-    this.steppers = new Set<Stepper>();
+    this.tracks = new Set<Track>();
     this.subs = null;
     this.lead = lead;
     this.currentStepSubject = new Subject();
@@ -78,24 +78,24 @@ class Pulse {
     return prevStep;
   }
 
-  addStepper(stepper: Stepper): void {
-    this.steppers.add(stepper);
+  addTrack(track: Track): void {
+    this.tracks.add(track);
   }
 
-  removeStepper(stepper: Stepper): boolean {
-    this.steppers.delete(stepper);
-    return this.steppers.size === 0;
+  removeTrack(track: Track): boolean {
+    this.tracks.delete(track);
+    return this.tracks.size === 0;
   }
 
-  hasSteppers(): boolean {
-    return this.steppers.size > 0;
+  hasTracks(): boolean {
+    return this.tracks.size > 0;
   }
 
   /**
    * Gets the set of steppers listening to this pulse.
    */
-  getSteppers(): Set<Stepper> {
-    return new Set(this.steppers);
+  getTracks(): Set<Track> {
+    return new Set(this.tracks);
   }
 
   /**
@@ -140,19 +140,19 @@ class Pulse {
    * Gets the count of steppers listening to this pulse.
    */
   get count(): number {
-    return this.steppers.size;
+    return this.tracks.size;
   }
 
   /**
    * Gets all steppers from child pulses (one level deep).
    * Does NOT include steppers from this pulse itself.
    */
-  getChildrenSteppers(): Stepper[] {
+  getChildrenSteppers(): Track[] {
     if (!this.hasSubs()) return [];
 
-    const childrenSteppers: Stepper[] = [];
+    const childrenSteppers: Track[] = [];
     for (const childPulse of this.subs!) {
-      childrenSteppers.push(...childPulse.steppers);
+      childrenSteppers.push(...childPulse.tracks);
     }
     return childrenSteppers;
   }
@@ -160,12 +160,12 @@ class Pulse {
   /**
    * Gets all steppers from this pulse AND all descendant pulses (recursive).
    */
-  getAllSteppers(): Stepper[] {
-    const allSteppers: Stepper[] = [...this.steppers];
+  getAllTracks(): Track[] {
+    const allSteppers: Track[] = [...this.tracks];
 
     if (this.hasSubs()) {
       for (const childPulse of this.subs!) {
-        allSteppers.push(...childPulse.getAllSteppers());
+        allSteppers.push(...childPulse.getAllTracks());
       }
     }
 
@@ -220,7 +220,7 @@ class Pulse {
    */
   destroy(): void {
     this.currentStepSubject.complete();
-    this.steppers.clear();
+    this.tracks.clear();
     this.subs = null;
   }
 }

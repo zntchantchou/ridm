@@ -1,6 +1,10 @@
 import * as Tone from "tone";
-import type { StepperOptions } from "../components/Stepper";
-import type { EffectNameType, EffectUpdate, EffectValue } from "../types";
+import type {
+  EffectNameType,
+  EffectUpdate,
+  EffectValue,
+  StepperOptions,
+} from "../types";
 import type Track from "../modules/Track";
 
 export type StepperIdType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;

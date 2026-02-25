@@ -75,7 +75,14 @@ export class StepperControlsElement extends LitElement {
         })}
       >
         <div class="stepper-info-container">
-          <span class="stepperControlName">${this.name}</span>
+          <span
+            class="stepperControlName"
+            style=${styleMap({
+              color: this.selected ? this.color : "white",
+              fontSize: "1rem",
+            })}
+            >${this.name}</span
+          >
         </div>
         <div class="solo-mute-container">
           <toggle-element

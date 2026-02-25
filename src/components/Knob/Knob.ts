@@ -80,8 +80,8 @@ export class KnobElement extends LitElement {
   }
 
   private setRingColor = (id: StepperIdType) => {
-    const color = State.getStepperOptions(id) as StepperOptions;
-    this.fillColor = color.color.cssColor;
+    const options = State.getStepperOptions(id) as StepperOptions;
+    this.fillColor = options.color.cssColor;
   };
 
   private handleSelectedStepperChange = (currentStepId: StepperIdType) => {

@@ -236,6 +236,7 @@ class Track {
     const stepperOptions = State.getStepperOptions(
       parseInt(this.stepperId) as StepperIdType,
     );
+    if (!stepperOptions) return false;
     const selectedSteps = stepperOptions.selectedSteps;
     const steps = stepperOptions.beats * stepperOptions.stepsPerBeat;
     if (!selectedSteps) return false;

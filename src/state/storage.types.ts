@@ -1,6 +1,5 @@
 import type { StepperIdType, Settings, ChannelOptions } from "./state.types";
 import type { EffectNameType, EffectValue } from "../types";
-import type { StepperColorType } from "../components/Stepper";
 
 export interface PersistedState {
   effects: SerializedEffectsState;
@@ -25,7 +24,7 @@ export type SerializedSteppersState = {
   beats: number;
   stepsPerBeat: number;
   selectedSteps: boolean[];
-  color: StepperColorType;
+  color: { cssColor: string };
   sampleName: string;
 }[];
 

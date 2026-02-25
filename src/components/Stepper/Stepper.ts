@@ -96,7 +96,6 @@ export class Stepper extends LitElement {
 
   private handleReload() {
     const options = State.getStepperOptions(this.stepperId as StepperIdType);
-    console.log("[Stepper]: handleReload ", options);
     if (!options) return;
     if (Array.isArray(options?.selectedSteps))
       this.selectedSteps = options.selectedSteps;

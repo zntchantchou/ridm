@@ -1,9 +1,6 @@
 import * as Tone from "tone";
-import type Stepper from "./components/Stepper";
 import type Track from "./modules/Track";
 import type { StepperIdType } from "./state/state.types";
-
-export type BeatMapType = Map<string, { steppers: Stepper[] }>;
 
 export type SoundSettings = {
   name: string;
@@ -51,7 +48,12 @@ export interface StepperOptions {
   stepsPerBeat: number;
   id: StepperIdType;
   sampleName: string;
-  color: string;
+  color: { cssColor: string };
   track?: Track;
   selectedSteps?: boolean[];
 }
+
+export type StepperColorType = {
+  name: string;
+  cssColor: string;
+};

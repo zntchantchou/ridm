@@ -86,7 +86,6 @@ export class FaderElement extends LitElement {
   willUpdate(changedProperties: Map<string, unknown>) {
     if (changedProperties.has("fillColor") || changedProperties.has("value")) {
       this.updateFillColor();
-      console.log("CHANGED PROPERTIES ", changedProperties);
     }
   }
 

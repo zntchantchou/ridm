@@ -1,4 +1,4 @@
-import type { StepperColorType } from "../components/Stepper";
+import type { StepperColorType } from "../types";
 import type { ChannelOptions, Effect, Settings } from "./state.types";
 import { generateEmptySteps } from "./state.utils";
 

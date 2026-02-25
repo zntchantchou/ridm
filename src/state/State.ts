@@ -94,7 +94,6 @@ class State {
         this.channelUpdateSubject,
       ] as Subject<StateUpdates>[],
     });
-    console.log("STATE CONSTRUCTOR END ", this);
   }
 
   // This should only be called if there is no existing state in localStorage
@@ -211,7 +210,7 @@ class State {
     return {
       effects,
       steppers,
-      settings: template.settings as Settings,
+      settings: templateCopy.settings as Settings,
     };
   }
 
@@ -222,6 +221,9 @@ class State {
     this.effects = effects;
     this.steppers = steppers;
     this.settings = settings;
+    console.log("TEMPLATE TPC UPDATE ", settings.tpc);
+    console.log("TEMPLATE NAME ", name);
+    this.tpcUpdateSubject.next(settings.tpc);
   }
 
   updateEffect = (update: EffectUpdate) => {
@@ -305,7 +307,7 @@ class State {
     return this.effects.get(stepperId);
   }
 
-  getStepperOptions(stepperId: StepperIdType): StepperOptions {
+  getStepperOptions(stepperId: StepperIdType): StepperOptions | undefined {
     return this.steppers.get(stepperId);
   }
 

@@ -1,4 +1,3 @@
-import type { BeatMapType } from "../types";
 import StepQueue from "./StepQueue";
 import UI from "./Ui";
 import Pulses from "./Pulses";
@@ -10,7 +9,6 @@ class TimeWorker {
   nextNoteWindowSec = 0.1;
   tickIntervalMS = 25;
   worker?: Worker;
-  beatMap?: undefined | BeatMapType;
   stepQueue: typeof StepQueue = StepQueue;
   audioContext: Tone.Context | null = null;
   isPlaying = false;

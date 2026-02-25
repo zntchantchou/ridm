@@ -7,6 +7,7 @@ import {
   MAX_VOLUME_DB,
   MIN_VOLUME_DB,
 } from "../../state/state.constants";
+import type { Subscription } from "rxjs";
 
 @customElement("controls-element")
 export class Controls extends LitElement {
@@ -14,6 +15,20 @@ export class Controls extends LitElement {
   tpc = 3;
   @state()
   volume = 10;
+  @state()
+  tpcUpdateSubscription: Subscription | null = null;
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.tpcUpdateSubscription = State.tpcUpdateSubject.subscribe(() => {
+      this.requestUpdate();
+    });
+  }
+
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.tpcUpdateSubscription?.unsubscribe();
+  }
 
   private handleTpcChange = (e: Event) => {
     State.steppersLoadingSubject.next(true);

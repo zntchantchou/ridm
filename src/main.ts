@@ -37,7 +37,6 @@ class Application {
     State.currentStepperIdSubject.subscribe(() => {
       const color = State.getSelectedStepperOptions()?.color;
       const boxShadow = `0 0 30px 1px ${color?.cssColor}80`;
-      console.log("BOX SHADOW ", boxShadow);
       sequencerElt!.style.boxShadow = boxShadow;
     });
     State.currentStepperIdSubject.next(State.getSelectedStepperId());

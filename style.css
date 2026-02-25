@@ -7,7 +7,7 @@
   --main-content-height: calc(100% - (var(--controls-height)));
   --sequencer-primary-color: rgb(15, 15, 15);
   --hover-gray: rgb(203, 203, 203);
-  --app-background: rgb(31, 31, 31);
+  --app-background: rgb(16, 16, 16);
 }
 
 body {

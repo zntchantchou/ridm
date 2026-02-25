@@ -10,8 +10,6 @@ import State from "./state/State";
 import StepQueue from "./modules/StepQueue";
 import type { TemplateName } from "./state/state.types";
 
-const sequencerElt = document.getElementById("sequencer");
-
 class Application {
   initialized = false;
   timeWorker: Timerworker;
@@ -34,11 +32,6 @@ class Application {
     this.sequencer = new Sequencer(Pulses);
     await this.sequencer.initialize();
     State.tpcUpdateSubject.subscribe(() => this.restart());
-    State.currentStepperIdSubject.subscribe(() => {
-      const color = State.getSelectedStepperOptions()?.color;
-      const boxShadow = `0 0 30px 1px ${color?.cssColor}80`;
-      sequencerElt!.style.boxShadow = boxShadow;
-    });
     State.currentStepperIdSubject.next(State.getSelectedStepperId());
   };
 

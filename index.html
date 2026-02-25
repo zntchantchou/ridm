@@ -54,10 +54,7 @@
     ></script>
     <script type="module" src="src/components/Fader/Fader.ts"></script>
     <script type="module" src="src/components/Footer/Footer.ts"></script>
-    <script
-      type="module"
-      src="src/components/Controls/Controls.ts"
-    ></script>
+    <script type="module" src="src/components/Controls/Controls.ts"></script>
     <script
       type="module"
       src="src/components/SoundPanel/SoundPanel.ts"
@@ -67,11 +64,15 @@
       src="src/components/PanelSection/PanelSection.ts"
     ></script>
     <script type="module" src="src/components/Knob/Knob.ts"></script>
-    <script type="module" src="src/components/RythmPanel/RythmPanel.ts"></script>
+    <script
+      type="module"
+      src="src/components/RythmPanel/RythmPanel.ts"
+    ></script>
     <script
       type="module"
       src="src/components/MobileDisclaimer/MobileDisclaimer.ts"
     ></script>
+    <script type="module" src="src/components/TopNav/TopNav.ts"></script>
     <!-- Structured Data for Search Engines -->
     <script type="application/ld+json">
       {
@@ -102,16 +103,18 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="app">
+    <div id="app" class="starfield-container">
+      <top-nav></top-nav>
+      <!-- BACKGROUND END -->
       <div id="app-loader" class="loader"></div>
       <div id="sequencer">
         <controls-element></controls-element>
         <div id="main">
           <sound-panel></sound-panel>
           <rythm-panel></rythm-panel>
+        </div>
       </div>
       <footer-element></footer-element>
-      </div>
     </div>
     <mobile-disclaimer></mobile-disclaimer>
   </body>

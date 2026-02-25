@@ -64,6 +64,9 @@ export class StepperControlsElement extends LitElement {
   }
 
   render() {
+    const textStyleMap = styleMap({
+      color: this.selected ? "white" : "#bcbcbc",
+    });
     return html`
       <div
         class="stepper-controls"
@@ -72,6 +75,7 @@ export class StepperControlsElement extends LitElement {
         @click=${this.handleClick}
         style=${styleMap({
           borderLeftColor: this.selected ? this.color : "#2a2a2a",
+          backgroundColor: this.selected ? "#484747" : "#363636",
         })}
       >
         <div class="stepper-info-container">
@@ -97,14 +101,14 @@ export class StepperControlsElement extends LitElement {
           ></toggle-element>
         </div>
         <div class="stepper-resize-container">
-          <span>BEATS</span>
+          <span style=${textStyleMap}>BEATS</span>
           <counter-element
             value=${this.beats}
             .min=${2}
             .max=${10}
             .onChange=${this.handleBeatsUpdate}
           ></counter-element>
-          <span>STEPS</span>
+          <span style=${textStyleMap}>STEPS</span>
           <counter-element
             value=${this.stepsPerBeat}
             .min=${2}
@@ -128,12 +132,12 @@ export class StepperControlsElement extends LitElement {
 
     .stepper-controls {
       display: flex;
-      background-color: rgb(59, 58, 58);
+      background-color: #1e1e1e;
       box-sizing: border-box;
       color: white;
       border-left: 0.5rem solid #2a2a2a;
       border-radius: 4px;
-      border-bottom: 2px solid #2a2a2a;
+      border-bottom: 4px solid #000000;
       height: 100%;
       width: 100%;
       margin-right: 0.4rem;

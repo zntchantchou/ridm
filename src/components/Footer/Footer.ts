@@ -55,6 +55,7 @@ export class Footer extends LitElement {
       display: flex;
       align-items: center;
       visibility: visible;
+      height: 3rem;
     }
     :host #separator {
       margin-left: 1rem;
@@ -63,7 +64,7 @@ export class Footer extends LitElement {
     #footer-content {
       display: flex;
       align-items: flex-end;
-      height: fit-content;
+      height: 100%;
     }
 
     :host img {

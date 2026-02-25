@@ -12,7 +12,7 @@ draw/
 .claude/
 .claude/discussions
 .claude/docs
-
+machines/
 node_modules
 dist
 *.local

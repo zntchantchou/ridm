@@ -11,6 +11,7 @@ import type { StepperControlsElement } from "./components/StepperControls/Steppe
 import type { ToggleElement } from "./components/Toggle/Toggle";
 import type { Stepper } from "./components/Stepper/Stepper";
 import type { RythmPanel } from "./components/RythmPanel/RythmPanel";
+import type { TopNav } from "./components/TopNav/TopNav";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -27,5 +28,6 @@ declare global {
     "rythm-panel": RythmPanel;
     "stepper-controls": StepperControlsElement;
     "stepper-element": Stepper;
+    "top-nav": TopNav;
   }
 }

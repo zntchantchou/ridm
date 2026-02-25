@@ -24,7 +24,7 @@ export class ResetButton extends LitElement {
       background: none;
       font-size: 0.8;
       color: white;
-      height: 4rem;
+      height: 2rem;
       width: 4rem;
       font-weight: bold;
     }

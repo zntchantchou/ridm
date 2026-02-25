@@ -119,7 +119,7 @@ export class SoundPanel extends LitElement {
     })?.value as PitchOptions;
 
     return html`
-      <div class="sound-panel">
+      <div class="sound-panel" id="sound-panel">
         <div
           class="details-section"
           style=${styleMap({ borderColor: this.fillColor })}
@@ -265,12 +265,15 @@ export class SoundPanel extends LitElement {
       height: 50%;
       width: 100%;
       display: flex;
-      padding: 1rem 0rem;
       display: flex;
       flex-direction: row;
+      padding: 1rem;
     }
 
     .sound-panel {
+      border-radius: 6px;
+      background-color: #1e1e1e;
+      padding: 1rem 1rem;
       display: flex;
       width: inherit;
       color: white;
@@ -291,7 +294,6 @@ export class SoundPanel extends LitElement {
     }
 
     .details-section {
-      background-color: var(--sequencer-primary-color);
       flex-direction: column;
       flex: 1;
       border-right: rgb(209, 209, 209) solid 0.15rem;

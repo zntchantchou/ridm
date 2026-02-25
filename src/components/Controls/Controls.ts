@@ -49,11 +49,6 @@ export class Controls extends LitElement {
   render() {
     return html` <div id="controls">
       <div class="control-group">
-        <div id="app-title">
-          <span>Ridm</span>
-        </div>
-      </div>
-      <div class="control-group">
         <play-pause-button id="play"></play-pause-button>
         <reset-button></reset-button>
       </div>
@@ -115,7 +110,6 @@ export class Controls extends LitElement {
       justify-content: space-around;
       align-items: center;
       padding-bottom: 0.4rem;
-      border-bottom: rgb(230, 230, 230) 4px solid;
       width: 100%;
       height: var(--controls-height);
       padding: 0rem 1rem;

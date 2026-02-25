@@ -24,12 +24,12 @@ body {
   font-family: "basico", Verdana, sans-serif;
   font-size: 1rem;
   height: 100%;
-  background-color: var(--app-background);
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  background-image: url("./public/pictures/camo.svg");
 }
 
 #play {
@@ -47,13 +47,16 @@ body {
 #sequencer {
   border: solid 0.2rem var(--sequencer-primary-color);
   visibility: hidden;
+  top: 1.4rem;
   display: none;
+  position: absolute;
   justify-items: center;
   align-items: center;
   padding-top: 0.5rem;
+  margin-top: 4rem;
   background-color: var(--sequencer-primary-color);
   min-height: 600px;
-  height: 90vh;
+  height: calc(100vh - 9rem);
   width: calc(1.5 * 90vh);
   border-radius: 10px;
 }
@@ -265,4 +268,44 @@ stepper-element {
   100% {
     transform: scale(1);
   }
+}
+
+.starfield-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.starfield-container svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Subtle radial vignette overlay */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 80% at 50% 50%,
+    transparent 30%,
+    rgba(22, 22, 22, 0.4) 70%,
+    rgba(22, 22, 22, 0.85) 100%
+  );
+}
+
+/* Very subtle warm glow from center — like a light from the drum machine */
+.ambient-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 55%,
+    rgba(255, 140, 50, 0.015) 0%,
+    transparent 70%
+  );
 }

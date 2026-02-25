@@ -134,7 +134,9 @@ export class MobileDisclaimer extends LitElement {
       color: rgb(220, 220, 220);
       letter-spacing: 0.5px;
     }
-
+    * {
+      font-family: "basico", Verdana, sans-serif;
+    }
     .main-message {
       font-size: 1.1rem;
       line-height: 1.6;

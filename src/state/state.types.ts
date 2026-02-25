@@ -44,14 +44,15 @@ export type TrackOptions = {
   stepperId: StepperIdType;
   sampleName: string;
   instance: Track;
+  channelOptions: ChannelOptions;
 };
+
 export type TracksState = Map<StepperIdType, TrackOptions>;
 
 export type AppState = {
   steppers: SteppersState;
   effects: EffectState;
   settings: Settings;
-  channels: ChannelsState;
 };
 
 export type StateUpdates =

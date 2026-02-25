@@ -1,6 +1,5 @@
 ## Follow the tasks-template.md
 
-Base on the first argument which is
 The conventions and structure common to all the tasks are in tasks/tasks-template.md
 
 ## Generate the tasks

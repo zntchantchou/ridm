@@ -4,10 +4,7 @@ import type { FeedbackDelayOptions, ReverbOptions } from "tone";
 import type { StepperIdType } from "../../../state/state.types";
 import type { PitchOptions } from "../../../types";
 import State from "../../../state/State";
-import {
-  INITIAL_SETTINGS,
-  INITIAL_CHANNEL_OPTIONS,
-} from "../../../state/state.constants";
+import { INITIAL_CHANNEL_OPTIONS } from "../../../state/state.constants";
 import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("sound-panel")
@@ -18,17 +15,24 @@ export class SoundPanel extends LitElement {
   @state() private fillColor =
     State.getSelectedStepperOptions()?.color.cssColor || "white";
 
+  @state() private volume: number = State.getTrack(this.selectedStepperId)
+    ?.channelOptions.volume as number;
+  @state() private panning: number = State.getTrack(this.selectedStepperId)
+    ?.channelOptions.pan as number;
+
   connectedCallback() {
     super.connectedCallback();
     State.currentStepperIdSubject.subscribe((id) => {
       this.selectedStepperId = id;
       const currentColor = State.getSelectedStepperOptions()?.color.cssColor;
       if (currentColor) this.fillColor = currentColor;
+      this.volume = State.getTrack(id)?.channelOptions.volume as number;
+      this.panning = State.getTrack(id)?.channelOptions.pan as number;
+      this.requestUpdate();
     });
   }
 
   private handleVolumeChange = (e: Event) => {
-    console.log("handleVolumeChange");
     const target = e.target as HTMLInputElement;
     State.channelUpdateSubject.next({
       stepperId: this.selectedStepperId as StepperIdType,
@@ -37,7 +41,6 @@ export class SoundPanel extends LitElement {
   };
 
   private handlePanningChange = (e: Event) => {
-    console.log("handlePanningChange");
     const target = e.target as HTMLInputElement;
     State.channelUpdateSubject.next({
       stepperId: this.selectedStepperId as StepperIdType,
@@ -136,8 +139,9 @@ export class SoundPanel extends LitElement {
               max=${40}
               direction="column"
               ?normalized=${true}
-              value=${State.getSelectedStepperOptions()?.track?.channel?.volume
-                .value || INITIAL_CHANNEL_OPTIONS.volume}
+              value=${isNaN(this.volume)
+                ? INITIAL_CHANNEL_OPTIONS.volume
+                : this.volume}
               .onChange=${this.handleVolumeChange}
             ></fader-element>
             <fader-element
@@ -145,9 +149,12 @@ export class SoundPanel extends LitElement {
               label="Panning"
               min=${-1}
               max=${1}
+              variant="absolute"
               direction="column"
-              ?normalized=${true}
-              value=${State.getSettings().tpc || INITIAL_SETTINGS.tpc}
+              ?normalized=${false}
+              value=${isNaN(this.panning)
+                ? INITIAL_CHANNEL_OPTIONS.pan
+                : this.panning}
               .onChange=${this.handlePanningChange}
             ></fader-element>
           </div>

@@ -29,7 +29,6 @@ export class FaderElement extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.updateFillColor();
   }
 
   private handleChange = (e: Event) => {
@@ -87,6 +86,7 @@ export class FaderElement extends LitElement {
   willUpdate(changedProperties: Map<string, unknown>) {
     if (changedProperties.has("fillColor") || changedProperties.has("value")) {
       this.updateFillColor();
+      console.log("CHANGED PROPERTIES ", changedProperties);
     }
   }
 
@@ -97,7 +97,7 @@ export class FaderElement extends LitElement {
 
   render() {
     const centering = this.direction === "row" ? { alignItems: "center" } : {};
-
+    console.log("FADER VALUE AT RENDER: ", this.value);
     return html`<div
       class="fader"
       style=${styleMap({
@@ -110,11 +110,11 @@ export class FaderElement extends LitElement {
       <input
         type="range"
         step=${this.step}
-        variant="positive"
+        variant=${this.variant || "positive"}
         min=${this.min}
         max=${this.max}
         @change=${(e: Event) => this.handleChange(e)}
-        value=${this.value}
+        .value=${this.value.toString()}
         style=${styleMap({
           background: this.gradient,
           margin: this.direction === "row" ? "0 .8rem" : ".8rem 0",

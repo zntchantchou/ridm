@@ -1,5 +1,5 @@
 import type { StepperColorType } from "../components/Stepper";
-import type { Effect, Settings } from "./state.types";
+import type { ChannelOptions, Effect, Settings } from "./state.types";
 import { generateEmptySteps } from "./state.utils";
 
 export const COLORS: StepperColorType[] = [
@@ -81,6 +81,11 @@ export const DEFAULT_STEPPER_OPTIONS = {
   beats: 4,
   stepsPerBeat: 4,
   selectedSteps: generateEmptySteps({ stepsPerBeat: 4, beats: 4 }),
+};
+
+export const DEFAULT_CHANNEL_OPTIONS: ChannelOptions = {
+  volume: 10,
+  pan: 0,
 };
 
 export const INITIAL_EFFECTS: Effect[] = [

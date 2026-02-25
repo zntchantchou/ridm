@@ -10,9 +10,9 @@ import type {
   StepperIdType,
   EffectState,
   SteppersState,
-  ChannelsState,
-  AppState,
   StateUpdates,
+  Settings,
+  TracksState,
 } from "./state.types";
 
 const STORAGE_KEY = "riddim-sequencer-state";
@@ -21,8 +21,8 @@ const DEBOUNCE_TIME_MS = 300; // Wait 300ms after last change
 type InitializeOptions = {
   effects: EffectState;
   steppers: SteppersState;
-  channels: ChannelsState;
-  settings: AppState["settings"];
+  settings: Settings;
+  tracks: TracksState;
   subjects: Subject<StateUpdates>[];
 };
 class Storage {
@@ -38,7 +38,7 @@ class Storage {
   /**
    * Initialize localStorage with default state if it doesn't exist
    */
-  private initializeStorage(state: AppState): void {
+  private initializeStorage(state: InitializeOptions): void {
     const existing = localStorage.getItem(STORAGE_KEY);
     if (!existing) {
       const initialState = this.serializeInitialState(state);
@@ -47,11 +47,11 @@ class Storage {
     }
   }
 
-  private serializeInitialState(state: AppState): PersistedState {
+  private serializeInitialState(state: InitializeOptions): PersistedState {
     return {
       effects: this.serializeInitialEffects(state.effects),
       steppers: this.serializeInitialSteppers(state.steppers),
-      channels: this.serializeInitialChannels(state.channels),
+      channels: this.serializeChannels(state.tracks),
       settings: state.settings,
       lastUpdated: Date.now(),
     };
@@ -177,44 +177,28 @@ class Storage {
   }
 
   /**
-   * Convert channels Map to serializable array
+   * Convert channels from tracks Map to serializable array
    */
-  private serializeChannels(): SerializedChannelsState {
+  private serializeChannels(tracks?: TracksState): SerializedChannelsState {
     const channels: SerializedChannelsState = [];
 
     for (let i = 0; i < 8; i++) {
       const stepperId = i as StepperIdType;
-      const channelOptions = State.getChannelOptions(stepperId);
-
-      if (channelOptions) {
+      let track;
+      if (tracks) {
+        track = tracks.get(i as StepperIdType);
+      } else {
+        track = State.getTrack(i as StepperIdType);
+      }
+      if (track?.channelOptions) {
         channels.push({
           stepperId,
-          channelOptions,
+          channelOptions: track.channelOptions,
         });
       }
     }
 
     return channels;
-  }
-
-  private serializeInitialChannels(
-    channels: ChannelsState,
-  ): SerializedChannelsState {
-    const serialized: SerializedChannelsState = [];
-
-    for (let i = 0; i < 8; i++) {
-      const stepperId = i as StepperIdType;
-      const channelOptions = channels.get(stepperId);
-
-      if (channelOptions) {
-        serialized.push({
-          stepperId,
-          channelOptions,
-        });
-      }
-    }
-
-    return serialized;
   }
 
   /**

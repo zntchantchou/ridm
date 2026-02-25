@@ -3,17 +3,26 @@ import { customElement, state } from "lit/decorators.js";
 import "../StepperControls/StepperControls";
 import "../Stepper/Stepper";
 import State from "../../state/State";
+import type { Subscription } from "rxjs";
 
 @customElement("rythm-panel")
 export class RythmPanel extends LitElement {
   @state()
   selectedStepperId = 0;
+  @state()
+  currentStepperIdSubscription: Subscription | null = null;
 
   connectedCallback(): void {
     super.connectedCallback();
-    State.currentStepperIdSubject.subscribe((id) => {
-      this.selectedStepperId = id;
-    });
+    this.currentStepperIdSubscription = State.currentStepperIdSubject.subscribe(
+      (id) => {
+        this.selectedStepperId = id;
+      },
+    );
+  }
+
+  disconnectedCallback(): void {
+    this.currentStepperIdSubscription?.unsubscribe();
   }
 
   override createRenderRoot() {

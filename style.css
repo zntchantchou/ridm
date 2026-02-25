@@ -62,6 +62,13 @@ body {
   border-radius: 10px;
 }
 
+@media (max-width: 1024px) {
+  #app {
+    visibility: hidden;
+    display: none;
+  }
+}
+
 #steppers-loading {
   background-color: rgba(214, 214, 214, 0.215);
   position: absolute;

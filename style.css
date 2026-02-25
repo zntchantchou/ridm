@@ -1,5 +1,6 @@
 @import url("./src/style/loader.css");
 @import url("./src/style/fonts.css");
+@import url("./src/style/reset.css");
 
 :root {
   --controls-height: 8%;

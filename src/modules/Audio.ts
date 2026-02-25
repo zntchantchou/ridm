@@ -5,7 +5,12 @@ import type {
   ToneSoundSettings,
   TrackEffect,
 } from "../types";
-import { INITIAL_EFFECTS, MIN_VOLUME_DB } from "../state/state.constants";
+import {
+  INITIAL_EFFECTS,
+  INITIAL_SETTINGS,
+  MIN_VOLUME_DB,
+} from "../state/state.constants";
+import State from "../state/State";
 
 class Audio {
   ctx: Tone.Context | null = null;
@@ -19,8 +24,7 @@ class Audio {
     Tone.setContext(this.ctx);
     if (this.ctx) {
       this.volume = new Tone.Volume({
-        // volume: parseInt(Controls.volumeRange?.value as string),
-        volume: 10,
+        volume: State.getSettings().volume || INITIAL_SETTINGS.volume,
       });
       this.ctx.resume();
     }

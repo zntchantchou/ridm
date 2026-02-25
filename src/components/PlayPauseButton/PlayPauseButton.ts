@@ -48,6 +48,8 @@ export class PlayPauseButton extends LitElement {
       height: 3.8rem;
       width: 3.8rem;
       margin: 0 1rem;
+
+      box-sizing: border-box;
     }
 
     img {

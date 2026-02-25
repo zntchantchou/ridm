@@ -50,7 +50,7 @@ export class Footer extends LitElement {
   static styles = css`
     :host {
       margin-top: 0.5rem;
-      color: rgb(126, 126, 126);
+      color: rgb(203, 203, 203);
       font-weight: 100;
       display: flex;
       align-items: center;

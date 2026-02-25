@@ -26,11 +26,12 @@ export class ResetButton extends LitElement {
       color: white;
       height: 4rem;
       width: 4rem;
+      font-weight: bold;
     }
 
     button:hover {
-      background-color: white;
-      color: #a8a8a8;
+      background-color: #f0e8d7;
+      color: #737373;
     }
     button:active {
       background-color: gray;

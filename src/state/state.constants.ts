@@ -25,7 +25,7 @@ export const COLORS: StepperColorType[] = [
   },
   {
     name: "orange",
-    cssColor: "#ff6600ff",
+    cssColor: "#ff4500",
   },
 
   {

@@ -221,8 +221,6 @@ class State {
     this.effects = effects;
     this.steppers = steppers;
     this.settings = settings;
-    console.log("TEMPLATE TPC UPDATE ", settings.tpc);
-    console.log("TEMPLATE NAME ", name);
     this.tpcUpdateSubject.next(settings.tpc);
   }
 

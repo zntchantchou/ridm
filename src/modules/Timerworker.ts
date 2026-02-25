@@ -2,7 +2,7 @@ import type { BeatMapType } from "../types";
 import StepQueue from "./StepQueue";
 import UI from "./Ui";
 import Pulses from "./Pulses";
-import Controls from "../components/Controls";
+import Controls from "./Controls";
 import * as Tone from "tone";
 
 class TimeWorker {

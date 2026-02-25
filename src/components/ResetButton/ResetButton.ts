@@ -1,6 +1,6 @@
 import { css, html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
-import Application from "../../../main";
+import Application from "../../main";
 
 @customElement("reset-button")
 export class ResetButton extends LitElement {

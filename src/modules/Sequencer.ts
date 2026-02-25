@@ -1,8 +1,7 @@
-import Stepper, { type StepperOptions } from "../components/Stepper";
-import SoundPanel from "../components/SoundPanel";
 import Pulses from "./Pulses";
 import State from "../state/State";
 import { Subscription } from "rxjs";
+import type { StepperIdType } from "../state/state.types";
 
 const appLoaderElt = document.getElementById("app-loader");
 const sequencer = document.getElementById("sequencer");
@@ -11,10 +10,8 @@ const sequencer = document.getElementById("sequencer");
 
 class Sequencer {
   pulses: typeof Pulses | null = null;
-  steppers: Stepper[] = [];
   stepperBeatsUpdateSubscriptions?: Subscription[] = [];
   stepperStepsUpdateSubscriptions?: Subscription[] = [];
-  soundPanel?: SoundPanel;
   // value is the parameters to be set on the effect (ToneAudioNode)
   constructor(pulses: typeof Pulses) {
     this.pulses = pulses;
@@ -42,7 +39,7 @@ class Sequencer {
   }
 
   private register = async (
-    options: StepperOptions,
+    options: { id: StepperIdType; beats: number; stepsPerBeat: number },
     initializeTracks: boolean = true,
   ) => {
     const steps = options.stepsPerBeat * options.beats;

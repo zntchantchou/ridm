@@ -1,7 +1,7 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import Application from "../../../main";
-import type { TemplateName } from "../../../state/state.types";
+import Application from "../../main";
+import type { TemplateName } from "../../state/state.types";
 
 @customElement("template-button")
 export class TemplateButton extends LitElement {

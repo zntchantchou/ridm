@@ -1,4 +1,4 @@
-import Controls from "./components/Controls";
+import Controls from "./modules/Controls";
 import Timerworker from "./modules/Timerworker";
 import Sequencer from "./modules/Sequencer";
 import Audio from "./modules/Audio";

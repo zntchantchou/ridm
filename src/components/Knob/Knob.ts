@@ -1,87 +1,53 @@
+import { LitElement, html, css } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 import { fromEvent, Observable, Subscription, tap, throttleTime } from "rxjs";
 import State from "../../state/State";
 import type { EffectNameType, IEffectValue } from "../../types";
 import type { StepperIdType } from "../../state/state.types";
-import type { StepperOptions } from "../Stepper";
+import type { StepperOptions } from "../../types";
 
-export type KnobOptions = {
-  label: string;
-  id: string;
-  value: number;
-  onChange: (value: string, name: keyof IEffectValue) => void;
-  min: number;
-  max: number;
-  fillColor: string;
-  settingName: keyof IEffectValue;
-  effectName: EffectNameType;
-  /** size in rem */
-  size: number;
-  parentElt: HTMLDivElement;
-};
+@customElement("knob-element")
+export class KnobElement extends LitElement {
+  @property({ type: String }) label = "";
+  @property({ type: String }) id = "";
+  @property({ type: Number }) value = 0;
+  @property({ type: Number }) min = 0;
+  @property({ type: Number }) max = 100;
+  @property({ type: Number }) size = 5;
+  @property({ type: String }) fillColor = "#fff";
+  @property({ type: String }) settingName: keyof IEffectValue = "wet";
+  @property({ type: String }) effectName: EffectNameType = "delay";
+  @property({ attribute: false }) onChange?: (
+    value: string,
+    name: keyof IEffectValue,
+  ) => void;
 
-class Knob {
-  label;
-  effectName: EffectNameType;
-  id;
-  value;
-  onChange;
-  min;
-  max;
-  initialized = false;
-  rootElt?: HTMLDivElement;
-  valueContainer?: HTMLDivElement;
-  valueElt?: HTMLSpanElement;
-  labelContainer?: HTMLDivElement;
-  labelElt?: HTMLSpanElement;
-  parentElt?: HTMLDivElement;
-  knobElt?: HTMLDivElement;
-  ringElt?: HTMLDivElement;
-  ringFillElt?: HTMLDivElement;
-  knobIndicatorElt?: HTMLDivElement;
-  knobIndicatorContainerElt?: HTMLDivElement;
-  knobContainerElt?: HTMLDivElement;
-  moveListener?: number;
-  clickListener?: number;
-  releaseListener?: number;
-  size: number;
-  dragObs: Observable<Event> | null = null;
-  dragSubscription?: Subscription;
-  selectedStepperId: StepperIdType = State.getSelectedStepperId();
-  // VALUES
-  startY = 0;
-  settingName?: keyof IEffectValue;
-  currentY = 0;
-  lastRotation = 0;
-  maxRotation = 140;
-  minRotation: number;
-  velocity = 2;
-  fillColor: string;
+  @state() private initialized = false;
+  @state() private currentY = 0;
+  @state() private lastRotation = 0;
+  @state() private startY = 0;
+  @state() private selectedStepperId: StepperIdType =
+    State.getSelectedStepperId();
 
-  constructor({
-    label,
-    id,
-    value = 0,
-    onChange,
-    size,
-    min,
-    max,
-    fillColor,
-    parentElt,
-    settingName,
-    effectName,
-  }: KnobOptions) {
-    this.label = label;
-    this.value = value;
-    this.effectName = effectName;
-    this.settingName = settingName;
-    this.min = min;
-    this.max = max;
-    this.id = id;
-    this.size = size;
-    this.fillColor = fillColor;
-    this.onChange = onChange;
-    this.label = label;
-    this.parentElt = parentElt;
+  private dragObs: Observable<Event> | null = null;
+  private dragSubscription?: Subscription;
+  private stateSubscription?: Subscription;
+  private maxRotation = 140;
+  private minRotation = 0;
+  private velocity = 2;
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.initializeRotation();
+    this.initializeEvents();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.cleanup();
+  }
+
+  private initializeRotation() {
     if (this.min >= 0) {
       this.maxRotation = this.maxRotation * 2;
       const rawMinRotation =
@@ -97,69 +63,20 @@ class Knob {
         (this.value / this.max) * this.maxRotation,
       );
     }
-    this.render();
-    this.initializeEvents();
-  }
-  // call in constructor and onUpdate
-  private render() {
-    this.rootElt = document.createElement("div");
-    this.rootElt.classList.add("knob-root");
-    this.valueContainer = document.createElement("div");
-    this.valueContainer.classList.add("knob-value-container");
-    this.valueElt = document.createElement("span");
-    this.valueElt.classList.add("knob-value");
-    this.labelContainer = document.createElement("div");
-    this.labelContainer.classList.add("knob-label-container");
-    this.labelElt = document.createElement("span");
-    this.labelElt.classList.add("knob-label");
-    this.labelElt.textContent = this.label;
-    this.knobContainerElt = document.createElement("div");
-    this.knobContainerElt.id = this.id;
-    this.knobContainerElt.classList.add("knob-container");
-    this.knobContainerElt.style.width = `${this.size}rem`;
-    this.knobContainerElt.style.height = `${this.size}rem`;
-    this.ringElt = document.createElement("div");
-    this.ringElt.classList.add("ring");
-    this.ringFillElt = document.createElement("div");
-    this.ringFillElt.classList.add("ring-fill");
-
-    const spaceElt = document.createElement("div");
-    spaceElt.classList.add("space");
-    this.knobElt = document.createElement("div");
-    this.knobElt.classList.add("knob");
-    this.knobIndicatorContainerElt = document.createElement("div");
-    this.knobIndicatorContainerElt.classList.add("knob-indicator-container");
-    this.knobIndicatorElt = document.createElement("div");
-    this.knobIndicatorElt.classList.add("knob-indicator");
-    this.knobIndicatorContainerElt.appendChild(this.knobIndicatorElt);
-    this.knobElt.appendChild(this.knobIndicatorContainerElt);
-    this.knobContainerElt.appendChild(this.ringElt);
-    this.knobContainerElt.appendChild(this.ringFillElt);
-    this.knobContainerElt.appendChild(spaceElt);
-    this.knobContainerElt.appendChild(this.knobElt);
-    this.valueContainer.appendChild(this.valueElt);
-    this.labelContainer.appendChild(this.labelElt);
-    this.rootElt.appendChild(this.labelContainer);
-    this.rootElt.appendChild(this.knobContainerElt);
-    this.rootElt.appendChild(this.valueContainer);
-    this!.valueElt.textContent = this.getValue();
-    this.parentElt?.appendChild(this.rootElt);
-    this.setRingColor(this.selectedStepperId);
-
-    this.updatePosition();
-    this.initialized = true;
   }
 
   private initializeEvents() {
-    this.knobIndicatorContainerElt?.addEventListener(
-      "pointerdown",
-      this.handleClick,
-    );
-    // should we really track dragging movement across the whole document
     this.dragObs = fromEvent(document, "pointermove");
-    State.currentStepperIdSubject // unsubscribe on destroy
+    this.stateSubscription = State.currentStepperIdSubject
       .pipe(tap(this.setRingColor))
       .subscribe(this.handleSelectedStepperChange);
+  }
+
+  private cleanup() {
+    this.dragSubscription?.unsubscribe();
+    this.stateSubscription?.unsubscribe();
+    document.removeEventListener("pointermove", this.handleMove);
+    document.removeEventListener("pointerup", this.handleRelease);
   }
 
   private setRingColor = (id: StepperIdType) => {
@@ -178,8 +95,8 @@ class Knob {
     this.value = settingValue as number;
     this.initialized = false;
     this.updatePosition();
-    if (this.valueElt) this.valueElt.textContent = this.getValue();
     this.initialized = true;
+    this.requestUpdate();
   };
 
   private handleClick = (e: PointerEvent) => {
@@ -187,70 +104,47 @@ class Knob {
     document.addEventListener("pointerup", this.handleRelease);
     this.dragSubscription = this.dragObs
       ?.pipe(throttleTime(100))
-      .subscribe(() => this.triggerUpdate()); // this actually updates the setting that this knob controls, hence throttling
+      .subscribe(() => this.triggerUpdate());
     this.startY = e.clientY;
   };
 
   private triggerUpdate = () => {
-    if (this.settingName) this.onChange(this.getValue(), this.settingName);
+    if (this.settingName && this.onChange) {
+      this.onChange(this.getValue(), this.settingName);
+    }
   };
 
   private updatePosition() {
     const value = this.initialized ? parseFloat(this.getValue()) : this.value;
     const ratio = value ? value / this.max : value;
     const angle = this.maxRotation * ratio;
-    const rotation = this.min >= 0 ? angle - this.maxRotation / 2 : angle;
-    this.knobIndicatorContainerElt!.style.transform = `rotate(${rotation}deg)`;
+    // const rotation = this.min >= 0 ? angle - this.maxRotation / 2 : angle;
     this.currentY = angle;
-    this.updateRingColor();
+    this.requestUpdate();
   }
 
   private handleMove = ({ clientY }: PointerEvent) => {
     const delta = this.startY - clientY;
-    this.currentY = this.lastRotation + delta * this.velocity; // This is the actual value
+    this.currentY = this.lastRotation + delta * this.velocity;
     if (this.currentY > this.maxRotation) {
-      this.currentY = this.maxRotation; // return instead ?
+      this.currentY = this.maxRotation;
     } else if (this.currentY <= this.minRotation) {
       this.currentY = this.minRotation;
     }
     this.updatePosition();
   };
 
-  private updateRingColor() {
-    const getBg = (startingAngle: number) =>
-      `conic-gradient(${this.fillColor} ${startingAngle}deg, rgba(255,255,255,0.0) 0 360deg, ${this.fillColor} 0deg)`;
-    if (this.min < 0) {
-      if (this.currentY > 0) {
-        this.ringFillElt!.style.background = getBg(this.currentY);
-        return;
-      }
-      this.ringFillElt!.style.background = `conic-gradient(${
-        this.fillColor
-      } 0deg, rgba(255,255,255,0.0) 0 ${360 + this.currentY}deg, ${
-        this.fillColor
-      } 0deg)`;
-      return;
-    }
-    this.ringFillElt!.style.background = `conic-gradient(from ${
-      -1 * (this.maxRotation / 2)
-    }deg, ${this.fillColor} ${
-      this.currentY
-    }deg, rgba(255,255,255,0.0) 0 360deg, ${this.fillColor} 0deg)`;
-    return;
-  }
-
   private handleRelease = () => {
     this.lastRotation = this.currentY;
-    if (this.valueElt) this.valueElt.textContent = this.getValue();
     this.dragSubscription?.unsubscribe();
     this.dragObs = null;
     document.removeEventListener("pointermove", this.handleMove);
     document.removeEventListener("pointerup", this.handleRelease);
     this.triggerUpdate();
+    this.requestUpdate();
   };
 
   private getValue() {
-    // ABSOLUTE
     if (!this.initialized) return this.value.toString();
     const valueUp = Math.abs((this.currentY / this.maxRotation) * this.max);
     const valueDown = -1 * (this.currentY / this.maxRotation) * this.min;
@@ -264,6 +158,177 @@ class Knob {
     }
     return "0";
   }
-}
 
-export default Knob;
+  private getRingFillBackground() {
+    const getBg = (startingAngle: number) =>
+      `conic-gradient(${this.fillColor} ${startingAngle}deg, rgba(255,255,255,0.0) 0 360deg, ${this.fillColor} 0deg)`;
+
+    if (this.min < 0) {
+      if (this.currentY > 0) {
+        return getBg(this.currentY);
+      }
+      return `conic-gradient(${this.fillColor} 0deg, rgba(255,255,255,0.0) 0 ${
+        360 + this.currentY
+      }deg, ${this.fillColor} 0deg)`;
+    }
+    return `conic-gradient(from ${-1 * (this.maxRotation / 2)}deg, ${
+      this.fillColor
+    } ${this.currentY}deg, rgba(255,255,255,0.0) 0 360deg, ${
+      this.fillColor
+    } 0deg)`;
+  }
+
+  private getRotation() {
+    const value = this.initialized ? parseFloat(this.getValue()) : this.value;
+    const ratio = value ? value / this.max : value;
+    const angle = this.maxRotation * ratio;
+    return this.min >= 0 ? angle - this.maxRotation / 2 : angle;
+  }
+
+  firstUpdated() {
+    this.setRingColor(this.selectedStepperId);
+    this.updatePosition();
+    this.initialized = true;
+  }
+
+  render() {
+    const rotation = this.getRotation();
+    const ringFillBg = this.getRingFillBackground();
+
+    return html`
+      <div class="knob-root">
+        <div class="knob-label-container">
+          <span class="knob-label">${this.label}</span>
+        </div>
+
+        <div
+          class="knob-container"
+          id=${this.id}
+          style="width: ${this.size}rem; height: ${this.size}rem;"
+        >
+          <div class="ring"></div>
+          <div class="ring-fill" style="background: ${ringFillBg}"></div>
+          <div class="space"></div>
+          <div class="knob">
+            <div
+              class="knob-indicator-container"
+              style="transform: rotate(${rotation}deg)"
+              @pointerdown=${this.handleClick}
+            >
+              <div class="knob-indicator"></div>
+            </div>
+          </div>
+        </div>
+        <div class="knob-value-container">
+          <span class="knob-value">${this.getValue()}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  static styles = css`
+    :host {
+      --ring-width: 14%;
+      --ring-space: 20%;
+      --knob-color-1: rgb(67, 68, 67);
+      --knob-color-2: rgb(40, 38, 38);
+    }
+
+    .knob-root {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0.2rem 1rem 0 1rem;
+      height: fit-content;
+    }
+
+    .knob-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-top: 0.4rem;
+    }
+
+    .knob-value-container {
+      color: #fff;
+      display: flex;
+      justify-content: center;
+    }
+
+    .knob-label,
+    .knob-value {
+      font-size: 0.8rem;
+    }
+
+    .knob-label {
+      color: #fff;
+      margin: 0.2rem 0px;
+    }
+
+    .knob-label-container {
+      display: flex;
+      flex-wrap: nowrap;
+    }
+
+    .ring {
+      position: absolute;
+      background: conic-gradient(
+        #545c64 140deg,
+        rgba(176, 161, 161, 0) 0 220deg,
+        #545c64 0deg
+      );
+      border-radius: 50%;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ring-fill {
+      position: absolute;
+      border-radius: 50%;
+      width: 100%;
+      height: 100%;
+    }
+
+    .space {
+      position: absolute;
+      background-color: rgb(21, 21, 21);
+      border-radius: 50%;
+      width: calc((100%) - var(--ring-width));
+      height: calc((100%) - var(--ring-width));
+    }
+
+    .knob {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      background: radial-gradient(
+        circle at center,
+        rgb(74, 73, 73) 0%,
+        rgb(75, 74, 74) 20%,
+        rgb(49, 49, 52) 40%,
+        rgb(34, 34, 34) 100%
+      );
+      border-radius: 50%;
+      width: calc((100%) - (var(--ring-width) + var(--ring-space)));
+      height: calc((100%) - (var(--ring-width) + var(--ring-space)));
+      cursor: grab;
+    }
+
+    .knob-indicator-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .knob-indicator {
+      background: #ffffff;
+      width: 9%;
+      height: 35%;
+      margin-top: 4%;
+    }
+  `;
+}

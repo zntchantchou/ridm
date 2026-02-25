@@ -12,16 +12,6 @@ const DEBOUNCE_TIME_MS = 200;
 const steppersDiv = document.getElementById("steppers");
 
 export type StepperColorType = { name: string; cssColor: string };
-export interface StepperOptions {
-  beats: number;
-  stepsPerBeat: number;
-  id: StepperIdType;
-  sampleName: string;
-  color: StepperColorType;
-  controls?: StepperControls;
-  track?: Track;
-  selectedSteps?: boolean[];
-}
 
 class Stepper {
   id?: StepperIdType;

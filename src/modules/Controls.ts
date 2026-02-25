@@ -1,4 +1,4 @@
-import Audio from "../modules/Audio";
+import Audio from "./Audio";
 import State from "../state/State";
 import { INITIAL_SETTINGS } from "../state/state.constants";
 import * as Tone from "tone";

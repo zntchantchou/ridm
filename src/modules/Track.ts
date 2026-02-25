@@ -1,7 +1,7 @@
 import * as Tone from "tone";
 import Audio from "./Audio.ts";
 import { debounceTime, filter, tap, type Subscription } from "rxjs";
-import Controls from "../components/Controls";
+import Controls from "./Controls.ts";
 import type {
   EffectNameType,
   EffectUpdate,

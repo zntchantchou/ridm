@@ -1,9 +1,9 @@
 import { css, html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import Application from "../../../main";
+import Application from "../../main";
 import playIcon from "/pictures/play-round.svg";
 import pauseIcon from "/pictures/pause-round.svg";
-import State from "../../../state/State";
+import State from "../../state/State";
 import type { Subscription } from "rxjs";
 
 @customElement("play-pause-button")

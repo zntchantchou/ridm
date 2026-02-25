@@ -1,7 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import type { StepperIdType } from "../../../state/state.types";
-import State from "../../../state/State";
+import type { StepperIdType } from "../../state/state.types";
+import State from "../../state/State";
 import "../Toggle/Toggle";
 import "../Counter/Counter";
 import { styleMap } from "lit/directives/style-map.js";

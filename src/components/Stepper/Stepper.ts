@@ -1,14 +1,14 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { debounceTime, filter, tap, type Subscription } from "rxjs";
-import type Track from "../../../modules/Track";
-import type { StepperColorType } from "../../Stepper";
-import Audio from "../../../modules/Audio";
-import State from "../../../state/State";
-import type Pulse from "../../../modules/Pulse";
-import Controls from "../../Controls";
+import type Track from "../../modules/Track";
+// import type { StepperColorType } from "../Stepper";
+import Audio from "../../modules/Audio";
+import State from "../../state/State";
+import type Pulse from "../../modules/Pulse";
+import Controls from "../../modules/Controls";
 import { ifDefined } from "lit/directives/if-defined.js";
-import type { StepperIdType } from "../../../state/state.types";
+import type { StepperIdType } from "../../state/state.types";
 
 const DEBOUNCE_TIME_MS = 200;
 
@@ -23,7 +23,7 @@ export class Stepper extends LitElement {
   @property({ attribute: false })
   track?: Track;
   @property({ attribute: false })
-  color?: StepperColorType;
+  color?: string;
   @property({ attribute: false })
   selectedSteps: boolean[] = Array(this.steps).fill(false);
 

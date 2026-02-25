@@ -27,7 +27,7 @@ import {
 import { generateEmptySteps } from "./state.utils";
 import Storage from "./Storage";
 import type { PersistedState } from "./storage.types";
-import Controls from "../components/Controls";
+import Controls from "../modules/Controls";
 import templates from "./state.templates";
 import Track from "../modules/Track";
 

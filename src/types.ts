@@ -1,5 +1,7 @@
 import * as Tone from "tone";
 import type Stepper from "./components/Stepper";
+import type Track from "./modules/Track";
+import type { StepperIdType } from "./state/state.types";
 
 export type BeatMapType = Map<string, { steppers: Stepper[] }>;
 
@@ -43,3 +45,13 @@ export type EffectUpdate = {
   stepperId: string;
   value: EffectValue;
 };
+
+export interface StepperOptions {
+  beats: number;
+  stepsPerBeat: number;
+  id: StepperIdType;
+  sampleName: string;
+  color: string;
+  track?: Track;
+  selectedSteps?: boolean[];
+}

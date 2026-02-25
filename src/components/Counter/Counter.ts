@@ -1,95 +1,102 @@
-import type { StepperIdType } from "../../state/state.types";
+import { LitElement, html, css } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 
-type CounterOptions = {
-  initialValue?: number;
-  min?: number;
-  max?: number;
-  stepperId?: StepperIdType;
-  onChange?: (value: number) => void;
-};
+@customElement("counter-element")
+export class CounterElement extends LitElement {
+  @property({ type: Number }) value = 0;
+  @property({ type: Number }) min = 2;
+  @property({ type: Number }) max = 10;
+  @property({ attribute: false }) onChange?: (value: number) => void;
 
-class Counter {
-  value: number;
-  min: number;
-  max: number;
-  stepperId?: StepperIdType;
-  rootElt: HTMLDivElement;
-  minusBtn: HTMLDivElement;
-  valueDisplay: HTMLDivElement;
-  plusBtn: HTMLDivElement;
-  onChange?: (value: number) => void;
+  @state() private _value = 0;
 
-  constructor({
-    initialValue,
-    min,
-    max,
-    onChange,
-    stepperId,
-  }: CounterOptions = {}) {
-    this.value = initialValue ?? 0;
-    this.min = min ?? 0;
-    this.max = max ?? 10;
-    if (Number.isInteger(stepperId)) this.stepperId = stepperId;
-    this.onChange = onChange;
-
-    this.rootElt = document.createElement("div");
-    this.rootElt.classList.add("counter");
-    this.minusBtn = document.createElement("div");
-    this.valueDisplay = document.createElement("div");
-    this.plusBtn = document.createElement("div");
-    [this.minusBtn, this.valueDisplay, this.plusBtn].forEach((elt) =>
-      elt.classList.add("counter-item"),
-    );
-    this.minusBtn.addEventListener("click", this.decrement);
-    this.plusBtn.addEventListener("click", this.increment);
-
-    this.render();
+  connectedCallback() {
+    super.connectedCallback();
+    this._value = this.value;
   }
 
-  increment = () => {
-    if (this.value < this.max) {
-      this.value++;
-      this.updateDisplay();
-      this.onChange?.(this.value);
+  private increment = () => {
+    if (this._value < this.max) {
+      this._value++;
+      this.onChange?.(this._value);
     }
   };
 
-  decrement = () => {
-    if (this.value > this.min) {
-      this.value--;
-      this.updateDisplay();
-      this.onChange?.(this.value);
+  private decrement = () => {
+    if (this._value > this.min) {
+      this._value--;
+      this.onChange?.(this._value);
     }
   };
 
-  private updateDisplay() {
-    this.valueDisplay.textContent = this.value.toString();
+  render() {
+    return html`
+      <div class="counter">
+        <div
+          class="counter-item counter-btn counter-minus"
+          @click=${this.decrement}
+        >
+          -
+        </div>
+        <div class="counter-item counter-value">${this._value}</div>
+        <div
+          class="counter-item counter-btn counter-plus"
+          @click=${this.increment}
+        >
+          +
+        </div>
+      </div>
+    `;
   }
 
-  private render(): HTMLDivElement {
-    this.rootElt.className = "counter";
+  static styles = css`
+    .counter {
+      display: flex;
+      cursor: pointer;
+    }
 
-    this.minusBtn.classList.add("counter-minus");
-    this.minusBtn.classList.add("counter-btn");
-    this.minusBtn.textContent = "-";
+    .counter-item {
+      min-width: 1rem;
+      flex: 1;
+      color: white;
+      padding: 0.4rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: content-box;
+      font-size: 0.9rem;
+      overflow: hidden;
+      background-color: rgb(28, 28, 28);
+    }
 
-    this.valueDisplay.classList.add("counter-value");
-    this.valueDisplay.textContent = this.value.toString();
+    .counter-btn {
+      font-size: 1.2rem;
+    }
 
-    this.plusBtn.classList.add("counter-plus");
-    this.plusBtn.classList.add("counter-btn");
-    this.plusBtn.textContent = "+";
+    .counter-btn:hover:active {
+      background-color: rgb(133, 133, 133);
+      animation: bounce 0.3s ease-in-out;
+    }
 
-    this.rootElt.appendChild(this.minusBtn);
-    this.rootElt.appendChild(this.valueDisplay);
-    this.rootElt.appendChild(this.plusBtn);
+    .counter-btn:hover {
+      color: rgb(38, 38, 38);
+      background-color: rgb(255, 255, 255);
+    }
 
-    return this.rootElt;
-  }
+    .counter-plus {
+      border-radius: 0 2rem 2rem 0;
+    }
 
-  getElement() {
-    return this.rootElt;
-  }
+    .counter-minus {
+      border-radius: 2rem 0 0 2rem;
+    }
+
+    .counter-value {
+      font-family: "technology";
+      font-size: 1.2rem;
+      border-left: 1px solid rgb(81, 81, 81);
+      border-right: 1px solid rgb(81, 81, 81);
+      font-weight: bolder;
+    }
+  `;
 }
-
-export default Counter;

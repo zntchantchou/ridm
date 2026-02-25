@@ -1,83 +1,42 @@
-import State from "../../state/State";
-import type { StepperIdType } from "../../state/state.types";
+import { css, html, LitElement } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { styleMap } from "lit/directives/style-map.js";
 
-type FaderOptions = {
-  initialValue: number;
-  min: number;
-  max: number;
-  step: number;
-  id?: string;
-  onChange: (e: Event) => void;
-  fillColor?: string;
-  variant?: "positive" | "absolute";
-  matchStepperColor?: boolean;
-  labelElt?: Element;
-  /* The fader will get the currently selected stepper's options and retrieve the value using this function **/
-  getValueFn?: (options: StepperIdType) => string;
-};
-
-class Fader {
-  matchStepperColor: boolean = false;
-  labelElt?: Element;
-  element: HTMLInputElement;
-  value: number;
-  min: number;
-  max: number;
-  getValueFn?: (options: StepperIdType) => string;
-  onChange: (e: Event) => void;
-  id?: string;
+@customElement("fader-element")
+export class FaderElement extends LitElement {
+  @property({ type: Number })
+  min: number = 0;
+  @property({ type: Boolean })
+  normalized = false;
+  @property({ type: Number })
+  max: number = 100;
+  @property({ type: Number })
+  step: number = 0.01;
+  @property({ type: Number })
+  value: number = 0;
+  @property({ type: String })
+  label = "";
+  @property({ type: String })
+  variant = "positive";
+  @property({ type: String })
+  direction = "row";
+  @property({ type: String })
   fillColor?: string = "rgb(126, 126, 126)";
-  variant: "positive" | "absolute";
-  constructor({
-    initialValue,
-    min,
-    max,
-    step,
-    onChange,
-    fillColor,
-    variant,
-    matchStepperColor,
-    getValueFn,
-    id,
-    labelElt,
-  }: FaderOptions) {
-    this.value = initialValue;
-    this.max = max;
-    this.min = min;
-    this.getValueFn = getValueFn;
-    this.onChange = onChange;
-    this.id = id;
-    this.element = document.createElement("input");
-    if (id) this.element.id = id;
-    this.element.type = "range";
-    this.element.min = this.min.toString();
-    this.element.max = this.max.toString();
-    this.element.step = step.toString();
-    this.element.value = this.value.toString();
-    this.element.addEventListener("change", this.handleChange);
-    if (labelElt) this.labelElt = labelElt;
-    if (variant) this.variant = variant;
-    else this.variant = this.min < 0 ? "absolute" : "positive";
-    if (fillColor) {
-      this.fillColor = fillColor;
-    }
-    if (matchStepperColor) this.listenToStepperColor();
-    this.updateFillColor();
+  @property({ type: String })
+  gradient? = "rgba(220, 220, 220, 1)";
+  @property({ attribute: false })
+  onChange?: (e: Event) => void;
+
+  connectedCallback(): void {
+    super.connectedCallback();
   }
 
-  private listenToStepperColor() {
-    State.currentStepperIdSubject.subscribe((id) => {
-      if (this.getValueFn) {
-        // state should implement those selectors instead of passing them down from parent
-        const value = this?.getValueFn(id as StepperIdType);
-        this.value = parseFloat(value);
-        this.element.value = value;
-        if (this.labelElt) this.labelElt.textContent = value.toUpperCase();
-      }
-      this.fillColor = State.getStepperOptions(id)?.color.cssColor;
-      this.updateFillColor();
-    });
-  }
+  private handleChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    this.value = parseFloat(target.value);
+    this.updateFillColor();
+    if (this.onChange) this?.onChange(e);
+  };
 
   private valueToPct(value: number) {
     const amplitude = this.max - this.min;
@@ -86,43 +45,164 @@ class Fader {
     return ratio * 100;
   }
 
-  private handleChange = (e: Event) => {
-    this.onChange(e);
-    const target = e.target as HTMLInputElement;
-    this.value = parseFloat(target.value);
-    if (this.labelElt) this.labelElt.textContent = target.value.toUpperCase();
-    this.updateFillColor();
-  };
+  private normalizeValue() {
+    if (!this.normalized) return this.value.toFixed(1);
+    let percentage = 0;
+    const amplitude = this.max - this.min;
+    if (this.value < 0) {
+      const diff = -1 * (this.min - this.value);
+      const ratio = diff / amplitude;
+      percentage = ratio * 100;
+    } else {
+      const startRatio = -this.min / amplitude;
+      const ratio = this.value / amplitude;
+      percentage = (startRatio + ratio) * 100;
+    }
+    return percentage.toFixed(1);
+  }
 
   private updateFillColor() {
-    let gradient;
     const inactiveColor = "rgba(220, 220, 220, 1)";
     if (this.variant === "positive") {
-      gradient = `linear-gradient(to right, ${this.fillColor} ${this.valueToPct(
+      this.gradient = `linear-gradient(to right, ${this.fillColor} ${this.valueToPct(
         this.value,
       )}%, ${inactiveColor} ${this.valueToPct(this.value)}%)`;
     } else {
       if (this.value < 0) {
         const ratio = this.value / this.min;
         const start = (1 - ratio) * 50;
-        gradient = `linear-gradient(to right, ${inactiveColor} ${start}%, ${this.fillColor}  ${start}%, ${this.fillColor} 50%, ${inactiveColor} 50%)`;
+        this.gradient = `linear-gradient(to right, ${inactiveColor} ${start}%, ${this.fillColor}  ${start}%, ${this.fillColor} 50%, ${inactiveColor} 50%)`;
       }
       if (this.value > 0) {
         const ratio = this.value / this.max;
         const start = 50;
         const end = start + ratio * start;
-        gradient = `linear-gradient(to right, ${inactiveColor} ${start}%, ${this.fillColor}  ${start}%, ${this.fillColor} ${end}%, ${inactiveColor} ${end}%)`;
+        this.gradient = `linear-gradient(to right, ${inactiveColor} ${start}%, ${this.fillColor}  ${start}%, ${this.fillColor} ${end}%, ${inactiveColor} ${end}%)`;
       }
-      if (this.value === 0) gradient = inactiveColor;
+      if (this.value === 0) this.gradient = inactiveColor;
     }
-    if (gradient) this.element.style.background = gradient;
+  }
+
+  willUpdate(changedProperties: Map<string, unknown>) {
+    if (changedProperties.has("fillColor") || changedProperties.has("value")) {
+      this.updateFillColor();
+      console.log("CHANGED PROPERTIES ", changedProperties);
+    }
+  }
+
+  renderLabel() {
+    if (this.label) return html`<span>${this.label}</span>`;
+    return null;
   }
 
   render() {
-    if (this.labelElt)
-      this.labelElt.textContent = this.value.toString().toUpperCase();
-    return this.element;
+    const centering = this.direction === "row" ? { alignItems: "center" } : {};
+    console.log("FADER VALUE AT RENDER: ", this.value);
+    return html`<div
+      class="fader"
+      style=${styleMap({
+        flexDirection: this.direction === "row" ? "row" : "column",
+        margin: this.direction === "row" ? "0 .8rem" : ".8rem 0",
+        ...centering,
+      })}
+    >
+      ${this.renderLabel()}
+      <input
+        type="range"
+        step=${this.step}
+        variant=${this.variant || "positive"}
+        min=${this.min}
+        max=${this.max}
+        @change=${(e: Event) => this.handleChange(e)}
+        .value=${this.value.toString()}
+        style=${styleMap({
+          background: this.gradient,
+          margin: this.direction === "row" ? "0 .8rem" : ".8rem 0",
+        })}
+      />
+      <div>${this.normalizeValue()}</div>
+    </div> `;
   }
-}
 
-export default Fader;
+  static styles = css`
+    :host {
+      height: 100%;
+      max-width: 100%;
+      padding: 0 1rem;
+      flex-direction: row;
+    }
+
+    .fader {
+      height: 100%;
+      display: flex;
+    }
+
+    input[type="range"] {
+      --slider-track-color: rgba(220, 220, 220, 1);
+      --slider-progress-color: rgb(126, 126, 126);
+      --slider-thumb-color: rgb(30, 29, 29);
+      --slider-thumb-height: 1.4rem;
+      --slider-thumb-width: 0.8rem;
+      --thumb-border-width: 0.15rem;
+      --slider-height: 0.2rem;
+      --slider-width: 1.8rem;
+      --slider-border-radius: 50px;
+      --track-border-radius: 2px;
+      /* removing default appearance */
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      max-width: 100%;
+      /* creating a custom design */
+      height: var(--slider-height);
+      cursor: pointer;
+      outline: none;
+      /*  slider progress trick  */
+      border-radius: var(--track-border-radius);
+    }
+
+    /* Track: webkit browsers */
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: var(--slider-height);
+      border-radius: var(--track-border-radius);
+    }
+
+    /* Track: Mozilla Firefox */
+    input[type="range"]::-moz-range-track {
+      height: var(--slider-height);
+      border-radius: var(--track-border-radius);
+    }
+
+    /* Thumb: webkit */
+    input[type="range"]::-webkit-slider-thumb {
+      /* removing default appearance */
+      -webkit-appearance: none;
+      appearance: none;
+      height: var(--slider-thumb-height);
+      width: var(--slider-thumb-width);
+      border-radius: 20%;
+      border: solid rgb(115, 113, 113);
+      border-width: var(--thumb-border-width);
+      box-sizing: content-box;
+      transform: translateY(
+        calc(
+          (-1 * (var(--slider-thumb-height) / 2) - var(--thumb-border-width)) +
+            var(--slider-height) / 2
+        )
+      );
+      background-color: var(--slider-thumb-color);
+    }
+
+    /* Thumb: Firefox */
+    input[type="range"]::-moz-range-thumb {
+      appearance: none;
+      height: var(--slider-thumb-height);
+      width: var(--slider-thumb-width);
+      border-radius: 20%;
+      border: solid rgb(115, 113, 113);
+      border-width: var(--thumb-border-width);
+      box-sizing: content-box;
+      background-color: var(--slider-thumb-color);
+    }
+  `;
+}

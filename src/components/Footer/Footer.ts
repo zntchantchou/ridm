@@ -1,6 +1,6 @@
 import { css, html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import State from "../../../state/State";
+import State from "../../state/State";
 import { take } from "rxjs";
 
 @customElement("footer-element")

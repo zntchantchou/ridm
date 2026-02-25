@@ -1,93 +1,54 @@
-import type { EffectNameType, IEffectValue } from "../../types";
-import Knob from "../Knob/Knob";
+import { LitElement, html, css } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { styleMap } from "lit/directives/style-map.js";
 
-type PanelSetting = {
-  effectName: EffectNameType;
-  label: string;
-  settingName: keyof IEffectValue;
-  inputType: "knob";
-  min: number;
-  max: number;
-  onChange: (value: string, name: string) => void;
-  parentElt?: HTMLDivElement;
-  size?: number;
-  value?: number;
-};
+@customElement("panel-section")
+export class PanelSectionElement extends LitElement {
+  @property({ type: String }) title = "";
+  @property() color = "white";
 
-type PanelSectionOptions = {
-  parentElt: HTMLDivElement;
-  title: string;
-  settings: PanelSetting[]; // eventually generate from state
-};
-
-class PanelSection {
-  /** Element the section is appended to at creation */
-  parentElt?: HTMLDivElement;
-  containerElt?: HTMLDivElement;
-  titleElt?: HTMLDivElement;
-  titleLabel?: HTMLSpanElement;
-  title: string = "section title";
-  settings: PanelSetting[];
-
-  constructor({ parentElt, title, settings }: PanelSectionOptions) {
-    this.parentElt = parentElt;
-    this.title = title.toUpperCase();
-    this.settings = settings;
-    this.render();
+  render() {
+    return html`
+      <div class="panel-section" style=${styleMap({ borderColor: this.color })}>
+        <div class="panel-section-title">
+          <span>${this.title.toUpperCase()}</span>
+        </div>
+        <div class="panel-section-controls">
+          <slot></slot>
+        </div>
+      </div>
+    `;
   }
 
-  private renderControls(): HTMLDivElement {
-    const controls = document.createElement("div");
-    controls.classList.add("panel-section-controls");
-    for (const s of this.settings) {
-      switch (s.inputType) {
-        case "knob":
-          this.renderKnob({ ...s, parentElt: controls });
-      }
+  static styles = css`
+    .panel-section {
+      height: 30%;
+      box-sizing: border-box;
+      border-right: var(--panel-section-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0 1rem;
     }
-    return controls;
-  }
 
-  private renderKnob({
-    label,
-    onChange,
-    parentElt,
-    size = 3,
-    value = 0,
-    min = 0,
-    max = 1,
-    settingName,
-    effectName,
-  }: PanelSetting) {
-    new Knob({
-      effectName,
-      label: label.toUpperCase(),
-      id: `${this.title}-${label}`,
-      value,
-      min,
-      max,
-      fillColor: "beige",
-      onChange,
-      size: size || 3,
-      settingName,
-      parentElt: parentElt as HTMLDivElement,
-    });
-  }
+    .panel-section-title {
+      color: black;
+      background-color: whitesmoke;
+      border-radius: 4px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 0.6rem;
+      /* Font has weird offset towards top */
+      padding-top: 0.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-  private render() {
-    // BASIC CONTENT
-    this.containerElt = document.createElement("div");
-    this.containerElt.classList.add("panel-section");
-    this.titleElt = document.createElement("div");
-    this.titleElt.classList.add("panel-section-title");
-    this.titleLabel = document.createElement("span");
-    this.titleLabel.textContent = this.title;
-    this.titleElt.appendChild(this.titleLabel);
-    this.containerElt.appendChild(this.titleElt);
-    this.containerElt.appendChild(this.renderControls());
-    // SETTINGS
-    this.parentElt?.appendChild(this.containerElt);
-  }
+    .panel-section-controls {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+  `;
 }
-
-export default PanelSection;

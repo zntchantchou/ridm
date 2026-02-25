@@ -2,7 +2,7 @@ import { html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import "../StepperControls/StepperControls";
 import "../Stepper/Stepper";
-import State from "../../../state/State";
+import State from "../../state/State";
 
 @customElement("rythm-panel")
 export class RythmPanel extends LitElement {

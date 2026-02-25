@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import Controls from "../components/Controls";
+import Controls from "./Controls";
 import StepQueue, { type Step } from "./StepQueue";
 import type Track from "./Track";
 

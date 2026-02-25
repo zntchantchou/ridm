@@ -1,12 +1,12 @@
 import { css, html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import State from "../../../state/State";
-import Audio from "../../../modules/Audio";
+import State from "../../state/State";
+import Audio from "../../modules/Audio";
 import {
   INITIAL_SETTINGS,
   MAX_VOLUME_DB,
   MIN_VOLUME_DB,
-} from "../../../state/state.constants";
+} from "../../state/state.constants";
 
 @customElement("controls-element")
 export class Controls extends LitElement {

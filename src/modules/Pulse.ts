@@ -195,9 +195,6 @@ class Pulse {
       totalSteps: this.steps,
       time,
     };
-    // if (typeof Audio.currentTime === "number" && time < Audio.currentTime)
-    //   return;
-
     StepQueue.push(nextStep); // Cons
     this.currentStepSubject.next(nextStep);
   }

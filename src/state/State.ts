@@ -15,7 +15,7 @@ import type {
   TracksState,
 } from "./state.types";
 import type { EffectNameType, EffectUpdate } from "../types";
-import type { StepperOptions } from "../components/Stepper";
+import type { StepperOptions } from "../types";
 import {
   COLORS,
   DEFAULT_STEPPER_OPTIONS,
@@ -305,7 +305,7 @@ class State {
     return this.effects.get(stepperId);
   }
 
-  getStepperOptions(stepperId: StepperIdType) {
+  getStepperOptions(stepperId: StepperIdType): StepperOptions {
     return this.steppers.get(stepperId);
   }
 

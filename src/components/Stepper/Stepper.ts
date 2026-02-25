@@ -2,10 +2,8 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { debounceTime, filter, tap, type Subscription } from "rxjs";
 import type Track from "../../modules/Track";
-// import type { StepperColorType } from "../Stepper";
 import Audio from "../../modules/Audio";
 import State from "../../state/State";
-import type Pulse from "../../modules/Pulse";
 import Controls from "../../modules/Controls";
 import { ifDefined } from "lit/directives/if-defined.js";
 import type { StepperIdType } from "../../state/state.types";
@@ -63,7 +61,6 @@ export class Stepper extends LitElement {
   private listenToTemplateReload() {
     this.templateReloadSubscription = State.templateReloadSubject.subscribe(
       () => {
-        console.log("STEPPER: TEMPLATE RELOAD");
         this.handleReload();
       },
     );
@@ -95,46 +92,6 @@ export class Stepper extends LitElement {
         State.steppersLoadingSubject.next(false);
         Audio.setMasterVolume(currentVolume as number);
       });
-  }
-
-  private isSelectedStep({
-    totalSteps,
-    stepNumber,
-  }: {
-    totalSteps: number;
-    stepNumber: number;
-  }) {
-    if (totalSteps === this.steps) return !!this.selectedSteps[stepNumber];
-    const parentChildRatio = totalSteps / this.steps;
-    const actualStep = stepNumber / parentChildRatio;
-    return Number.isInteger(actualStep) && !!this.selectedSteps[actualStep];
-  }
-
-  listenToPulse(pulse: Pulse) {
-    if (this.pulseSubscription) {
-      this.pulseSubscription?.unsubscribe();
-    }
-    this.pulseSubscription = pulse.currentStepSubject
-      // Only trigger if note is selected
-      .pipe(
-        filter(({ stepNumber, totalSteps }) =>
-          this.isSelectedStep({ totalSteps, stepNumber }),
-        ),
-      )
-      .pipe(
-        tap(({ time }) => {
-          try {
-            this?.track?.playSample(time);
-          } catch (e) {
-            // an error related to tone.player note timing actually takes place here
-            // it is non blocking but it does paint the console red...
-            // the error is way worse when Tone.now is not added to the offset parameter in Tone.player.start()
-            console.error("[Stepper] Error playing sample:", e);
-            // Don't propagate the error - keep the subscription alive
-          }
-        }),
-      )
-      .subscribe();
   }
 
   private handleReload() {

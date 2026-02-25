@@ -97,7 +97,6 @@ export class FaderElement extends LitElement {
 
   render() {
     const centering = this.direction === "row" ? { alignItems: "center" } : {};
-    console.log("FADER VALUE AT RENDER: ", this.value);
     return html`<div
       class="fader"
       style=${styleMap({

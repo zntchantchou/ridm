@@ -9,7 +9,7 @@ import { styleMap } from "lit/directives/style-map.js";
 @customElement("stepper-controls")
 export class StepperControlsElement extends LitElement {
   @property({ type: Number }) stepperId: StepperIdType = 0;
-  @property({ type: Number }) stepsPerBeats = 4;
+  @property({ type: Number }) stepsPerBeat = 4;
   @property({ type: Number }) beats = 4;
   @property({ type: String }) name = "";
   @property({ type: String }) color = "";
@@ -37,7 +37,7 @@ export class StepperControlsElement extends LitElement {
   private handleClear = () => {
     State.stepperSelectedStepsSubject.next({
       stepperId: this.stepperId,
-      selectedSteps: Array(this.stepsPerBeats * this.beats).fill(false),
+      selectedSteps: Array(this.stepsPerBeat * this.beats).fill(false),
     });
   };
 
@@ -47,7 +47,7 @@ export class StepperControlsElement extends LitElement {
       oldSteps: this.steps,
       stepperId: this.stepperId,
     });
-    this.stepsPerBeats = value;
+    this.stepsPerBeat = value;
   };
 
   private handleBeatsUpdate = (value: number) => {
@@ -60,8 +60,9 @@ export class StepperControlsElement extends LitElement {
   };
 
   get steps() {
-    return this.stepsPerBeats * this.beats;
+    return this.stepsPerBeat * this.beats;
   }
+
   render() {
     return html`
       <div
@@ -91,14 +92,14 @@ export class StepperControlsElement extends LitElement {
         <div class="stepper-resize-container">
           <span>BEATS</span>
           <counter-element
-            .value=${this.beats}
+            value=${this.beats}
             .min=${2}
             .max=${10}
             .onChange=${this.handleBeatsUpdate}
           ></counter-element>
           <span>STEPS</span>
           <counter-element
-            .value=${this.stepsPerBeats}
+            value=${this.stepsPerBeat}
             .min=${2}
             .max=${10}
             .onChange=${this.handleStepsUpdate}

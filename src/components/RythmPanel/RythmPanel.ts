@@ -19,6 +19,10 @@ export class RythmPanel extends LitElement {
         this.selectedStepperId = id;
       },
     );
+
+    State.templateReloadSubject.subscribe(() => {
+      this.requestUpdate();
+    });
   }
 
   disconnectedCallback(): void {

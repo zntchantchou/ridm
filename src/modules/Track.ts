@@ -220,14 +220,29 @@ class Track {
       .pipe(debounceTime(DEBOUNCE_TIME_MS))
       .pipe(filter(({ stepperId }) => stepperId === parseInt(this.stepperId)))
       .subscribe(({ oldSteps }) => {
-        console.log("Track listentoResize oldsteps", oldSteps, this.steps);
-        console.log("Track listentoResize steps", this.steps);
         if (this.steps !== null) {
           Pulses.update(this, oldSteps, this.steps);
-          console.log("STATS ", Pulses.getStats());
         }
         State.steppersLoadingSubject.next(false);
       });
+  }
+  private isSelectedStep({
+    totalSteps,
+    stepNumber,
+  }: {
+    totalSteps: number;
+    stepNumber: number;
+  }) {
+    const stepperOptions = State.getStepperOptions(
+      parseInt(this.stepperId) as StepperIdType,
+    );
+    const selectedSteps = stepperOptions.selectedSteps;
+    const steps = stepperOptions.beats * stepperOptions.stepsPerBeat;
+    if (!selectedSteps) return false;
+    if (totalSteps === steps) return !!selectedSteps[stepNumber];
+    const parentChildRatio = totalSteps / steps;
+    const actualStep = stepNumber / parentChildRatio;
+    return Number.isInteger(actualStep) && !!selectedSteps[actualStep];
   }
 
   listenToPulse(pulse: Pulse) {
@@ -237,12 +252,8 @@ class Track {
     this.pulseSubscription = pulse.currentStepSubject
       // Only trigger if note is selected
       .pipe(
-        filter(({ stepNumber }) => {
-          const selectedSteps = State.getStepperOptions(
-            parseInt(this.stepperId) as StepperIdType,
-          )?.selectedSteps;
-          if (selectedSteps && selectedSteps[stepNumber]) return true;
-          return false;
+        filter(({ stepNumber, totalSteps }) => {
+          return this.isSelectedStep({ totalSteps, stepNumber });
         }),
       )
       .pipe(

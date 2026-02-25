@@ -1,5 +1,5 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 
 @customElement("counter-element")
 export class CounterElement extends LitElement {
@@ -8,24 +8,17 @@ export class CounterElement extends LitElement {
   @property({ type: Number }) max = 10;
   @property({ attribute: false }) onChange?: (value: number) => void;
 
-  @state() private _value = 0;
-
-  connectedCallback() {
-    super.connectedCallback();
-    this._value = this.value;
-  }
-
   private increment = () => {
-    if (this._value < this.max) {
-      this._value++;
-      this.onChange?.(this._value);
+    if (this.value < this.max) {
+      this.value++;
+      this.onChange?.(this.value);
     }
   };
 
   private decrement = () => {
-    if (this._value > this.min) {
-      this._value--;
-      this.onChange?.(this._value);
+    if (this.value > this.min) {
+      this.value--;
+      this.onChange?.(this.value);
     }
   };
 
@@ -38,7 +31,7 @@ export class CounterElement extends LitElement {
         >
           -
         </div>
-        <div class="counter-item counter-value">${this._value}</div>
+        <div class="counter-item counter-value">${this.value}</div>
         <div
           class="counter-item counter-btn counter-plus"
           @click=${this.increment}

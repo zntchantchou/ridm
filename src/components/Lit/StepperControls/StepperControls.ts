@@ -4,6 +4,7 @@ import type { StepperIdType } from "../../../state/state.types";
 import State from "../../../state/State";
 import "../Toggle/Toggle";
 import "../Counter/Counter";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("stepper-controls")
 export class StepperControlsElement extends LitElement {
@@ -12,6 +13,8 @@ export class StepperControlsElement extends LitElement {
   @property({ type: Number }) beats = 4;
   @property({ type: String }) name = "";
   @property({ type: String }) color = "";
+  @property({ type: Boolean })
+  selected: boolean = false;
 
   private handleClick = () => {
     State.currentStepperIdSubject.next(this.stepperId as StepperIdType);
@@ -66,6 +69,9 @@ export class StepperControlsElement extends LitElement {
         data-stepper-id=${this.stepperId}
         data-selected="off"
         @click=${this.handleClick}
+        style=${styleMap({
+          borderLeftColor: this.selected ? this.color : "#2a2a2a",
+        })}
       >
         <div class="stepper-info-container">
           <span class="stepperControlName">${this.name}</span>
@@ -117,9 +123,9 @@ export class StepperControlsElement extends LitElement {
       background-color: rgb(59, 58, 58);
       box-sizing: border-box;
       color: white;
-      border-left: 0.5rem solid transparent;
+      border-left: 0.5rem solid #2a2a2a;
       border-radius: 4px;
-      border-bottom: 2px solid black;
+      border-bottom: 2px solid #2a2a2a;
       height: 100%;
       width: 100%;
       margin-right: 0.4rem;

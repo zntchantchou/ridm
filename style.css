@@ -1,9 +1,9 @@
-@import url("./src/style/panel.css");
-@import url("./src/style/knob.css");
-@import url("./src/style/panel-section.css");
-@import url("./src/style/counter.css");
 @import url("./src/style/loader.css");
-@import url("./src/style/toggle.css");
+/* @import url("./src/style/panel-section.css"); */
+/* @import url("./src/style/panel.css"); */
+/* @import url("./src/style/knob.css"); */
+/* @import url("./src/style/counter.css"); */
+/* @import url("./src/style/toggle.css"); */
 @import url("./src/style/fonts.css");
 
 :root {
@@ -137,6 +137,7 @@ rythm-panel {
   width: 100%;
   display: flex;
   flex-direction: row;
+  padding: 1rem 0.8rem;
   box-sizing: border-box;
 }
 

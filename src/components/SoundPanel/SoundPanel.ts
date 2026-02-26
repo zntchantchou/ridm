@@ -262,20 +262,19 @@ export class SoundPanel extends LitElement {
       --panel-section-padding: 0.6rem 1.8rem;
       --panel-section-border: rgb(209, 209, 209) solid 0.2rem;
       box-sizing: border-box;
-      height: 50%;
-      width: 100%;
-      display: flex;
+      height: 100%;
       display: flex;
       flex-direction: row;
-      padding: 1rem;
+      width: 100%;
     }
 
     .sound-panel {
+      box-sizing: border-box;
       border-radius: 6px;
       background-color: #1e1e1e;
-      padding: 1rem 1rem;
+      padding: 1rem 0rem;
       display: flex;
-      width: inherit;
+      width: calc(100% - 1rem);
       color: white;
     }
 

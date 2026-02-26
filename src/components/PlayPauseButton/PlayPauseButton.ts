@@ -46,7 +46,7 @@ export class PlayPauseButton extends LitElement {
       align-items: center;
       justify-content: center;
       height: 3.8rem;
-      width: 3.8rem;
+      width: 3rem;
       margin: 0 1rem;
 
       box-sizing: border-box;

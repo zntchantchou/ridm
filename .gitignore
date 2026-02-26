@@ -6,13 +6,12 @@ npm-debug.log*
 todos
 
 doodle/
-samples/AKAIMPC60
-samples/RolandTR909
 draw/
 .claude/
 .claude/discussions
 .claude/docs
-machines/
+public/machines/
+public/samples/
 node_modules
 dist
 *.local

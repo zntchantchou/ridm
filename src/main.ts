@@ -9,6 +9,7 @@ import "./state/State";
 import State from "./state/State";
 import StepQueue from "./modules/StepQueue";
 import type { TemplateName } from "./state/state.types";
+import SampleRegistry from "./modules/SampleRegistry";
 
 class Application {
   initialized = false;
@@ -28,11 +29,14 @@ class Application {
   }
 
   init = async () => {
+    State.steppersLoadingSubject.next(true);
     Controls.init();
+    await SampleRegistry.initialize();
     this.sequencer = new Sequencer(Pulses);
     await this.sequencer.initialize();
     State.tpcUpdateSubject.subscribe(() => this.restart());
     State.currentStepperIdSubject.next(State.getSelectedStepperId());
+    State.steppersLoadingSubject.next(false);
   };
 
   async loadTemplate(name: TemplateName) {

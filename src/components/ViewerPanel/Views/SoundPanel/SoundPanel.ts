@@ -1,10 +1,10 @@
 import { css, html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import type { FeedbackDelayOptions, ReverbOptions } from "tone";
-import type { StepperIdType } from "../../state/state.types";
-import type { PitchOptions } from "../../types";
-import State from "../../state/State";
-import { INITIAL_CHANNEL_OPTIONS } from "../../state/state.constants";
+import type { StepperIdType } from "../../../../state/state.types";
+import type { PitchOptions } from "../../../../types";
+import State from "../../../../state/State";
+import { INITIAL_CHANNEL_OPTIONS } from "../../../../state/state.constants";
 import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("sound-panel")

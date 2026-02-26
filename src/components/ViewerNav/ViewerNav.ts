@@ -1,17 +1,23 @@
 import { css, html, LitElement } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import note from "/pictures/note.svg";
 import mixer from "/pictures/mixer.svg";
 import folder from "/pictures/folder.svg";
+import type { ViewName } from "../ViewerPanel/ViewerPanel";
 
 @customElement("viewer-nav")
 export class ViewerNav extends LitElement {
   @state()
-  selectedView = "one";
-  handleSelectView = (view: string) => {
-    console.log("HANDLE SELECT VIEW");
+  selectedView: ViewName = "mix";
+
+  @property()
+  @property({ attribute: false })
+  onViewChange!: (viewName: ViewName) => void;
+
+  handleSelectView = (view: ViewName) => {
     this.selectedView = view;
+    this.onViewChange(view);
   };
 
   getItemStyleMap = (view: string) => {
@@ -29,25 +35,25 @@ export class ViewerNav extends LitElement {
       <div id="viewer-nav">
         <div
           class="nav-item"
-          @click=${() => this.handleSelectView("one")}
-          style=${this.getItemStyleMap("one")}
+          @click=${() => this.handleSelectView("mix")}
+          style=${this.getItemStyleMap("mix")}
         >
           <img src=${mixer} />
         </div>
-        <!-- <div
+        <div
           class="nav-item"
-          @click=${() => this.handleSelectView("two")}
-          style=${this.getItemStyleMap("two")}
+          @click=${() => this.handleSelectView("samples")}
+          style=${this.getItemStyleMap("samples")}
         >
           <img src=${note} />
-        </div> -->
-        <div
+        </div>
+        <!-- <div
           class="nav-item"
           @click=${() => this.handleSelectView("three")}
           style=${this.getItemStyleMap("three")}
         >
           <img src=${folder} />
-        </div>
+        </div> -->
       </div>
     `;
   }
@@ -63,7 +69,6 @@ export class ViewerNav extends LitElement {
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: salmon;
       width: 3rem;
       height: 3rem;
       cursor: pointer;

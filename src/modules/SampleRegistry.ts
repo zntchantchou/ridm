@@ -12,11 +12,14 @@ class SampleRegistry {
   private sampleMap = new Map<string, SampleDescriptor>();
   private machineIndex = new Map<string, SampleDescriptor[]>();
   private typeIndex = new Map<SampleType, SampleDescriptor[]>();
+  private initialized = false;
 
   async initialize(): Promise<void> {
+    if (this.initialized) return;
     const response = await fetch(MANIFEST_PATH);
     this.manifest = await response.json();
     this.buildIndices();
+    this.initialized = true;
   }
 
   private buildIndices(): void {
@@ -56,6 +59,10 @@ class SampleRegistry {
 
   getSamplesByType(type: SampleType): SampleDescriptor[] {
     return this.typeIndex.get(type) || [];
+  }
+
+  getAllSamples() {
+    return this.manifest?.samples;
   }
 
   search(query: string): SampleDescriptor[] {

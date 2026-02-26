@@ -62,7 +62,9 @@ class SampleRegistry {
   }
 
   getAllSamples() {
-    return this.manifest?.samples;
+    return Array.from(this.sampleMap.values()).sort((a, b) =>
+      a.file.localeCompare(b.file),
+    );
   }
 
   search(query: string): SampleDescriptor[] {

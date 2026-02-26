@@ -1,21 +1,33 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import type { SampleDescriptor } from "../../../../types/samples.types";
+import type {
+  SampleDescriptor,
+  SampleType,
+} from "../../../../types/samples.types";
 import SampleRegistry from "../../../../modules/SampleRegistry";
+import type { ColumnItem } from "../BrowserColumn/BrowserColumn";
 
 type OrderBy = "name" | "type" | "machine";
+const ORDER_BY_VALUES: Record<OrderBy, OrderBy> = {
+  name: "name",
+  type: "type",
+  machine: "machine",
+};
 @customElement("sample-browser")
 export class SampleBrowser extends LitElement {
   @property({ type: Number }) stepperId!: number;
   @property({ type: String }) filterType?: string;
 
   @state() private searchQuery = "";
-  @state() private selectedMachine?: string;
+  @state() private selectedMachineId?: string;
+  @state() private selectedTypeId?: string;
+  @state() private selectedSampleId?: string;
   @state() private samples: SampleDescriptor[] = [];
   @state() private orderBy: OrderBy = "name";
 
   async connectedCallback() {
     super.connectedCallback();
+    await SampleRegistry.initialize();
     this.updateSamples();
   }
 
@@ -33,8 +45,8 @@ export class SampleBrowser extends LitElement {
     }
 
     // Apply machine filter
-    if (this.selectedMachine) {
-      samples = samples.filter((s) => s.machine === this.selectedMachine);
+    if (this.selectedMachineId) {
+      samples = samples.filter((s) => s.machine === this.selectedMachineId);
     }
 
     this.samples = samples;
@@ -48,24 +60,119 @@ export class SampleBrowser extends LitElement {
   createItems() {
     return Array(10);
   }
+
+  createCategoryItems() {
+    return [
+      {
+        label: "all",
+        onClick: () => (this.orderBy = ORDER_BY_VALUES.name),
+        selected: this.orderBy === ORDER_BY_VALUES.name,
+      },
+      {
+        label: "drum machines",
+        onClick: () => (this.orderBy = ORDER_BY_VALUES.machine),
+        selected: this.orderBy === ORDER_BY_VALUES.machine,
+      },
+      {
+        label: "categories",
+        onClick: () => (this.orderBy = ORDER_BY_VALUES.type),
+        selected: this.orderBy === ORDER_BY_VALUES.type,
+      },
+    ];
+  }
+
+  private selectMachine(machineId: string) {
+    this.selectedMachineId = machineId;
+  }
+  private selectType(typeId: string) {
+    this.selectedTypeId = typeId;
+  }
+
+  createSecondColumnItems() {
+    let items: ColumnItem[] = [];
+    if (this.orderBy === ORDER_BY_VALUES.machine) {
+      items = SampleRegistry.getMachines().map((machine) => {
+        return {
+          label: machine.name,
+          onClick: () => this.selectMachine(machine.id),
+          selected: this.selectedMachineId === machine.id,
+        };
+      });
+    }
+    if (this.orderBy === ORDER_BY_VALUES.type) {
+      items = SampleRegistry.getTypes().map((type) => {
+        return {
+          label: type.label,
+          onClick: () => this.selectType(type.id),
+          selected: this.selectedTypeId === type.id,
+        };
+      });
+    }
+    if (this.orderBy === ORDER_BY_VALUES.name) {
+      items = SampleRegistry.getAllSamples()?.map((sample) => {
+        return {
+          label: sample.file,
+          onClick: () => this.handleSampleClick(sample),
+          selected: this.selectedSampleId === sample.id,
+        };
+      });
+    }
+    return items;
+  }
+
+  createThirdColumnItems = () => {
+    let items: ColumnItem[] = [];
+    if (this.orderBy === ORDER_BY_VALUES.machine && this.selectedMachineId) {
+      items = SampleRegistry.getSamplesByMachine(this.selectedMachineId).map(
+        (sample) => {
+          return {
+            label: sample.file,
+            onClick: () => this.handleSampleClick(sample),
+            selected: this.selectedSampleId === sample.id,
+          };
+        },
+      );
+    }
+    if (this.orderBy === ORDER_BY_VALUES.type && this.selectedTypeId) {
+      items = SampleRegistry.getSamplesByType(
+        this.selectedTypeId as SampleType,
+      ).map((sample) => {
+        return {
+          label: sample.file,
+          onClick: () => this.handleSampleClick(sample),
+          selected: this.selectedSampleId === sample.id,
+        };
+      });
+    }
+    return items;
+  };
+
+  handleSampleClick(sample: SampleDescriptor) {
+    this.selectedSampleId = sample.id;
+  }
+
   render() {
     return html`
       <div class="sample-browser">
         <div class="column">
-          <input type="text" id="search-input" placeholder="search ..." />
+          <input
+          type="text"
+          id="search-input"
+          placeholder="&#128269 search ..."
+          >
+          
+          <browser-column .items=${this.createCategoryItems()}></browser-column>
+        </div>
+        <div class="column">
           <browser-column
-            .items=${[
-              { label: "all", onClick: () => console.log("all onclick") },
-              {
-                label: "machines",
-                onClick: () => console.log("machines onclick"),
-              },
-              { label: "types", onClick: () => console.log("types onclick") },
-            ]}
+            .items=${this.createSecondColumnItems()}
           ></browser-column>
         </div>
-        <div class="column"></div>
-        <div class="column"></div>
+        <div class="column">
+          <browser-column
+            .items=${this.createThirdColumnItems()}
+          ></browser-column>
+        </div>
       </div>
     `;
   }

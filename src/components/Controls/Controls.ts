@@ -112,7 +112,7 @@ export class Controls extends LitElement {
       padding-bottom: 0.4rem;
       width: 100%;
       height: var(--controls-height);
-      padding: 0rem 1rem;
+      padding-right: 6rem;
     }
   `;
 }

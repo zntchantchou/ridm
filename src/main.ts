@@ -89,6 +89,7 @@ class Application {
   };
 
   handleSpacePress = (e: KeyboardEvent) => {
+    if (State.isSearching) return;
     if (e.code === "Space") {
       e.preventDefault();
       this.handlePlayPause();

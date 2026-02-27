@@ -36,6 +36,7 @@ class State {
   private steppers: SteppersState;
   private settings: Settings;
   private tracks: TracksState;
+  isSearching = false;
   // audio updates
   effectUpdateSubject = new Subject<EffectUpdate>();
   tpcUpdateSubject = new Subject<number>();
@@ -341,6 +342,11 @@ class State {
 
   getSelectedStepperOptions() {
     return this.steppers.get(this.getSelectedStepperId());
+  }
+
+  setIsSearching(isSearching: boolean) {
+    this.isSearching = isSearching;
+    console.log("SET IS SEARCHIN : ", this.isSearching);
   }
 }
 

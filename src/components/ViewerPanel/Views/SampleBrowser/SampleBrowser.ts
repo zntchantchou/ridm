@@ -6,6 +6,7 @@ import type {
 } from "../../../../types/samples.types";
 import SampleRegistry from "../../../../modules/SampleRegistry";
 import type { ColumnItem } from "../BrowserColumn/BrowserColumn";
+import State from "../../../../state/State";
 
 type OrderBy = "name" | "category" | "machine";
 const ORDER_BY_VALUES: Record<OrderBy, OrderBy> = {
@@ -151,6 +152,8 @@ export class SampleBrowser extends LitElement {
             id="search-input"
             placeholder="type to search..."
             @input=${this.handleSearch}
+            @blur=${() => State.setIsSearching(false)}
+            @focus=${() => State.setIsSearching(true)}
           />
 
           <browser-column .items=${this.createCategoryItems()}></browser-column>

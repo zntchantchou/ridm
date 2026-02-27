@@ -58,7 +58,6 @@ class State {
     const { effects, steppers, settings, tracks } = this.storage.hasState()
       ? this.deserializeStoreState()
       : this.createInitialState();
-
     this.effects = effects;
     this.steppers = steppers;
     this.settings = settings;

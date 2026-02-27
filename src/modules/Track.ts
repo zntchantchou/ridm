@@ -94,7 +94,7 @@ class Track {
 
   private loadSample() {
     const fullPath = `${samplesDirPath}/${this.name}.wav`;
-    console.log("FUL PATH ", fullPath);
+    console.log("fullpath ", fullPath);
     this.source = new Tone.Player(fullPath);
     const storedPitch = State.getEffect({
       trackId: parseInt(this.stepperId) as StepperIdType,
@@ -139,12 +139,16 @@ class Track {
   }
 
   public playSample(time: number = 0) {
+    console.log("PLAY ", time);
+    console.log("this.source ", this.source);
+    console.log("NAME ", this.name);
     if (
       Controls.isPlaying &&
       this.source?.buffer &&
       this.source.buffer.loaded &&
       !this.muted // should work out of the box but sample sometimes play eventhough it is muted
     ) {
+      console.log("PLAY SAMPLE ");
       this.source?.start(time, 0, Tone.now() + this.source.buffer.duration);
     }
   }

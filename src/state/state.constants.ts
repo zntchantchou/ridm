@@ -40,40 +40,36 @@ export const COLORS: StepperColorType[] = [
 
 export const SAMPLES_DIRS = [
   {
-    name: "bd",
+    name: "01",
     path: "bd.wav",
   },
   {
-    name: "sd",
+    name: "02",
     path: "sd.wav",
   },
   {
-    name: "hh",
+    name: "03",
     path: "hh.wav",
   },
   {
-    name: "oh",
+    name: "04",
     path: "oh.wav",
   },
   {
-    name: "ht",
+    name: "05",
     path: "ht.wav",
   },
   {
-    name: "bo",
+    name: "06",
     path: "bo.wav",
   },
   {
-    name: "sh",
+    name: "07",
     path: "sh.wav",
   },
   {
-    name: "cp",
+    name: "08",
     path: "cp.wav",
-  },
-  {
-    name: "rs",
-    path: "rs.wav",
   },
 ];
 

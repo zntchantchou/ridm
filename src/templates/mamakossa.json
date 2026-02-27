@@ -150,7 +150,7 @@
         true
       ],
       "color": { "name": "skyBlue", "cssColor": "#0099ff" },
-      "sampleName": "bd"
+      "sampleName": "01"
     },
     {
       "id": 1,
@@ -207,7 +207,7 @@
         false
       ],
       "color": { "name": "hotPink", "cssColor": "#b655ff" },
-      "sampleName": "sd"
+      "sampleName": "02"
     },
     {
       "id": 2,
@@ -247,7 +247,7 @@
         false
       ],
       "color": { "name": "yellow", "cssColor": "#ffff00" },
-      "sampleName": "hh"
+      "sampleName": "03"
     },
     {
       "id": 3,
@@ -288,7 +288,7 @@
         false
       ],
       "color": { "name": "chartreuse", "cssColor": "#99ff00" },
-      "sampleName": "oh"
+      "sampleName": "04"
     },
     {
       "id": 4,
@@ -344,7 +344,7 @@
         true
       ],
       "color": { "name": "magenta", "cssColor": "#ff7fff" },
-      "sampleName": "ht"
+      "sampleName": "05"
     },
     {
       "id": 5,
@@ -401,7 +401,7 @@
         false
       ],
       "color": { "name": "orange", "cssColor": "#ff4500" },
-      "sampleName": "bo"
+      "sampleName": "06"
     },
     {
       "id": 6,
@@ -434,7 +434,7 @@
         false
       ],
       "color": { "name": "cyan", "cssColor": "#00ffff" },
-      "sampleName": "sh"
+      "sampleName": "07"
     },
     {
       "id": 7,
@@ -455,7 +455,7 @@
         false
       ],
       "color": { "name": "purple", "cssColor": "#ff0066" },
-      "sampleName": "cp"
+      "sampleName": "08"
     }
   ],
   "channels": [

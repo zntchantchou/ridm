@@ -105,6 +105,7 @@ export class SampleBrowser extends LitElement {
         return {
           label: sample.file,
           onClick: async () => await this.handleSampleClick(sample),
+          onAction: () => this.handleSampleLoad(sample),
           selected: this.selectedSampleId === sample.id,
         };
       });
@@ -122,6 +123,7 @@ export class SampleBrowser extends LitElement {
         return {
           label: sample.file,
           onClick: async () => await this.handleSampleClick(sample),
+          onAction: () => this.handleSampleLoad(sample),
           selected: this.selectedSampleId === sample.id,
         };
       });
@@ -134,6 +136,7 @@ export class SampleBrowser extends LitElement {
         return {
           label: sample.file,
           onClick: async () => await this.handleSampleClick(sample),
+          onAction: () => this.handleSampleLoad(sample),
           selected: this.selectedSampleId === sample.id,
         };
       });
@@ -145,6 +148,12 @@ export class SampleBrowser extends LitElement {
     this.selectedSampleId = sample.id;
     await Audio.preview(sample.path);
   }
+
+  handleSampleLoad = (sample: SampleDescriptor) => {
+    console.log("LOADING SAMPLE ", sample);
+    // this.selectedSampleId = sample.id;
+    // await Audio.preview(sample.path);
+  };
 
   render() {
     return html`
@@ -164,10 +173,12 @@ export class SampleBrowser extends LitElement {
         <div class="column">
           <browser-column
             .items=${this.createSecondColumnItems()}
+            .withActionButton=${this.orderBy === ORDER_BY_VALUES.name}
           ></browser-column>
         </div>
         <div class="column">
           <browser-column
+            .withActionButton=${true}
             .items=${this.createThirdColumnItems()}
           ></browser-column>
         </div>

@@ -48,8 +48,8 @@ class Audio {
         0,
         this.samplePreviewSource.buffer.duration,
       );
-    } catch (_) {
-      console.log("sample preview error");
+    } catch (e) {
+      console.log("sample preview error : ", e);
     }
   }
 

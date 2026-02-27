@@ -160,7 +160,6 @@ class Storage {
     for (let i = 0; i < 8; i++) {
       const stepperId = i as StepperIdType;
       const stepperOptions = steppers.get(stepperId);
-
       if (stepperOptions) {
         serialized.push({
           id: stepperOptions.id,

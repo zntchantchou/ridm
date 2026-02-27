@@ -14,8 +14,7 @@ export class ViewerPanel extends LitElement {
     if (this.currentView === "samples") {
       return html`<sample-browser></sample-browser>`;
     }
-    return html`<sample-browser></sample-browser>`;
-    // return html`<sound-panel></sound-panel>`;
+    return html`<sound-panel></sound-panel>`;
   }
 
   changeView = (viewName: ViewName) => {

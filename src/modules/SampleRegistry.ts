@@ -53,12 +53,29 @@ class SampleRegistry {
     return sample ? `${SAMPLES_DIR}/${sample.path}` : undefined;
   }
 
-  getSamplesByMachine(machineId: string): SampleDescriptor[] {
-    return this.machineIndex.get(machineId) || [];
+  getSamplesByMachine(
+    machineId: string,
+    filterQuery?: string,
+  ): SampleDescriptor[] {
+    let samples = this.machineIndex.get(machineId);
+    if (!samples) return [];
+    if (filterQuery) {
+      samples = samples.filter((s) =>
+        s.file.toLowerCase().includes(filterQuery),
+      );
+    }
+    return samples;
   }
 
-  getSamplesByType(type: SampleType): SampleDescriptor[] {
-    return this.typeIndex.get(type) || [];
+  getSamplesByType(type: SampleType, filterQuery: string): SampleDescriptor[] {
+    let samples = this.typeIndex.get(type);
+    if (!samples) return [];
+    if (filterQuery) {
+      samples = samples.filter((s) =>
+        s.file.toLowerCase().includes(filterQuery),
+      );
+    }
+    return samples;
   }
 
   getAllSamples() {
@@ -78,25 +95,41 @@ class SampleRegistry {
         s.file.toLowerCase().includes(lowerQuery),
     );
   }
-  getMachines(): Array<{ id: string; name: string; count: number }> {
-    return Array.from(this.machineIndex.entries())
-      .map(([id, samples]) => ({
+
+  getMachines(searchQuery?: string): Machine[] {
+    let machines = Array.from(this.machineIndex.entries()).map(
+      ([id, samples]) => ({
         id,
         name: samples[0].machineName,
         count: samples.length,
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      }),
+    );
+    if (searchQuery) {
+      machines = machines.filter((m) =>
+        m.name.toLocaleLowerCase().includes(searchQuery.toLowerCase()),
+      );
+    }
+    return machines.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  getTypes(): Array<{ id: string; label: string; count: number }> {
-    return Array.from(this.typeIndex.entries())
-      .map(([id, samples]) => ({
+  getCategories(searchQuery?: string): SampleCategory[] {
+    let categories = Array.from(this.typeIndex.entries()).map(
+      ([id, samples]) => ({
         id,
         label: samples[0].typeLabel,
         count: samples.length,
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label));
+      }),
+    );
+    if (searchQuery) {
+      categories = categories.filter((c) =>
+        c.label.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+    }
+    return categories.sort((a, b) => a.label.localeCompare(b.label));
   }
 }
+
+type Machine = { id: string; name: string; count: number };
+type SampleCategory = { id: string; label: string; count: number };
 
 export default new SampleRegistry();

@@ -55,7 +55,6 @@ body {
   padding-top: 0.5rem;
   margin-top: 4rem;
   background-color: var(--sequencer-primary-color);
-  min-height: 600px;
   height: calc(100vh - 9rem);
   width: calc(1.5 * 90vh);
   border-radius: 10px;

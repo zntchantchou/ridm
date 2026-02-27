@@ -7,10 +7,10 @@ import type {
 import SampleRegistry from "../../../../modules/SampleRegistry";
 import type { ColumnItem } from "../BrowserColumn/BrowserColumn";
 
-type OrderBy = "name" | "type" | "machine";
+type OrderBy = "name" | "category" | "machine";
 const ORDER_BY_VALUES: Record<OrderBy, OrderBy> = {
   name: "name",
-  type: "type",
+  category: "category",
   machine: "machine",
 };
 @customElement("sample-browser")
@@ -20,63 +20,50 @@ export class SampleBrowser extends LitElement {
 
   @state() private searchQuery = "";
   @state() private selectedMachineId?: string;
-  @state() private selectedTypeId?: string;
+  @state() private selectedCategoryId?: string;
   @state() private selectedSampleId?: string;
-  @state() private samples: SampleDescriptor[] = [];
   @state() private orderBy: OrderBy = "name";
 
   async connectedCallback() {
     super.connectedCallback();
     await SampleRegistry.initialize();
-    this.updateSamples();
-  }
-
-  private updateSamples() {
-    let samples = SampleRegistry.getAllSamples() || [];
-
-    // Apply search filter
-    if (this.searchQuery) {
-      samples = SampleRegistry.search(this.searchQuery);
-    }
-
-    // Apply type filter
-    if (this.filterType) {
-      samples = samples.filter((s) => s.type === this.filterType);
-    }
-
-    // Apply machine filter
-    if (this.selectedMachineId) {
-      samples = samples.filter((s) => s.machine === this.selectedMachineId);
-    }
-
-    this.samples = samples;
   }
 
   private handleSearch(e: Event) {
     this.searchQuery = (e.target as HTMLInputElement).value;
-    this.updateSamples();
   }
 
   createItems() {
     return Array(10);
   }
 
+  private handleCategoryClick(orderBy: OrderBy) {
+    this.orderBy = orderBy;
+    this.clearSelection();
+  }
+
+  private clearSelection() {
+    this.selectedSampleId = undefined;
+    this.selectedMachineId = undefined;
+    this.selectedCategoryId = undefined;
+  }
+
   createCategoryItems() {
     return [
       {
         label: "all",
-        onClick: () => (this.orderBy = ORDER_BY_VALUES.name),
+        onClick: () => this.handleCategoryClick(ORDER_BY_VALUES.name),
         selected: this.orderBy === ORDER_BY_VALUES.name,
       },
       {
         label: "drum machines",
-        onClick: () => (this.orderBy = ORDER_BY_VALUES.machine),
+        onClick: () => this.handleCategoryClick(ORDER_BY_VALUES.machine),
         selected: this.orderBy === ORDER_BY_VALUES.machine,
       },
       {
         label: "categories",
-        onClick: () => (this.orderBy = ORDER_BY_VALUES.type),
-        selected: this.orderBy === ORDER_BY_VALUES.type,
+        onClick: () => this.handleCategoryClick(ORDER_BY_VALUES.category),
+        selected: this.orderBy === ORDER_BY_VALUES.category,
       },
     ];
   }
@@ -85,13 +72,14 @@ export class SampleBrowser extends LitElement {
     this.selectedMachineId = machineId;
   }
   private selectType(typeId: string) {
-    this.selectedTypeId = typeId;
+    this.selectedCategoryId = typeId;
   }
 
   createSecondColumnItems() {
     let items: ColumnItem[] = [];
     if (this.orderBy === ORDER_BY_VALUES.machine) {
-      items = SampleRegistry.getMachines().map((machine) => {
+      const filterQuery = this.selectedMachineId ? "" : this.searchQuery;
+      items = SampleRegistry.getMachines(filterQuery).map((machine) => {
         return {
           label: machine.name,
           onClick: () => this.selectMachine(machine.id),
@@ -99,17 +87,18 @@ export class SampleBrowser extends LitElement {
         };
       });
     }
-    if (this.orderBy === ORDER_BY_VALUES.type) {
-      items = SampleRegistry.getTypes().map((type) => {
+    if (this.orderBy === ORDER_BY_VALUES.category) {
+      const filterQuery = this.selectedCategoryId ? "" : this.searchQuery;
+      items = SampleRegistry.getCategories(filterQuery).map((category) => {
         return {
-          label: type.label,
-          onClick: () => this.selectType(type.id),
-          selected: this.selectedTypeId === type.id,
+          label: category.label,
+          onClick: () => this.selectType(category.id),
+          selected: this.selectedCategoryId === category.id,
         };
       });
     }
     if (this.orderBy === ORDER_BY_VALUES.name) {
-      items = SampleRegistry.getAllSamples()?.map((sample) => {
+      items = SampleRegistry.search(this.searchQuery).map((sample) => {
         return {
           label: sample.file,
           onClick: () => this.handleSampleClick(sample),
@@ -123,19 +112,21 @@ export class SampleBrowser extends LitElement {
   createThirdColumnItems = () => {
     let items: ColumnItem[] = [];
     if (this.orderBy === ORDER_BY_VALUES.machine && this.selectedMachineId) {
-      items = SampleRegistry.getSamplesByMachine(this.selectedMachineId).map(
-        (sample) => {
-          return {
-            label: sample.file,
-            onClick: () => this.handleSampleClick(sample),
-            selected: this.selectedSampleId === sample.id,
-          };
-        },
-      );
+      items = SampleRegistry.getSamplesByMachine(
+        this.selectedMachineId,
+        this.searchQuery,
+      ).map((sample) => {
+        return {
+          label: sample.file,
+          onClick: () => this.handleSampleClick(sample),
+          selected: this.selectedSampleId === sample.id,
+        };
+      });
     }
-    if (this.orderBy === ORDER_BY_VALUES.type && this.selectedTypeId) {
+    if (this.orderBy === ORDER_BY_VALUES.category && this.selectedCategoryId) {
       items = SampleRegistry.getSamplesByType(
-        this.selectedTypeId as SampleType,
+        this.selectedCategoryId as SampleType,
+        this.searchQuery,
       ).map((sample) => {
         return {
           label: sample.file,
@@ -156,11 +147,12 @@ export class SampleBrowser extends LitElement {
       <div class="sample-browser">
         <div class="column">
           <input
-          type="text"
-          id="search-input"
-          placeholder="&#128269 search ..."
-          >
-          
+            type="text"
+            id="search-input"
+            placeholder="type to search..."
+            @input=${this.handleSearch}
+          />
+
           <browser-column .items=${this.createCategoryItems()}></browser-column>
         </div>
         <div class="column">
@@ -177,37 +169,6 @@ export class SampleBrowser extends LitElement {
     `;
   }
 
-  // <input
-  //         type="text"
-  //         placeholder="Search samples..."
-  //         @input=${this.handleSearch}
-  //       />
-
-  //       <select
-  //         @change=${(e: Event) => {
-  //           this.selectedMachine = (e.target as HTMLSelectElement).value;
-  //           this.updateSamples();
-  //         }}
-  //       >
-  //         <option value="">All Machines</option>
-  //         ${machines.map(
-  //           (m) => html`
-  //             <option value="${m.id}">${m.name} (${m.count})</option>
-  //           `,
-  //         )}
-  //       </select>
-
-  //       <div class="samples-grid">
-  //         ${this.samples.map(
-  //           (sample) => html`
-  //             <button @click=${() => console.log("SAMPLE SELECTED")}>
-  //               <div class="machine">${sample.machineName}</div>
-  //               <div class="type">${sample.typeLabel}</div>
-  //               <div class="file">${sample.file}</div>
-  //             </button>
-  //           `,
-  //         )}
-  //       </div>
   static styles = css`
     :host {
       --container-border-radius: 10px;
@@ -242,23 +203,14 @@ export class SampleBrowser extends LitElement {
 
     #search-input {
       all: unset;
-      font-size: 1rem;
-      padding: 0.4rem 1rem;
+      font-size: 0.9rem;
+      padding: 0.4rem 0.4rem;
       border-radius: 0.2rem;
       background-color: #d9d8d8;
       color: #373737;
       border: none;
-      width: 80%;
-      margin-bottom: 0.4rem;
+      width: 90%;
+      margin-bottom: 0.3rem;
     }
   `;
 }
-
-//   private selectSample(sample: SampleDescriptor) {
-//     this.dispatchEvent(new CustomEvent('sample-selected', {
-//       detail: { stepperId: this.stepperId, sample },
-//       bubbles: true,
-//       composed: true,
-//     }));
-//   }
-// }

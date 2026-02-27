@@ -31,10 +31,11 @@ function slugify(text: string): string {
 function formatMachineName(dirName: string): string {
   // Convert "RolandTR808" to "Roland TR-808"
   return dirName
-    .replace(/([A-Z])/g, " $1")
-    .replace(/(\d+)/g, " $1")
-    .trim()
-    .replace(/\s+/g, " ");
+    .replace(/([a-z])([A-Z])/g, "$1 $2")  // lowercase followed by uppercase
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")  // Multiple caps followed by cap+lowercase
+    .replace(/([a-zA-Z])(\d)/g, "$1 $2")  // letter followed by number
+    .replace(/(\d)([A-Z])/g, "$1 $2")  // number followed by uppercase
+    .trim();
 }
 
 function generateFlatManifest() {

@@ -37,15 +37,19 @@ class Audio {
       const fullPath = "samples/machines/" + samplePath;
       if (!this.samplePreviewSource) {
         this.samplePreviewSource = new Tone.Player();
+        this.samplePreviewSource.chain(
+          ...this.getMasterNodes(),
+          Tone.getDestination(),
+        );
       }
       await this.samplePreviewSource.load(fullPath);
-      this.samplePreviewSource.autostart = true;
-      this.samplePreviewSource.chain(
-        ...this.getMasterNodes(),
-        Tone.getDestination(),
+      this.samplePreviewSource.start(
+        Tone.now(),
+        0,
+        this.samplePreviewSource.buffer.duration,
       );
-    } catch (e) {
-      // console.log("sample preview error: ", e);
+    } catch (_) {
+      console.log("sample preview error");
     }
   }
 

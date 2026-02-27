@@ -143,7 +143,7 @@ export class SampleBrowser extends LitElement {
 
   async handleSampleClick(sample: SampleDescriptor) {
     this.selectedSampleId = sample.id;
-    Audio.preview(sample.path);
+    await Audio.preview(sample.path);
   }
 
   render() {

@@ -86,7 +86,7 @@ class SampleRegistry {
 
   search(query: string): SampleDescriptor[] {
     if (!this.manifest) return [];
-
+    if (!query) return this.manifest.samples;
     const lowerQuery = query.toLowerCase();
     return this.manifest.samples.filter(
       (s) =>

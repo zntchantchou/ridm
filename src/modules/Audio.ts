@@ -19,6 +19,8 @@ class Audio {
   soundSettings: ToneSoundSettings[] = [];
   minVolume = MIN_VOLUME_DB;
   lastVolume = 0;
+  samplePreviewSource?: Tone.Player;
+
   public async init() {
     this.ctx = new Tone.Context();
     Tone.setContext(this.ctx);
@@ -27,6 +29,23 @@ class Audio {
         volume: State.getSettings().volume || INITIAL_SETTINGS.volume,
       });
       this.ctx.resume();
+    }
+  }
+
+  public async preview(samplePath: string) {
+    try {
+      const fullPath = "samples/machines/" + samplePath;
+      if (!this.samplePreviewSource) {
+        this.samplePreviewSource = new Tone.Player();
+      }
+      await this.samplePreviewSource.load(fullPath);
+      this.samplePreviewSource.autostart = true;
+      this.samplePreviewSource.chain(
+        ...this.getMasterNodes(),
+        Tone.getDestination(),
+      );
+    } catch (e) {
+      // console.log("sample preview error: ", e);
     }
   }
 

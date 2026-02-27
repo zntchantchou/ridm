@@ -94,6 +94,7 @@ class Track {
 
   private loadSample() {
     const fullPath = `${samplesDirPath}/${this.name}.wav`;
+    console.log("FUL PATH ", fullPath);
     this.source = new Tone.Player(fullPath);
     const storedPitch = State.getEffect({
       trackId: parseInt(this.stepperId) as StepperIdType,

@@ -5,7 +5,7 @@
 :root {
   --controls-height: 4rem;
   --main-content-height: calc(100% - (var(--controls-height)));
-  --sequencer-primary-color: rgb(15, 15, 15);
+  --sequencer-primary-color: rgb(7, 7, 7);
   --hover-gray: rgb(203, 203, 203);
   --app-background: rgb(16, 16, 16);
 }

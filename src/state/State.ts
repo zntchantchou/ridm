@@ -346,7 +346,6 @@ class State {
 
   setIsSearching(isSearching: boolean) {
     this.isSearching = isSearching;
-    console.log("SET IS SEARCHIN : ", this.isSearching);
   }
 }
 

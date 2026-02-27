@@ -7,6 +7,7 @@ import type {
 import SampleRegistry from "../../../../modules/SampleRegistry";
 import type { ColumnItem } from "../BrowserColumn/BrowserColumn";
 import State from "../../../../state/State";
+import Audio from "../../../../modules/Audio";
 
 type OrderBy = "name" | "category" | "machine";
 const ORDER_BY_VALUES: Record<OrderBy, OrderBy> = {
@@ -28,6 +29,7 @@ export class SampleBrowser extends LitElement {
   async connectedCallback() {
     super.connectedCallback();
     await SampleRegistry.initialize();
+    this.requestUpdate();
   }
 
   private handleSearch(e: Event) {
@@ -102,7 +104,7 @@ export class SampleBrowser extends LitElement {
       items = SampleRegistry.search(this.searchQuery).map((sample) => {
         return {
           label: sample.file,
-          onClick: () => this.handleSampleClick(sample),
+          onClick: async () => await this.handleSampleClick(sample),
           selected: this.selectedSampleId === sample.id,
         };
       });
@@ -119,7 +121,7 @@ export class SampleBrowser extends LitElement {
       ).map((sample) => {
         return {
           label: sample.file,
-          onClick: () => this.handleSampleClick(sample),
+          onClick: async () => await this.handleSampleClick(sample),
           selected: this.selectedSampleId === sample.id,
         };
       });
@@ -131,7 +133,7 @@ export class SampleBrowser extends LitElement {
       ).map((sample) => {
         return {
           label: sample.file,
-          onClick: () => this.handleSampleClick(sample),
+          onClick: async () => await this.handleSampleClick(sample),
           selected: this.selectedSampleId === sample.id,
         };
       });
@@ -139,8 +141,9 @@ export class SampleBrowser extends LitElement {
     return items;
   };
 
-  handleSampleClick(sample: SampleDescriptor) {
+  async handleSampleClick(sample: SampleDescriptor) {
     this.selectedSampleId = sample.id;
+    Audio.preview(sample.path);
   }
 
   render() {

@@ -27,7 +27,6 @@ export class BrowserColumn extends LitElement {
     return html`<div
       class="action-btn"
       @click=${(e: Event) => {
-        console.log("EVENT ON ACTION BCOL");
         if (item.onAction) item?.onAction();
         e.preventDefault();
       }}
@@ -137,12 +136,3 @@ export class BrowserColumn extends LitElement {
     }
   `;
 }
-
-//   private selectSample(sample: SampleDescriptor) {
-//     this.dispatchEvent(new CustomEvent('sample-selected', {
-//       detail: { stepperId: this.stepperId, sample },
-//       bubbles: true,
-//       composed: true,
-//     }));
-//   }
-// }

@@ -30,6 +30,7 @@ import type { PersistedState } from "./storage.types";
 import Controls from "../modules/Controls";
 import templates from "./state.templates";
 import Track from "../modules/Track";
+import SampleRegistry from "../modules/SampleRegistry";
 
 class State {
   private effects: EffectState;
@@ -41,6 +42,10 @@ class State {
   effectUpdateSubject = new Subject<EffectUpdate>();
   tpcUpdateSubject = new Subject<number>();
   volumeUpdateSubject = new Subject<number>();
+  sampleUpdateSubject = new Subject<{
+    sampleId: string;
+    stepperId: StepperIdType;
+  }>();
   // stepper updates
   steppersLoadingSubject = new BehaviorSubject<boolean>(false);
   currentStepperIdSubject = new Subject<StepperIdType>();
@@ -77,6 +82,10 @@ class State {
     this.volumeUpdateSubject.subscribe((v) => this.updateVolume(v));
     this.channelUpdateSubject.subscribe((v) => this.updateChannel(v));
     this.isPlayingSubject.subscribe((v) => this.updateIsPlaying(v));
+    this.sampleUpdateSubject.subscribe(
+      async ({ sampleId, stepperId }) =>
+        await this.updateSample(stepperId, sampleId),
+    );
 
     // Pass raw subjects to Storage for persistence (debounced)
     this.storage.initialize({
@@ -92,6 +101,7 @@ class State {
         this.stepperResizeSubject,
         this.volumeUpdateSubject,
         this.channelUpdateSubject,
+        this.sampleUpdateSubject,
       ] as Subject<StateUpdates>[],
     });
   }
@@ -264,6 +274,17 @@ class State {
     const updatedTrack = { ...track, channelOptions: updatedChannelOptions };
     this.tracks.set(stepperId, updatedTrack);
   };
+
+  async updateSample(stepperId: StepperIdType, sampleId: string) {
+    const samplePath = SampleRegistry.resolvePath(sampleId);
+    const track = this.tracks.get(stepperId);
+    if (samplePath && track) {
+      console.log("SAMPLE PATH ", samplePath);
+      await track?.instance.loadSample(sampleId);
+      track.sampleName = samplePath;
+      this.tracks.set(stepperId, track);
+    }
+  }
 
   updateStepperSize = (update: StepperResizeUpdate) => {
     const { stepperId, beats, stepsPerBeat } = update;

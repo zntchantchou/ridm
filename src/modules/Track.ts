@@ -13,6 +13,7 @@ import type { ChannelUpdate, StepperIdType } from "../state/state.types.ts";
 import type Pulse from "./Pulse.ts";
 import Pulses from "./Pulses.ts";
 import { DEBOUNCE_TIME_MS } from "../state/state.constants.ts";
+import SampleRegistry from "./SampleRegistry.ts";
 
 const samplesDirPath = "samples";
 const DEFAULT_SAMPLE_RATE = 1;
@@ -52,7 +53,7 @@ class Track {
 
   init() {
     Tone.setContext(Audio.ctx as Tone.Context);
-    this.loadSample();
+    this.loadInitialSample();
     this.loadEffects();
     this.initializeUpdateMethods();
     const channelOptions = State.getChannelOptions(
@@ -92,9 +93,17 @@ class Track {
     this.effects = [];
   }
 
-  private loadSample() {
+  public async loadSample(sampleId: string) {
+    try {
+      const path = SampleRegistry.resolvePath(sampleId);
+      if (path) await this?.source?.load(path);
+    } catch (e) {
+      console.log("sample preview error : ", e);
+    }
+  }
+
+  private loadInitialSample() {
     const fullPath = `${samplesDirPath}/${this.name}.wav`;
-    console.log("fullpath ", fullPath);
     this.source = new Tone.Player(fullPath);
     const storedPitch = State.getEffect({
       trackId: parseInt(this.stepperId) as StepperIdType,
@@ -139,16 +148,12 @@ class Track {
   }
 
   public playSample(time: number = 0) {
-    console.log("PLAY ", time);
-    console.log("this.source ", this.source);
-    console.log("NAME ", this.name);
     if (
       Controls.isPlaying &&
       this.source?.buffer &&
       this.source.buffer.loaded &&
       !this.muted // should work out of the box but sample sometimes play eventhough it is muted
     ) {
-      console.log("PLAY SAMPLE ");
       this.source?.start(time, 0, Tone.now() + this.source.buffer.duration);
     }
   }

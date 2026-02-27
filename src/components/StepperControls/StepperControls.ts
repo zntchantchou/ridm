@@ -85,7 +85,7 @@ export class StepperControlsElement extends LitElement {
               color: this.selected ? this.color : "white",
               fontSize: "1rem",
             })}
-            >${this.name}</span
+            >0${this.stepperId + 1}</span
           >
         </div>
         <div class="solo-mute-container">

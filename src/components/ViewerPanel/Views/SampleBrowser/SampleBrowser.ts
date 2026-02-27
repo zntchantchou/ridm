@@ -149,10 +149,11 @@ export class SampleBrowser extends LitElement {
     await Audio.preview(sample.path);
   }
 
-  handleSampleLoad = (sample: SampleDescriptor) => {
-    console.log("LOADING SAMPLE ", sample);
-    // this.selectedSampleId = sample.id;
-    // await Audio.preview(sample.path);
+  private handleSampleLoad = (sample: SampleDescriptor) => {
+    State.sampleUpdateSubject.next({
+      sampleId: sample.id,
+      stepperId: State.getSelectedStepperId(),
+    });
   };
 
   render() {

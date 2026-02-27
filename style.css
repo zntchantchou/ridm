@@ -29,7 +29,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background-image: url("./public/pictures/camo.svg");
+  background-image: url("/pictures/camo.svg");
 }
 
 #play {

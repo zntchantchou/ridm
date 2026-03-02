@@ -118,7 +118,7 @@
       "stepperId": 0,
       "channelOptions": {
         "pan": 0,
-        "volume": 0.5,
+        "volume": 1,
         "mute": false,
         "solo": false
       }
@@ -400,8 +400,8 @@
     }
   ],
   "tracks": [
-    { "stepperId": 0, "sampleId": "yamahary30_perc_02" },
-    { "stepperId": 1, "sampleId": "rolandtr808_sd_24" },
+    { "stepperId": 0, "sampleId": "alesissr16_bd_00" },
+    { "stepperId": 1, "sampleId": "alesissr16_sd_00" },
     { "stepperId": 2, "sampleId": "rolandtr909_hh_00" },
     { "stepperId": 3, "sampleId": "rolandtr909_oh_00" },
     { "stepperId": 4, "sampleId": "sakatadpm48_ht_00" },

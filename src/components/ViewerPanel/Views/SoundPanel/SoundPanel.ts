@@ -6,6 +6,8 @@ import type { PitchOptions } from "../../../../types";
 import State from "../../../../state/State";
 import { INITIAL_CHANNEL_OPTIONS } from "../../../../state/state.constants";
 import { styleMap } from "lit/directives/style-map.js";
+import SampleRegistry from "../../../../modules/SampleRegistry";
+import type { Subscription } from "rxjs";
 
 @customElement("sound-panel")
 export class SoundPanel extends LitElement {
@@ -20,16 +22,35 @@ export class SoundPanel extends LitElement {
   @state() private panning: number = State.getTrack(this.selectedStepperId)
     ?.channelOptions.pan as number;
 
+  currentStepperIdSubscription: Subscription | null = null;
+
+  @state()
+  private sampleName = "";
+
   connectedCallback() {
     super.connectedCallback();
+    const track = State.getTrack(this.selectedStepperId);
+    if (track) {
+      this.sampleName = SampleRegistry.resolve(track?.sampleId)?.file as string;
+    }
     State.currentStepperIdSubject.subscribe((id) => {
       this.selectedStepperId = id;
       const currentColor = State.getSelectedStepperOptions()?.color.cssColor;
       if (currentColor) this.fillColor = currentColor;
-      this.volume = State.getTrack(id)?.channelOptions.volume as number;
-      this.panning = State.getTrack(id)?.channelOptions.pan as number;
+      const track = State.getTrack(id);
+      if (track) {
+        this.volume = track?.channelOptions.volume as number;
+        this.panning = track?.channelOptions.pan as number;
+        this.sampleName = SampleRegistry.resolve(track?.sampleId)
+          ?.file as string;
+      }
       this.requestUpdate();
     });
+  }
+  disconnectedCallback(): void {
+    if (this.currentStepperIdSubscription) {
+      this.currentStepperIdSubscription.unsubscribe();
+    }
   }
 
   private handleVolumeChange = (e: Event) => {
@@ -126,8 +147,10 @@ export class SoundPanel extends LitElement {
         >
           <div class="sample-details">
             <div id="sample-details-header">
-              <span style=${styleMap({ color: this.fillColor })}
-                >${State.getSelectedStepperOptions()?.sampleName}</span
+              <span
+                style=${styleMap({ color: this.fillColor })}
+                id="sample-name"
+                >${this.sampleName}</span
               >
             </div>
 
@@ -270,16 +293,16 @@ export class SoundPanel extends LitElement {
 
     .sound-panel {
       box-sizing: border-box;
-      border-radius: 6px;
+      border-radius: 6px 0 6px 6px;
       background-color: #1e1e1e;
       padding: 1rem 0rem;
       display: flex;
-      width: calc(100% - 1rem);
+      width: 100%;
       color: white;
     }
 
     #sample-name {
-      font-size: 2rem;
+      font-size: 1.4rem;
     }
 
     #sample-details-header {

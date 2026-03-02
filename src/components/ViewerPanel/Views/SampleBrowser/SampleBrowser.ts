@@ -8,6 +8,9 @@ import SampleRegistry from "../../../../modules/SampleRegistry";
 import type { ColumnItem } from "../BrowserColumn/BrowserColumn";
 import State from "../../../../state/State";
 import Audio from "../../../../modules/Audio";
+import { styleMap } from "lit/directives/style-map.js";
+import type { Subscription } from "rxjs";
+import type { StepperIdType } from "../../../../state/state.types";
 
 type OrderBy = "name" | "category" | "machine";
 const ORDER_BY_VALUES: Record<OrderBy, OrderBy> = {
@@ -20,16 +23,41 @@ export class SampleBrowser extends LitElement {
   @property({ type: Number }) stepperId!: number;
   @property({ type: String }) filterType?: string;
 
+  @state() private selectedStepperId: StepperIdType =
+    State.getSelectedStepperId();
   @state() private searchQuery = "";
   @state() private selectedMachineId?: string;
   @state() private selectedCategoryId?: string;
   @state() private selectedSampleId?: string;
   @state() private orderBy: OrderBy = "name";
+  @state() private fillColor: string =
+    State.getSelectedStepperOptions()?.color?.cssColor || "gray";
+  @state() private sampleName: string = "sample";
+  currentStepperIdSubscription: Subscription | null = null;
 
   async connectedCallback() {
     super.connectedCallback();
     await SampleRegistry.initialize();
+    const track = State.getTrack(this.selectedStepperId);
+    if (track) {
+      this.sampleName = SampleRegistry.resolve(track?.sampleId)?.file as string;
+    }
+    State.currentStepperIdSubject.subscribe((id) => {
+      const currentColor = State.getSelectedStepperOptions()?.color.cssColor;
+      if (currentColor) this.fillColor = currentColor;
+      const track = State.getTrack(id);
+      if (track) {
+        this.sampleName = SampleRegistry.resolve(track?.sampleId)
+          ?.file as string;
+      }
+    });
     this.requestUpdate();
+  }
+
+  disconnectedCallback(): void {
+    if (this.currentStepperIdSubscription) {
+      this.currentStepperIdSubscription.unsubscribe();
+    }
   }
 
   private handleSearch(e: Event) {
@@ -160,6 +188,11 @@ export class SampleBrowser extends LitElement {
     return html`
       <div class="sample-browser">
         <div class="column">
+          <div id="sample-details-header">
+            <span style=${styleMap({ color: this.fillColor })} id="sample-name"
+              >${this.sampleName}</span
+            >
+          </div>
           <input
             type="text"
             id="search-input"
@@ -168,7 +201,6 @@ export class SampleBrowser extends LitElement {
             @blur=${() => State.setIsSearching(false)}
             @focus=${() => State.setIsSearching(true)}
           />
-
           <browser-column .items=${this.createCategoryItems()}></browser-column>
         </div>
         <div class="column">
@@ -200,13 +232,23 @@ export class SampleBrowser extends LitElement {
       width: 100%;
     }
 
+    #sample-name {
+      font-size: 1.4rem;
+    }
+
+    #sample-details-header {
+      height: 2.4rem;
+      width: 100%;
+      font-size: 1.8em;
+    }
+
     .sample-browser {
       box-sizing: border-box;
-      border-radius: 6px;
+      border-radius: 6px 0 6px 6px;
       background-color: #1e1e1e;
-      padding: 1rem 0rem;
+      padding: 1rem 1rem;
       display: flex;
-      width: calc(100% - 1rem);
+      width: 100%;
       color: white;
     }
     .column {
@@ -228,7 +270,7 @@ export class SampleBrowser extends LitElement {
       color: #373737;
       border: none;
       width: 90%;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.5rem;
     }
   `;
 }

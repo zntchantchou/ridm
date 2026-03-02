@@ -333,10 +333,6 @@ class State {
   }
 
   getInitialStepperOptions() {
-    console.log(
-      "getInitialStepperOptions ",
-      Array.from(this.steppers.values()),
-    );
     return Array.from(this.steppers.values());
   }
 

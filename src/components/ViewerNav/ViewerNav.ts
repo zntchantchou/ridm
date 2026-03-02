@@ -1,9 +1,8 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
-import note from "/pictures/note.svg";
-import mixer from "/pictures/mixer.svg";
-import folder from "/pictures/folder.svg";
+import note from "/pictures/note-opt.svg";
+import mixer from "/pictures/mixer-opt.svg";
 import type { ViewName } from "../ViewerPanel/ViewerPanel";
 
 @customElement("viewer-nav")
@@ -45,15 +44,8 @@ export class ViewerNav extends LitElement {
           @click=${() => this.handleSelectView("samples")}
           style=${this.getItemStyleMap("samples")}
         >
-          <img src=${note} />
+          <img src=${note} fill="blue" />
         </div>
-        <!-- <div
-          class="nav-item"
-          @click=${() => this.handleSelectView("three")}
-          style=${this.getItemStyleMap("three")}
-        >
-          <img src=${folder} />
-        </div> -->
       </div>
     `;
   }
@@ -62,10 +54,9 @@ export class ViewerNav extends LitElement {
     :host {
       width: 3rem;
       height: 100%;
-      /* margin-left: 1rem; */
     }
     .nav-item {
-      border-radius: 6px;
+      border-radius: 0px 6px 6px 0px;
       display: flex;
       justify-content: center;
       align-items: center;

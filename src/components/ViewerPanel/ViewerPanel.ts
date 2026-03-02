@@ -5,7 +5,7 @@ export type ViewName = "mix" | "samples";
 @customElement("viewer-panel")
 export class ViewerPanel extends LitElement {
   @state()
-  currentView: ViewName = "samples";
+  currentView: ViewName = "mix";
 
   renderPanel() {
     if (this.currentView === "mix") {

@@ -18,7 +18,6 @@ export class BrowserColumn extends LitElement {
   withActionButton: boolean = false;
 
   handleClick = (item: ColumnItem) => {
-    console.log("Browser column handleClick");
     if (item.onClick) item.onClick();
   };
 

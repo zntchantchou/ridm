@@ -7,7 +7,7 @@ import State from "../../../../state/State";
 import { INITIAL_CHANNEL_OPTIONS } from "../../../../state/state.constants";
 import { styleMap } from "lit/directives/style-map.js";
 import SampleRegistry from "../../../../modules/SampleRegistry";
-import type { Subscription } from "rxjs";
+import { type Subscription } from "rxjs";
 
 @customElement("sound-panel")
 export class SoundPanel extends LitElement {
@@ -23,6 +23,7 @@ export class SoundPanel extends LitElement {
     ?.channelOptions.pan as number;
 
   currentStepperIdSubscription: Subscription | null = null;
+  sampleUpdateSubscription: Subscription | null = null;
 
   @state()
   private sampleName = "";
@@ -33,23 +34,32 @@ export class SoundPanel extends LitElement {
     if (track) {
       this.sampleName = SampleRegistry.resolve(track?.sampleId)?.file as string;
     }
-    State.currentStepperIdSubject.subscribe((id) => {
-      this.selectedStepperId = id;
-      const currentColor = State.getSelectedStepperOptions()?.color.cssColor;
-      if (currentColor) this.fillColor = currentColor;
-      const track = State.getTrack(id);
-      if (track) {
-        this.volume = track?.channelOptions.volume as number;
-        this.panning = track?.channelOptions.pan as number;
-        this.sampleName = SampleRegistry.resolve(track?.sampleId)
-          ?.file as string;
-      }
-      this.requestUpdate();
-    });
+    this.sampleUpdateSubscription = State.sampleUpdateSubject.subscribe(
+      ({ sampleId }) => {
+        this.sampleName = SampleRegistry.resolve(sampleId)?.file as string;
+      },
+    );
+    this.currentStepperIdSubscription = State.currentStepperIdSubject.subscribe(
+      (id) => {
+        this.selectedStepperId = id;
+        const currentColor = State.getSelectedStepperOptions()?.color.cssColor;
+        if (currentColor) this.fillColor = currentColor;
+        const track = State.getTrack(id);
+        if (track) {
+          this.volume = track?.channelOptions.volume as number;
+          this.panning = track?.channelOptions.pan as number;
+          this.sampleName = SampleRegistry.resolve(track?.sampleId)
+            ?.file as string;
+        }
+        this.requestUpdate();
+      },
+    );
   }
+
   disconnectedCallback(): void {
-    if (this.currentStepperIdSubscription) {
-      this.currentStepperIdSubscription.unsubscribe();
+    if (this.currentStepperIdSubscription || this.sampleUpdateSubscription) {
+      this.currentStepperIdSubscription?.unsubscribe();
+      this.sampleUpdateSubscription?.unsubscribe();
     }
   }
 

@@ -9,7 +9,7 @@ import type { ColumnItem } from "../BrowserColumn/BrowserColumn";
 import State from "../../../../state/State";
 import Audio from "../../../../modules/Audio";
 import { styleMap } from "lit/directives/style-map.js";
-import type { Subscription } from "rxjs";
+import { type Subscription } from "rxjs";
 import type { StepperIdType } from "../../../../state/state.types";
 
 type OrderBy = "name" | "category" | "machine";
@@ -34,7 +34,7 @@ export class SampleBrowser extends LitElement {
     State.getSelectedStepperOptions()?.color?.cssColor || "gray";
   @state() private sampleName: string = "sample";
   currentStepperIdSubscription: Subscription | null = null;
-
+  sampleUpdateSubscription: Subscription | null = null;
   async connectedCallback() {
     super.connectedCallback();
     await SampleRegistry.initialize();
@@ -42,15 +42,24 @@ export class SampleBrowser extends LitElement {
     if (track) {
       this.sampleName = SampleRegistry.resolve(track?.sampleId)?.file as string;
     }
-    State.currentStepperIdSubject.subscribe((id) => {
-      const currentColor = State.getSelectedStepperOptions()?.color.cssColor;
-      if (currentColor) this.fillColor = currentColor;
-      const track = State.getTrack(id);
-      if (track) {
-        this.sampleName = SampleRegistry.resolve(track?.sampleId)
-          ?.file as string;
-      }
-    });
+
+    this.sampleUpdateSubscription = State.sampleUpdateSubject.subscribe(
+      ({ sampleId }) => {
+        this.sampleName = SampleRegistry.resolve(sampleId)?.file as string;
+      },
+    );
+
+    this.currentStepperIdSubscription = State.currentStepperIdSubject.subscribe(
+      (id) => {
+        const currentColor = State.getSelectedStepperOptions()?.color.cssColor;
+        if (currentColor) this.fillColor = currentColor;
+        const track = State.getTrack(id);
+        if (track) {
+          this.sampleName = SampleRegistry.resolve(track?.sampleId)
+            ?.file as string;
+        }
+      },
+    );
     this.requestUpdate();
   }
 
@@ -255,7 +264,6 @@ export class SampleBrowser extends LitElement {
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      align-items: center;
       border-right: solid black 2px;
       height: 100%;
       width: 20rem;
@@ -263,13 +271,14 @@ export class SampleBrowser extends LitElement {
 
     #search-input {
       all: unset;
+      width: 90%;
       font-size: 0.9rem;
       padding: 0.4rem 0.4rem;
+      padding-left: 0.8rem;
       border-radius: 0.2rem;
       background-color: #d9d8d8;
       color: #373737;
       border: none;
-      width: 90%;
       margin-bottom: 0.5rem;
     }
   `;

@@ -11,7 +11,6 @@ export class StepperControlsElement extends LitElement {
   @property({ type: Number }) stepperId: StepperIdType = 0;
   @property({ type: Number }) stepsPerBeat = 4;
   @property({ type: Number }) beats = 4;
-  @property({ type: String }) name = "";
   @property({ type: String }) color = "";
   @property({ type: Boolean })
   selected: boolean = false;

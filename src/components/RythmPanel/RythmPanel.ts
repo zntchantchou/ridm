@@ -49,11 +49,10 @@ export class RythmPanel extends LitElement {
 
   renderStepperControls() {
     const controls = State.getInitialStepperOptions().map(
-      ({ id, beats, stepsPerBeat, sampleName, color }) => {
+      ({ id, beats, stepsPerBeat, color }) => {
         return html`<stepper-controls
           stepsPerBeat=${stepsPerBeat}
           beats=${beats}
-          name=${sampleName}
           stepperId=${id}
           color=${color.cssColor}
           ?selected=${id === this.selectedStepperId}

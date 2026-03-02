@@ -10,8 +10,8 @@ draw/
 .claude/
 .claude/discussions
 .claude/docs
-public/machines/
-public/samples/
+public/samples/machines.backup/
+
 node_modules
 dist
 *.local

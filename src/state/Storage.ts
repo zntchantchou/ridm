@@ -5,6 +5,7 @@ import type {
   SerializedEffectsState,
   SerializedSteppersState,
   SerializedChannelsState,
+  SerializedTracksState,
 } from "./storage.types";
 import type {
   StepperIdType,
@@ -52,6 +53,7 @@ class Storage {
       effects: this.serializeInitialEffects(state.effects),
       steppers: this.serializeInitialSteppers(state.steppers),
       channels: this.serializeChannels(state.tracks),
+      tracks: this.serializeInitialTracks(state.tracks),
       settings: state.settings,
       lastUpdated: Date.now(),
     };
@@ -77,6 +79,7 @@ class Storage {
       effects: this.serializeEffects(),
       steppers: this.serializeSteppers(),
       channels: this.serializeChannels(),
+      tracks: this.serializeTracks(),
       settings: State.getSettings(),
       lastUpdated: Date.now(),
     };
@@ -127,6 +130,36 @@ class Storage {
     return serialized;
   }
 
+  private serializeTracks(): SerializedTracksState {
+    const tracks: SerializedTracksState = [];
+    for (let i = 0; i < 8; i++) {
+      const stepperId = i as StepperIdType;
+      const currentTrack = State.getTrack(stepperId);
+      if (currentTrack) {
+        tracks.push({
+          stepperId: currentTrack.stepperId,
+          sampleId: currentTrack.sampleId,
+        });
+      }
+    }
+    return tracks;
+  }
+
+  private serializeInitialTracks(tracks: TracksState): SerializedTracksState {
+    const serializedTracks: SerializedTracksState = [];
+    for (let i = 0; i < 8; i++) {
+      const stepperId = i as StepperIdType;
+      const currentTrack = tracks.get(stepperId);
+      if (currentTrack) {
+        serializedTracks.push({
+          stepperId: currentTrack.stepperId,
+          sampleId: currentTrack.sampleId,
+        });
+      }
+    }
+    return serializedTracks;
+  }
+
   /**
    * Convert steppers Map to serializable array
    */
@@ -144,7 +177,6 @@ class Storage {
           stepsPerBeat: stepperOptions.stepsPerBeat,
           selectedSteps: stepperOptions.selectedSteps || [],
           color: stepperOptions.color,
-          sampleName: stepperOptions.sampleName,
         });
       }
     }
@@ -167,7 +199,6 @@ class Storage {
           stepsPerBeat: stepperOptions.stepsPerBeat,
           selectedSteps: stepperOptions.selectedSteps || [],
           color: stepperOptions.color,
-          sampleName: stepperOptions.sampleName,
         });
       }
     }

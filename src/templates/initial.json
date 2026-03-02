@@ -136,8 +136,7 @@
         false,
         false
       ],
-      "color": { "name": "skyBlue", "cssColor": "#0099ff" },
-      "sampleName": "01"
+      "color": { "name": "skyBlue", "cssColor": "#0099ff" }
     },
     {
       "id": 1,
@@ -161,8 +160,7 @@
         false,
         false
       ],
-      "color": { "name": "hotPink", "cssColor": "#b655ff" },
-      "sampleName": "02"
+      "color": { "name": "hotPink", "cssColor": "#b655ff" }
     },
     {
       "id": 2,
@@ -186,8 +184,7 @@
         false,
         false
       ],
-      "color": { "name": "yellow", "cssColor": "#ffff00" },
-      "sampleName": "03"
+      "color": { "name": "yellow", "cssColor": "#ffff00" }
     },
     {
       "id": 3,
@@ -211,8 +208,7 @@
         false,
         false
       ],
-      "color": { "name": "chartreuse", "cssColor": "#99ff00" },
-      "sampleName": "04"
+      "color": { "name": "chartreuse", "cssColor": "#99ff00" }
     },
     {
       "id": 4,
@@ -236,8 +232,7 @@
         false,
         false
       ],
-      "color": { "name": "magenta", "cssColor": "#ff7fff" },
-      "sampleName": "05"
+      "color": { "name": "magenta", "cssColor": "#ff7fff" }
     },
     {
       "id": 5,
@@ -261,8 +256,7 @@
         false,
         false
       ],
-      "color": { "name": "orange", "cssColor": "#ff4500" },
-      "sampleName": "06"
+      "color": { "name": "orange", "cssColor": "#ff4500" }
     },
     {
       "id": 6,
@@ -286,8 +280,7 @@
         false,
         false
       ],
-      "color": { "name": "cyan", "cssColor": "#00ffff" },
-      "sampleName": "07"
+      "color": { "name": "cyan", "cssColor": "#00ffff" }
     },
     {
       "id": 7,
@@ -311,9 +304,18 @@
         false,
         false
       ],
-      "color": { "name": "purple", "cssColor": "#ff0066" },
-      "sampleName": "08"
+      "color": { "name": "purple", "cssColor": "#ff0066" }
     }
+  ],
+  "tracks": [
+    { "stepperId": 0, "sampleId": "akailinn_bd_00" },
+    { "stepperId": 1, "sampleId": "rolandtr808_sd_24" },
+    { "stepperId": 2, "sampleId": "rolandtr909_hh_00" },
+    { "stepperId": 3, "sampleId": "rolandtr909_oh_00" },
+    { "stepperId": 4, "sampleId": "sakatadpm48_ht_00" },
+    { "stepperId": 5, "sampleId": "yamahary30_perc_02" },
+    { "stepperId": 6, "sampleId": "yamahatg33_sh_00" },
+    { "stepperId": 7, "sampleId": "rolandtr909_cp_01" }
   ],
   "channels": [
     {
@@ -349,6 +351,11 @@
       "channelOptions": { "pan": 0, "volume": 0, "mute": false, "solo": false }
     }
   ],
-  "settings": { "tpc": 3.7, "volume": -10, "selectedStepperId": 0 },
+  "settings": {
+    "tpc": 3.7,
+    "volume": -10,
+    "selectedStepperId": 0,
+    "templateName": "initial"
+  },
   "lastUpdated": 1769605588409
 }

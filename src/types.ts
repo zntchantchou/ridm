@@ -47,7 +47,6 @@ export interface StepperOptions {
   beats: number;
   stepsPerBeat: number;
   id: StepperIdType;
-  sampleName: string;
   color: { cssColor: string };
   track?: Track;
   selectedSteps?: boolean[];

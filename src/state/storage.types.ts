@@ -6,8 +6,14 @@ export interface PersistedState {
   steppers: SerializedSteppersState;
   channels: SerializedChannelsState;
   settings: Settings;
+  tracks: SerializedTracksState;
   lastUpdated: number;
 }
+
+export type SerializedTracksState = {
+  stepperId: StepperIdType;
+  sampleId: string;
+}[];
 
 export type SerializedEffectsState = {
   stepperId: StepperIdType;
@@ -25,7 +31,6 @@ export type SerializedSteppersState = {
   stepsPerBeat: number;
   selectedSteps: boolean[];
   color: { cssColor: string };
-  sampleName: string;
 }[];
 
 export type SerializedChannelsState = {

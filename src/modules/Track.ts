@@ -15,13 +15,12 @@ import Pulses from "./Pulses.ts";
 import { DEBOUNCE_TIME_MS } from "../state/state.constants.ts";
 import SampleRegistry from "./SampleRegistry.ts";
 
-const samplesDirPath = "samples";
 const DEFAULT_SAMPLE_RATE = 1;
 const MIN_SAMPLE_RATE = 0.25;
 const MAX_SAMPLE_RATE = 3;
 
 type TrackOptions = {
-  name: string;
+  sampleId: string;
   stepperId: string;
   source?: Tone.Player;
   effects?: TrackEffect[];
@@ -29,7 +28,7 @@ type TrackOptions = {
 };
 
 class Track {
-  name: string;
+  sampleId: string;
   samplePath?: string;
   sampleRate: number = 0;
   stepperId: string;
@@ -43,17 +42,18 @@ class Track {
   pulseSubscription: Subscription | null = null;
   resizeSubscription: Subscription | null = null;
 
-  constructor({ stepperId, name, sampleRate }: TrackOptions) {
-    this.name = name;
+  constructor({ sampleId, stepperId, sampleRate }: TrackOptions) {
+    this.sampleId = sampleId;
     this.stepperId = stepperId;
+    if (!this.sampleId) throw new Error("NO SAMPLE ID PROVIDED AT TRACK INIT");
     if (!Number.isNaN(sampleRate) && sampleRate) {
       this.sampleRate = sampleRate;
     }
   }
 
-  init() {
+  async init() {
     Tone.setContext(Audio.ctx as Tone.Context);
-    this.loadInitialSample();
+    await this.loadInitialSample();
     this.loadEffects();
     this.initializeUpdateMethods();
     const channelOptions = State.getChannelOptions(
@@ -93,23 +93,19 @@ class Track {
     this.effects = [];
   }
 
-  public async loadSample(sampleId: string) {
+  private async loadInitialSample() {
     try {
-      const path = SampleRegistry.resolvePath(sampleId);
-      if (path) await this?.source?.load(path);
+      const fullPath = SampleRegistry.resolvePath(this.sampleId);
+      this.source = new Tone.Player();
+      await this.source.load(fullPath as string);
+      const storedPitch = State.getEffect({
+        trackId: parseInt(this.stepperId) as StepperIdType,
+        name: "pitch",
+      })?.value as PitchOptions;
+      this.source.playbackRate = this.calculateSampleRate(storedPitch.pitch);
     } catch (e) {
-      console.log("sample preview error : ", e);
+      console.log("load initial sample error : ", e);
     }
-  }
-
-  private loadInitialSample() {
-    const fullPath = `${samplesDirPath}/${this.name}.wav`;
-    this.source = new Tone.Player(fullPath);
-    const storedPitch = State.getEffect({
-      trackId: parseInt(this.stepperId) as StepperIdType,
-      name: "pitch",
-    })?.value as PitchOptions;
-    this.source.playbackRate = this.calculateSampleRate(storedPitch.pitch);
   }
 
   private loadEffects() {
@@ -144,6 +140,18 @@ class Track {
       });
     } else {
       this.effects = Audio.defaultEffects;
+    }
+  }
+
+  public async loadSample(sampleId: string) {
+    try {
+      const path = SampleRegistry.resolvePath(sampleId);
+      if (path) {
+        await this?.source?.load(path);
+        if (!this.source) throw new Error("NO SOURCE !");
+      }
+    } catch (e) {
+      console.log("sample loading error : ", e);
     }
   }
 

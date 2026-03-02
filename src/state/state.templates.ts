@@ -1,5 +1,5 @@
 import mamakossa from "../templates/mamakossa.json";
-import nottoochaabi from "../templates/nottochaabi.json";
+import nottoochaabi from "../templates/nottoochaabi.json";
 import initial from "../templates/initial.json";
 
 export type TemplateType =

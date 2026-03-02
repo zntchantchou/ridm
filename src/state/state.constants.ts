@@ -38,41 +38,6 @@ export const COLORS: StepperColorType[] = [
   },
 ];
 
-export const SAMPLES_DIRS = [
-  {
-    name: "01",
-    path: "bd.wav",
-  },
-  {
-    name: "02",
-    path: "sd.wav",
-  },
-  {
-    name: "03",
-    path: "hh.wav",
-  },
-  {
-    name: "04",
-    path: "oh.wav",
-  },
-  {
-    name: "05",
-    path: "ht.wav",
-  },
-  {
-    name: "06",
-    path: "bo.wav",
-  },
-  {
-    name: "07",
-    path: "sh.wav",
-  },
-  {
-    name: "08",
-    path: "cp.wav",
-  },
-];
-
 export const DEFAULT_STEPPER_OPTIONS = {
   beats: 4,
   stepsPerBeat: 4,

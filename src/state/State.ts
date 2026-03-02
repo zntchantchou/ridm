@@ -16,21 +16,11 @@ import type {
 } from "./state.types";
 import type { EffectNameType, EffectUpdate } from "../types";
 import type { StepperOptions } from "../types";
-import {
-  COLORS,
-  DEFAULT_STEPPER_OPTIONS,
-  INITIAL_CHANNEL_OPTIONS,
-  INITIAL_EFFECTS,
-  INITIAL_SETTINGS,
-  SAMPLES_DIRS,
-} from "./state.constants";
-import { generateEmptySteps } from "./state.utils";
 import Storage from "./Storage";
 import type { PersistedState } from "./storage.types";
 import Controls from "../modules/Controls";
 import templates from "./state.templates";
 import Track from "../modules/Track";
-import SampleRegistry from "../modules/SampleRegistry";
 
 class State {
   private effects: EffectState;
@@ -53,6 +43,7 @@ class State {
   stepperSelectedStepsSubject = new Subject<StepperSelectedStepsUpdate>();
   /** notifies stepper components to rerender */
   templateReloadSubject = new Subject<boolean>();
+  templateUpdateSubject = new Subject<TemplateName>();
   // channel updates
   channelUpdateSubject = new Subject<ChannelUpdate>();
   isPlayingSubject = new Subject<boolean>();
@@ -62,32 +53,13 @@ class State {
   constructor() {
     const { effects, steppers, settings, tracks } = this.storage.hasState()
       ? this.deserializeStoreState()
-      : this.createInitialState();
+      : this.createDefaultState();
     this.effects = effects;
     this.steppers = steppers;
     this.settings = settings;
     this.tracks = tracks;
-
     // Subscribe directly to subjects to ensure synchronous state updates
-    // BEFORE any Track subscriptions fire
-    this.currentStepperIdSubject.subscribe((v) =>
-      this.updateSelectedStepperId(v),
-    );
-    this.effectUpdateSubject.subscribe((v) => this.updateEffect(v));
-    this.stepperSelectedStepsSubject.subscribe((v) =>
-      this.updateSelectedSteps(v),
-    );
-    this.tpcUpdateSubject.subscribe((v) => this.updateTpc(v));
-    this.stepperResizeSubject.subscribe((u) => this.updateStepperSize(u));
-    this.volumeUpdateSubject.subscribe((v) => this.updateVolume(v));
-    this.channelUpdateSubject.subscribe((v) => this.updateChannel(v));
-    this.isPlayingSubject.subscribe((v) => this.updateIsPlaying(v));
-    this.sampleUpdateSubject.subscribe(
-      async ({ sampleId, stepperId }) =>
-        await this.updateSample(stepperId, sampleId),
-    );
-
-    // Pass raw subjects to Storage for persistence (debounced)
+    this.inititalizeSubscriptions();
     this.storage.initialize({
       effects,
       steppers,
@@ -106,40 +78,73 @@ class State {
     });
   }
 
-  // This should only be called if there is no existing state in localStorage
-  createInitialState() {
+  private inititalizeSubscriptions() {
+    this.currentStepperIdSubject.subscribe((v) =>
+      this.updateSelectedStepperId(v),
+    );
+    this.effectUpdateSubject.subscribe((v) => this.updateEffect(v));
+    this.stepperSelectedStepsSubject.subscribe((v) =>
+      this.updateSelectedSteps(v),
+    );
+    this.tpcUpdateSubject.subscribe((v) => this.updateTpc(v));
+    this.stepperResizeSubject.subscribe((u) => this.updateStepperSize(u));
+    this.volumeUpdateSubject.subscribe((v) => this.updateVolume(v));
+    this.channelUpdateSubject.subscribe((v) => this.updateChannel(v));
+    this.isPlayingSubject.subscribe((v) => this.updateIsPlaying(v));
+    this.sampleUpdateSubject.subscribe(
+      async ({ sampleId, stepperId }) =>
+        await this.updateSample(stepperId, sampleId),
+    );
+  }
+
+  createDefaultState(): {
+    steppers: SteppersState;
+    effects: EffectState;
+    settings: Settings;
+    tracks: TracksState;
+  } {
+    const template = templates["initial"];
+    // Deep clone to prevent mutation of imported template objects
+    const templateCopy = structuredClone(template);
+    const templateEffects = templateCopy.effects as unknown as {
+      effects: Effect[];
+    }[];
+    const templateSteppers =
+      templateCopy.steppers as unknown as StepperOptions[];
+    const templateChannels = templateCopy.channels as unknown as {
+      channelOptions: ChannelOptions;
+    }[];
+    const templateTracks = templateCopy.tracks as unknown as {
+      stepperId: StepperIdType;
+      sampleId: string;
+    }[];
+
     const effects = new Map<StepperIdType, Effect[]>();
     const steppers = new Map<StepperIdType, StepperOptions>();
     const tracks = new Map<StepperIdType, TrackOptions>();
+
     for (let i = 0; i < 8; i++) {
-      const beats = DEFAULT_STEPPER_OPTIONS.beats;
-      const stepsPerBeat = DEFAULT_STEPPER_OPTIONS.stepsPerBeat;
-      effects.set(i as StepperIdType, INITIAL_EFFECTS);
-      steppers.set(i as StepperIdType, {
-        beats,
-        stepsPerBeat,
-        selectedSteps: generateEmptySteps({
-          stepsPerBeat: stepsPerBeat,
-          beats,
-        }),
-        color: COLORS[i],
-        sampleName: SAMPLES_DIRS[i].name,
-        id: i as StepperIdType,
-      });
+      effects.set(i as StepperIdType, templateEffects[i].effects);
+      steppers.set(i as StepperIdType, templateSteppers[i]);
       tracks.set(i as StepperIdType, {
         stepperId: i as StepperIdType,
-        sampleName: SAMPLES_DIRS[i].name,
+        sampleId: templateTracks[i].sampleId,
         instance: new Track({
           stepperId: i.toString(),
-          name: SAMPLES_DIRS[i].name,
+          sampleId: templateTracks[i].sampleId,
         }),
-        channelOptions: { ...INITIAL_CHANNEL_OPTIONS },
+        channelOptions: {
+          ...templateChannels[i].channelOptions,
+          solo: false,
+          mute: false,
+        },
       });
     }
+
     return {
       effects,
       steppers,
-      settings: { ...INITIAL_SETTINGS },
+      settings: templateCopy.settings as Settings,
       tracks,
     };
   }
@@ -150,11 +155,15 @@ class State {
     settings: Settings;
     tracks: TracksState;
   } {
+    if (!this.storage.hasState()) {
+      this.deserializeTemplate("initial");
+    }
     const {
       effects: storeEffects,
       steppers: storeSteppers,
       channels: storeChannels,
       settings,
+      tracks: storeTracks,
     } = this.storage.getPersistedState() as PersistedState;
     const effects = new Map<StepperIdType, Effect[]>();
     const steppers = new Map<StepperIdType, StepperOptions>();
@@ -162,12 +171,12 @@ class State {
     for (let i = 0; i < 8; i++) {
       effects.set(i as StepperIdType, storeEffects[i].effects);
       steppers.set(i as StepperIdType, storeSteppers[i]);
+      // We need to load tracks
       tracks.set(i as StepperIdType, {
-        stepperId: i as StepperIdType,
-        sampleName: SAMPLES_DIRS[i].name,
+        ...storeTracks[i],
         instance: new Track({
           stepperId: i.toString(),
-          name: SAMPLES_DIRS[i].name,
+          sampleId: storeTracks[i].sampleId,
         }),
         channelOptions: {
           ...storeChannels[i].channelOptions,
@@ -195,6 +204,10 @@ class State {
     const templateChannels = templateCopy.channels as unknown as {
       channelOptions: ChannelOptions;
     }[];
+    const templateTracks = templateCopy.tracks as unknown as {
+      stepperId: StepperIdType;
+      sampleId: string;
+    }[];
 
     const effects = new Map<StepperIdType, Effect[]>();
     const steppers = new Map<StepperIdType, StepperOptions>();
@@ -203,17 +216,20 @@ class State {
       effects.set(i as StepperIdType, templateEffects[i].effects);
       steppers.set(i as StepperIdType, templateSteppers[i]);
 
-      // Update track channel options from template
-      const track = this.tracks.get(i as StepperIdType);
-      if (track) {
+      // Update track channel o.ptions and sampleId from template
+      const track = this.tracks?.get(i as StepperIdType);
+      if (track && templateTracks[i]) {
+        const updatedSampleId = templateTracks[i].sampleId;
         const updatedTrack = {
           ...track,
+          sampleId: updatedSampleId,
           channelOptions: {
             ...templateChannels[i].channelOptions,
             solo: false,
             mute: false,
           },
         };
+        track.instance.sampleId = updatedSampleId;
         this.tracks.set(i as StepperIdType, updatedTrack);
       }
     }
@@ -276,12 +292,10 @@ class State {
   };
 
   async updateSample(stepperId: StepperIdType, sampleId: string) {
-    const samplePath = SampleRegistry.resolvePath(sampleId);
     const track = this.tracks.get(stepperId);
-    if (samplePath && track) {
-      console.log("SAMPLE PATH ", samplePath);
-      await track?.instance.loadSample(sampleId);
-      track.sampleName = samplePath;
+    if (track) {
+      await track.instance.loadSample(sampleId);
+      track.sampleId = sampleId;
       this.tracks.set(stepperId, track);
     }
   }
@@ -319,6 +333,10 @@ class State {
   }
 
   getInitialStepperOptions() {
+    console.log(
+      "getInitialStepperOptions ",
+      Array.from(this.steppers.values()),
+    );
     return Array.from(this.steppers.values());
   }
 

@@ -46,7 +46,7 @@ export type ChannelOptions = Partial<Tone.ChannelOptions>;
 export type ChannelsState = Map<StepperIdType, ChannelOptions>;
 export type TrackOptions = {
   stepperId: StepperIdType;
-  sampleName: string;
+  sampleId: string;
   instance: Track;
   channelOptions: ChannelOptions;
 };

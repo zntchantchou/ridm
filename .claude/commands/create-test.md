@@ -9,7 +9,7 @@ First take a look at the changes that may have taken place in the application th
 The second argument is the functionality that is being tested: $2, the topic of this task
 The optional third argument is the guidelines file to help with specific informations for this test creation: $2
 
-## Create less a checklist not exceeding 10 test scenarios
+## Create a checklist not exceeding 10 test scenarios
 
 Update this checklist once all the tests have been validated.
 

@@ -9,6 +9,7 @@ import "./state/State";
 import State from "./state/State";
 import StepQueue from "./modules/StepQueue";
 import type { TemplateName } from "./state/state.types";
+import SampleRegistry from "./modules/SampleRegistry";
 
 class Application {
   initialized = false;
@@ -28,11 +29,14 @@ class Application {
   }
 
   init = async () => {
+    await SampleRegistry.initialize();
     State.steppersLoadingSubject.next(true);
     Controls.init();
     this.sequencer = new Sequencer(Pulses);
     await this.sequencer.initialize();
-    State.tpcUpdateSubject.subscribe(() => this.restart());
+    State.tpcUpdateSubject.subscribe(() => {
+      this.restart();
+    });
     State.currentStepperIdSubject.next(State.getSelectedStepperId());
     State.steppersLoadingSubject.next(false);
   };
@@ -43,9 +47,9 @@ class Application {
     Controls.pause();
     StepQueue.clear();
     Pulses.restart();
+    // shoud deserialize template data to update storage
     State.loadTemplate(name);
-
-    await this.sequencer?.reload(false); // this inits steppers from state
+    await this.sequencer?.reload(); // this inits steppers from state
     State.currentStepperIdSubject.next(State.getSelectedStepperId());
     State.templateReloadSubject.next(true);
     this.timeWorker.pause(); // also stops ui

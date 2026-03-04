@@ -51,6 +51,7 @@ export class SampleBrowser extends LitElement {
 
     this.currentStepperIdSubscription = State.currentStepperIdSubject.subscribe(
       (id) => {
+        this.selectedStepperId = id;
         const currentColor = State.getSelectedStepperOptions()?.color.cssColor;
         if (currentColor) this.fillColor = currentColor;
         const track = State.getTrack(id);
@@ -198,9 +199,10 @@ export class SampleBrowser extends LitElement {
       <div class="sample-browser">
         <div class="column">
           <div id="sample-details-header">
-            <span style=${styleMap({ color: this.fillColor })} id="sample-name"
-              >${this.sampleName}</span
+            <span style=${styleMap({ color: this.fillColor })}>
+              0${this.selectedStepperId + 1}</span
             >
+            <span id="sample-name">${this.sampleName}</span>
           </div>
           <input
             type="text"

@@ -157,11 +157,11 @@ export class SoundPanel extends LitElement {
         >
           <div class="sample-details">
             <div id="sample-details-header">
-              <span
-                style=${styleMap({ color: this.fillColor })}
-                id="sample-name"
-                >${this.sampleName}</span
+              <span style=${styleMap({ color: this.fillColor })}>
+                0${this.selectedStepperId + 1}</span
               >
+
+              <span id="sample-name">${this.sampleName}</span>
             </div>
 
             <fader-element

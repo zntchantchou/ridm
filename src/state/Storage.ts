@@ -16,6 +16,8 @@ import type {
   TracksState,
 } from "./state.types";
 
+const STORAGE_VERSION_KEY = "version";
+const STORAGE_VERSION = "1.0";
 const STORAGE_KEY = "riddim-sequencer-state";
 const DEBOUNCE_TIME_MS = 300; // Wait 300ms after last change
 
@@ -36,14 +38,21 @@ class Storage {
     this.initializeStorage(state);
     this.setupSubscriptions(state.subjects);
   }
+
+  setStorageVersion() {
+    localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
+  }
   /**
    * Initialize localStorage with default state if it doesn't exist
    */
   private initializeStorage(state: InitializeOptions): void {
+    const version = localStorage.getItem(STORAGE_VERSION_KEY);
+    const isCurrentVersion = version && version === STORAGE_VERSION;
     const existing = localStorage.getItem(STORAGE_KEY);
-    if (!existing) {
+    if (!existing || !version || !isCurrentVersion) {
       const initialState = this.serializeInitialState(state);
       this.saveToLocalStorage(initialState);
+      this.setStorageVersion();
       return;
     }
   }
